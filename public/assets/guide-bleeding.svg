@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <circle cx="60" cy="60" r="56" fill="#fef2f2" stroke="#fca5a5" stroke-width="2"/>
+  <!-- Blood drop & cross -->
+  <path d="M 60 25 C 60 25, 88 60, 88 78 C 88 94, 75 100, 60 100 C 45 100, 32 94, 32 78 C 32 60, 60 25, 60 25 Z" fill="#dc2626"/>
+  <!-- White cross inside drop -->
+  <rect x="55" y="65" width="10" height="26" rx="2" fill="#ffffff"/>
+  <rect x="47" y="73" width="26" height="10" rx="2" fill="#ffffff"/>
+</svg>

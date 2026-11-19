@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 160" width="100%" height="100%">
+  <defs>
+    <linearGradient id="pacerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="50%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="500" height="160" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- Hands Compression Graphic -->
+  <g transform="translate(30, 20)">
+    <!-- Sternum Base -->
+    <path d="M 10 100 Q 60 90 110 100" fill="none" stroke="#94a3b8" stroke-width="6" stroke-linecap="round"/>
+    <!-- Hands Interlocked -->
+    <ellipse cx="60" cy="65" rx="26" ry="16" fill="#fbd0a0" stroke="#d99f70" stroke-width="2"/>
+    <ellipse cx="60" cy="74" rx="22" ry="12" fill="#fbd0a0" stroke="#d99f70" stroke-width="2"/>
+    <!-- Down Arrow -->
+    <path d="M 60 15 L 60 45 M 52 37 L 60 45 L 68 37" fill="none" stroke="#b91c1c" stroke-width="3" stroke-linecap="round"/>
+    <text x="60" y="125" fill="#0f172a" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">5-6 cm Depth</text>
+  </g>
+
+  <!-- Rate Gauge -->
+  <g transform="translate(180, 25)">
+    <text x="0" y="16" fill="#0f172a" font-size="13" font-weight="800" font-family="sans-serif">CPR CHEST COMPRESSION TARGET</text>
+    <rect x="0" y="30" width="280" height="12" rx="6" fill="#e2e8f0"/>
+    <rect x="70" y="30" width="140" height="12" rx="6" fill="#10b981"/>
+    
+    <!-- Markers -->
+    <text x="0" y="58" fill="#64748b" font-size="10" font-family="sans-serif">80 BPM</text>
+    <text x="140" y="58" fill="#15803d" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">100 - 120 BPM (OPTIMAL)</text>
+    <text x="280" y="58" fill="#64748b" font-size="10" font-family="sans-serif" text-anchor="end">140 BPM</text>
+
+    <!-- Cycle reminder -->
+    <rect x="0" y="75" width="280" height="32" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="140" y="96" fill="#1e40af" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">
+      🔄 30 Compressions &rarr; 2 Rescue Breaths
+    </text>
+  </g>
+</svg>
+

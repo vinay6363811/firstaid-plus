@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="installBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="instShadow" x="-5%" y="-10%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Card Body -->
+  <rect width="840" height="200" rx="14" fill="url(#installBg)" stroke="#3b82f6" stroke-width="1.5" filter="url(#instShadow)"/>
+
+  <!-- Left: Phone Icon with FirstAid+ Logo -->
+  <g transform="translate(40, 25)">
+    <rect x="0" y="0" width="90" height="150" rx="18" fill="#1e293b" stroke="#60a5fa" stroke-width="2.5"/>
+    <rect x="6" y="8" width="78" height="134" rx="12" fill="#0f172a"/>
+    <!-- App icon on screen -->
+    <rect x="23" y="35" width="44" height="44" rx="10" fill="#dc2626"/>
+    <text x="45" y="66" fill="#ffffff" font-size="28" font-weight="900" font-family="sans-serif" text-anchor="middle">+</text>
+    <text x="45" y="94" fill="#ffffff" font-size="9" font-weight="bold" font-family="sans-serif" text-anchor="middle">FirstAid+</text>
+    <text x="45" y="106" fill="#38bdf8" font-size="7" font-family="sans-serif" text-anchor="middle">OFFLINE READY</text>
+    <circle cx="45" cy="128" r="6" fill="#1e293b" stroke="#475569"/>
+  </g>
+
+  <!-- Center Text -->
+  <g transform="translate(160, 35)">
+    <rect x="0" y="0" width="150" height="22" rx="11" fill="rgba(56, 189, 248, 0.15)" stroke="#38bdf8" stroke-width="1"/>
+    <text x="12" y="15" fill="#38bdf8" font-size="11" font-weight="bold" font-family="sans-serif">★ RECOMMENDED UTILITY</text>
+
+    <text x="0" y="50" fill="#ffffff" font-size="20" font-weight="800" font-family="sans-serif">Keep FirstAid+ On Your Phone For Fast Access</text>
+    <text x="0" y="74" fill="#cbd5e1" font-size="13" font-family="sans-serif">Accidents happen without warning. In browser: Tap <strong style="fill:#38bdf8">Share > Add to Home Screen</strong></text>
+    <text x="0" y="94" fill="#cbd5e1" font-size="13" font-family="sans-serif">to install this application as an instant offline emergency guide.</text>
+
+    <!-- Checklist row -->
+    <g transform="translate(0, 112)">
+      <text x="0" y="15" fill="#34d399" font-size="14" font-weight="bold">✓</text>
+      <text x="16" y="15" fill="#e2e8f0" font-size="12" font-family="sans-serif">Zero download fee</text>
+
+      <text x="140" y="15" fill="#34d399" font-size="14" font-weight="bold">✓</text>
+      <text x="156" y="15" fill="#e2e8f0" font-size="12" font-family="sans-serif">Zero internet required</text>
+
+      <text x="310" y="15" fill="#34d399" font-size="14" font-weight="bold">✓</text>
+      <text x="326" y="15" fill="#e2e8f0" font-size="12" font-family="sans-serif">Direct 112 India Speed Dial</text>
+
+      <text x="510" y="15" fill="#34d399" font-size="14" font-weight="bold">✓</text>
+      <text x="526" y="15" fill="#e2e8f0" font-size="12" font-family="sans-serif">CPR audio pacer</text>
+    </g>
+  </g>
+</svg>
+

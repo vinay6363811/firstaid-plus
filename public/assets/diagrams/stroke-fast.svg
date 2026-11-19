@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="100%">
+  <defs>
+    <filter id="strokeDiagShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="600" height="240" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#strokeDiagShadow)"/>
+
+  <!-- 4 Step FAST Blocks -->
+  <g transform="translate(15, 20)">
+    
+    <!-- F: Face Drooping -->
+    <g transform="translate(0, 0)">
+      <rect width="135" height="195" rx="8" fill="#fef2f2" stroke="#fecdd3" stroke-width="1.5"/>
+      <circle cx="67" cy="30" r="16" fill="#dc2626"/>
+      <text x="67" y="37" fill="#ffffff" font-size="18" font-weight="900" font-family="sans-serif" text-anchor="middle">F</text>
+      <text x="67" y="66" fill="#991b1b" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">FACE</text>
+      <!-- Face graphic with drooping mouth -->
+      <circle cx="67" cy="110" r="26" fill="#fbd0a0" stroke="#d99f70" stroke-width="2"/>
+      <circle cx="58" cy="102" r="3" fill="#0f172a"/>
+      <circle cx="76" cy="102" r="3" fill="#0f172a"/>
+      <!-- Drooping smile -->
+      <path d="M 56 122 Q 67 126 77 114" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="67" y="156" fill="#7f1d1d" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Drooping Smile</text>
+      <text x="67" y="172" fill="#64748b" font-size="9" font-family="sans-serif" text-anchor="middle">One side uneven</text>
+    </g>
+
+    <!-- A: Arm Weakness -->
+    <g transform="translate(145, 0)">
+      <rect width="135" height="195" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+      <circle cx="67" cy="30" r="16" fill="#1e40af"/>
+      <text x="67" y="37" fill="#ffffff" font-size="18" font-weight="900" font-family="sans-serif" text-anchor="middle">A</text>
+      <text x="67" y="66" fill="#1e3a8a" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">ARMS</text>
+      <!-- Raised arm vs drifting arm -->
+      <g transform="translate(42, 90)">
+        <path d="M 10 35 L 10 0" stroke="#1e40af" stroke-width="6" stroke-linecap="round"/>
+        <path d="M 40 35 L 45 20" stroke="#dc2626" stroke-width="6" stroke-linecap="round"/>
+        <path d="M 45 20 L 45 32 M 42 27 L 45 32 L 48 27" fill="none" stroke="#dc2626" stroke-width="2"/>
+      </g>
+      <text x="67" y="156" fill="#1e3a8a" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Arm Drifts Down</text>
+      <text x="67" y="172" fill="#64748b" font-size="9" font-family="sans-serif" text-anchor="middle">Cannot raise both</text>
+    </g>
+
+    <!-- S: Speech Difficulty -->
+    <g transform="translate(290, 0)">
+      <rect width="135" height="195" rx="8" fill="#fffbeb" stroke="#fde68a" stroke-width="1.5"/>
+      <circle cx="67" cy="30" r="16" fill="#b45309"/>
+      <text x="67" y="37" fill="#ffffff" font-size="18" font-weight="900" font-family="sans-serif" text-anchor="middle">S</text>
+      <text x="67" y="66" fill="#92400e" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">SPEECH</text>
+      <!-- Speech bubble with garbled text -->
+      <rect x="25" y="86" width="85" height="42" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+      <path d="M 45 128 L 45 136 L 55 128 Z" fill="#ffffff" stroke="#cbd5e1"/>
+      <text x="67" y="104" fill="#dc2626" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">"W-wha..?"</text>
+      <text x="67" y="118" fill="#64748b" font-size="9" font-family="sans-serif" text-anchor="middle">Slurred words</text>
+      <text x="67" y="156" fill="#92400e" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Slurred Speech</text>
+      <text x="67" y="172" fill="#64748b" font-size="9" font-family="sans-serif" text-anchor="middle">Cannot repeat sentence</text>
+    </g>
+
+    <!-- T: Time to Call 112 -->
+    <g transform="translate(435, 0)">
+      <rect width="135" height="195" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+      <circle cx="67" cy="30" r="16" fill="#15803d"/>
+      <text x="67" y="37" fill="#ffffff" font-size="18" font-weight="900" font-family="sans-serif" text-anchor="middle">T</text>
+      <text x="67" y="66" fill="#166534" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">TIME</text>
+      <!-- Clock icon & 112 -->
+      <circle cx="67" cy="108" r="22" fill="#ffffff" stroke="#15803d" stroke-width="3"/>
+      <path d="M 67 96 L 67 108 L 76 108" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="20" y="142" width="95" height="24" rx="12" fill="#dc2626"/>
+      <text x="67" y="158" fill="#ffffff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">DIAL 112</text>
+      <text x="67" y="178" fill="#166534" font-size="9" font-weight="bold" font-family="sans-serif" text-anchor="middle">Every Minute Counts</text>
+    </g>
+
+  </g>
+</svg>
+

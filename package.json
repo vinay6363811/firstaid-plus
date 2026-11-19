@@ -1,0 +1,17 @@
+{
+  "name": "firstaid-plus",
+  "version": "1.0.0",
+  "description": "FirstAid+ Smart Emergency Assistant — AI-powered first aid guidance for India",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test_suite.js"
+  },
+  "keywords": ["first-aid", "emergency", "medical", "india", "health"],
+  "author": "FirstAid+ Team",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

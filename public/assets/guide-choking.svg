@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <circle cx="60" cy="60" r="56" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <!-- Lungs / Airway with Clear Windpipe -->
+  <path d="M 60 25 L 60 55" stroke="#0284c7" stroke-width="6" stroke-linecap="round"/>
+  <!-- Left Lung -->
+  <path d="M 57 55 C 45 55, 30 65, 30 82 C 30 96, 45 98, 55 88 C 58 84, 58 65, 57 55 Z" fill="#38bdf8"/>
+  <!-- Right Lung -->
+  <path d="M 63 55 C 75 55, 90 65, 90 82 C 90 96, 75 98, 65 88 C 62 84, 62 65, 63 55 Z" fill="#38bdf8"/>
+  <circle cx="60" cy="40" r="5" fill="#f59e0b"/>
+</svg>
