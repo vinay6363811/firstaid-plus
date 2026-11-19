@@ -30,7 +30,7 @@ class SmartAssistantController {
   addWelcomeMessage() {
     const welcomeHtml = `
       <p>👋 Hello! I am your <strong>FirstAid+ Emergency Assistant</strong>.</p>
-      <p style="margin-top: 6px; color: #94a3b8; font-size: 0.9rem;">
+      <p style="margin-top: 6px; color: #64748b; font-size: 0.9rem;">
         Describe what just happened in plain words (e.g. <em>"My friend accidentally spilled boiling water on his hand"</em> or <em>"Person collapsed and is unresponsive"</em>).
       </p>
     `;
@@ -120,7 +120,7 @@ class SmartAssistantController {
     const typing = document.createElement("div");
     typing.id = id;
     typing.className = "chat-bubble assistant";
-    typing.innerHTML = `<span style="color: #94a3b8; font-style: italic;">Analyzing symptoms...</span>`;
+    typing.innerHTML = `<span style="color: #64748b; font-style: italic;">Analyzing symptoms...</span>`;
     this.messagesContainer.appendChild(typing);
     this.scrollToBottom();
   }

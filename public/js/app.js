@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = "";
 
     if (guides.length === 0) {
-      container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">No first aid guides match your search.</div>`;
+      container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">No first aid guides match your search.</div>`;
       return;
     }
 
