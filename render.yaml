@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: firstaid-plus
+    runtime: node
+    plan: free
+    buildCommand: ""
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 10000
+    autoDeploy: true
