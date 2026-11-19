@@ -84,37 +84,57 @@ async function analyzeText(text) {
       engine: "FirstAid+ Local Clinical Knowledge Base",
       possibleEmergency: local.possibleEmergency || local.title,
       severity: local.severity,
+      confidenceTier: local.confidenceTier || "high",
+      isUnknownProblem: Boolean(local.isUnknownProblem),
+      primaryMessage: local.primaryMessage || null,
+      secondaryMessage: local.secondaryMessage || null,
+      consultDoctorButton: Boolean(local.consultDoctorButton || local.isUnknownProblem),
+      isLifeThreatening: Boolean(local.isLifeThreatening),
+      safetyWarning: local.safetyWarning || null,
+      uncertaintyNotice: local.uncertaintyNotice || null,
       whatHappened: local.whatHappened,
       warningSigns: local.warningSigns,
       immediateFirstAid: local.immediateFirstAid,
       whatNotToDo: local.whatNotToDo,
       whenToGetHelp: local.whenToGetHelp,
-      emergencyCallRequired: local.emergencyCallRequired,
+      emergencyCallRequired: Boolean(local.emergencyCallRequired),
       safetyDisclaimer: "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India.",
       matchedKeywords: local.matchedKeywords || []
     };
   }
 
   const systemPrompt = `You are FirstAid+, an educational first-aid emergency triage assistant.
-Analyze the user's description of a medical emergency or injury.
+Analyze the user's description of a medical emergency, injury, or health complaint.
 Adhere strictly to these rules:
-1. Suggest a POSSIBLE emergency category, never a definitive medical diagnosis.
+1. Suggest a POSSIBLE emergency category or health complaint, never a definitive medical diagnosis.
 2. Rate severity strictly as one of:
    - "Low" (Basic first aid may be sufficient, but monitor the condition)
    - "Moderate" (Medical evaluation may be needed)
    - "High" (Seek urgent medical care)
    - "Critical" (Call emergency services immediately)
 3. Never falsely guarantee that an injury is minor or safe.
-4. Output must be strictly valid JSON matching this schema:
+4. If the user's description is unknown, unrecognized, outside safe first-aid scope, involves prescription drug dosing, or chronic disease therapy:
+   Set "isUnknownProblem": true, "confidenceTier": "unknown",
+   "primaryMessage": "We're unable to provide reliable guidance for this problem. It's better to consult a doctor for proper medical advice.",
+   "secondaryMessage": "Your health is important. Please don't rely on uncertain information or self-medicate based on guesses.",
+   "consultDoctorButton": true.
+5. If the user describes serious red-flag symptoms (severe chest pain, difficulty breathing, stroke FAST signs, unconsciousness, heavy bleeding):
+   Set "confidenceTier": "emergency", "severity": "Critical", "emergencyCallRequired": true.
+6. Output must be strictly valid JSON matching this schema:
 {
-  "possibleEmergency": "string (e.g. Possible 2nd-degree thermal scald burn)",
+  "possibleEmergency": "string (e.g. Possible tension headache, or Possible 2nd-degree scald burn)",
   "severity": "Low" | "Moderate" | "High" | "Critical",
-  "whatHappened": "string (simple explanation of what might have happened)",
+  "confidenceTier": "emergency" | "high" | "partial" | "unknown",
+  "isUnknownProblem": boolean,
+  "primaryMessage": "string or null",
+  "secondaryMessage": "string or null",
+  "consultDoctorButton": boolean,
+  "whatHappened": "string",
   "warningSigns": ["array of warning symptoms to look for"],
   "immediateFirstAid": ["array of clear, actionable numbered steps"],
   "whatNotToDo": ["array of harmful actions to avoid"],
-  "whenToGetHelp": "string (clearly explaining when to visit hospital or call ambulance)",
-  "emergencyCallRequired": boolean (true if 112 should be called immediately)
+  "whenToGetHelp": "string",
+  "emergencyCallRequired": boolean
 }`;
 
   try {
@@ -129,6 +149,12 @@ Adhere strictly to these rules:
       engine: "Gemini 2.5 Flash AI Engine",
       possibleEmergency: aiResult.possibleEmergency,
       severity: aiResult.severity,
+      confidenceTier: aiResult.confidenceTier || (aiResult.severity === "Critical" ? "emergency" : "high"),
+      isUnknownProblem: Boolean(aiResult.isUnknownProblem),
+      primaryMessage: aiResult.primaryMessage || null,
+      secondaryMessage: aiResult.secondaryMessage || null,
+      consultDoctorButton: Boolean(aiResult.consultDoctorButton || aiResult.isUnknownProblem),
+      isLifeThreatening: Boolean(aiResult.confidenceTier === "emergency" || aiResult.severity === "Critical"),
       whatHappened: aiResult.whatHappened,
       warningSigns: aiResult.warningSigns || [],
       immediateFirstAid: aiResult.immediateFirstAid || [],
@@ -146,6 +172,14 @@ Adhere strictly to these rules:
       fallbackReason: error.message,
       possibleEmergency: local.possibleEmergency || local.title,
       severity: local.severity,
+      confidenceTier: local.confidenceTier || "high",
+      isUnknownProblem: Boolean(local.isUnknownProblem),
+      primaryMessage: local.primaryMessage || null,
+      secondaryMessage: local.secondaryMessage || null,
+      consultDoctorButton: Boolean(local.consultDoctorButton || local.isUnknownProblem),
+      isLifeThreatening: Boolean(local.isLifeThreatening),
+      safetyWarning: local.safetyWarning || null,
+      uncertaintyNotice: local.uncertaintyNotice || null,
       whatHappened: local.whatHappened,
       warningSigns: local.warningSigns,
       immediateFirstAid: local.immediateFirstAid,
@@ -244,6 +278,48 @@ async function processChatMessage(userMessage, conversationHistory = []) {
   // First run clinical keyword / symptom matching
   const match = analyzeTextSymptoms(userMessage);
 
+  // If unknown problem: prioritize safety over guessing
+  if (match.isUnknownProblem) {
+    const unknownReply = `**Medical Consultation Recommended**\n\n` +
+      `We're unable to provide reliable guidance for this problem. It's better to consult a doctor for proper medical advice.\n\n` +
+      `Your health is important. Please don't rely on uncertain information or self-medicate based on guesses.`;
+    return {
+      detectedEmergency: "Medical Consultation Recommended",
+      severity: "Moderate",
+      guideId: "unknown_problem",
+      isUnknownProblem: true,
+      consultDoctorButton: true,
+      primaryMessage: match.primaryMessage,
+      secondaryMessage: match.secondaryMessage,
+      reply: unknownReply,
+      structuredGuide: match
+    };
+  }
+
+  // If life-threatening emergency: prioritize urgent emergency action immediately
+  if (match.confidenceTier === "emergency" || match.isLifeThreatening) {
+    const immediateSteps = match.immediateFirstAid.slice(0, 3);
+    const harmfulActions = match.whatNotToDo.slice(0, 2);
+    const emergencyReply = `🚨 **POTENTIAL MEDICAL EMERGENCY DETECTED**\n\n` +
+      `**${match.possibleEmergency || match.title}**\n\n` +
+      `Do not delay seeking professional emergency assistance. If the person is in distress, call 112 immediately in India.\n\n` +
+      `**Immediate emergency action:**\n` +
+      immediateSteps.map(s => `• ${s}`).join('\n') + `\n\n` +
+      `**What NOT to do:**\n` +
+      harmfulActions.map(s => `• ${s}`).join('\n') + `\n\n` +
+      `**Emergency care:**\n` +
+      `• Call 112 immediately. ${match.whenToGetHelp}`;
+    return {
+      detectedEmergency: match.title,
+      severity: match.severity,
+      guideId: match.id,
+      isLifeThreatening: true,
+      confidenceTier: "emergency",
+      reply: emergencyReply,
+      structuredGuide: match
+    };
+  }
+
   if (hasApiKey()) {
     try {
       const prompt = `You are FirstAid+ Smart Conversational Emergency Assistant.
@@ -293,6 +369,7 @@ Keep response direct and concise for emergency situations.`;
     detectedEmergency: match.title,
     severity: match.severity,
     guideId: match.id,
+    confidenceTier: match.confidenceTier || "high",
     reply: formattedResponse,
     structuredGuide: match
   };

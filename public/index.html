@@ -213,8 +213,23 @@
                 <button type="button" class="example-chip" data-prompt="Adult person collapsed on the floor, unresponsive and not breathing normally.">
                   ⚡ Unconscious & not breathing
                 </button>
-                <button type="button" class="example-chip" data-prompt="Person having violent shaking, jerking convulsions, foaming at the mouth.">
-                  ⚠️ Violent seizure & convulsions
+                <button type="button" class="example-chip" data-prompt="Severe throbbing headache in temples and forehead for the past 4 hours.">
+                  🤕 Severe headache
+                </button>
+                <button type="button" class="example-chip" data-prompt="High fever with shivering chills and body aches since yesterday.">
+                  🌡️ High fever & chills
+                </button>
+                <button type="button" class="example-chip" data-prompt="Sharp stomach pain, bloating, and burning acidity after dinner.">
+                  🤢 Stomach pain & acidity
+                </button>
+                <button type="button" class="example-chip" data-prompt="Terrible throbbing toothache with swollen gums on lower jaw.">
+                  🦷 Toothache & swollen gum
+                </button>
+                <button type="button" class="example-chip" data-prompt="Red itchy hives and rash spreading on arms after wearing new sweater.">
+                  🔴 Skin rash & itching
+                </button>
+                <button type="button" class="example-chip" data-prompt="I have an unusual strange purple tingling feeling with random unidentifiable sensations.">
+                  ❓ Unknown problem test
                 </button>
               </div>
             </div>
@@ -365,6 +380,51 @@
       <!-- =================================================================== -->
       <div id="analyzer-results-view">
         
+        <!-- Serious Red Flag Emergency Alert Banner (Requirement 4) -->
+        <div id="results-emergency-alert-card" class="emergency-alert-banner" style="display: none;">
+          <div class="emergency-alert-icon">🚨</div>
+          <div class="emergency-alert-content">
+            <h3 id="emergency-alert-title">POTENTIAL MEDICAL EMERGENCY DETECTED</h3>
+            <p id="emergency-alert-desc">The described symptoms suggest a serious or potentially life-threatening emergency. Do not wait or rely solely on app advice. Call emergency medical services immediately.</p>
+            <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+              <a href="tel:112" class="btn btn-emergency-pulse">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <span>CALL 112 IMMEDIATELY (INDIA)</span>
+              </a>
+              <a href="tel:108" class="btn btn-secondary" style="font-weight: 700; border-color: #ef4444; color: #b91c1c;">
+                <span>Call 108 (Ambulance)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unknown Problem & Uncertainty Card (Requirement 3 & 6) -->
+        <div id="results-unknown-problem-card" class="unknown-problem-card" style="display: none;">
+          <div class="unknown-card-header">
+            <div class="unknown-card-icon">🩺</div>
+            <div>
+              <h3 style="margin: 0; font-size: 1.2rem; color: #0f172a;">Medical Consultation Recommended</h3>
+              <span class="unknown-card-tag">Safety & Reliability Notice</span>
+            </div>
+          </div>
+          <div class="unknown-card-body">
+            <div class="unknown-primary-quote">
+              "We're unable to provide reliable guidance for this problem. It's better to consult a doctor for proper medical advice."
+            </div>
+            <p class="unknown-secondary-msg">
+              Your health is important. Please don't rely on uncertain information or self-medicate based on guesses.
+            </p>
+            <div class="unknown-actions-row">
+              <button id="results-consult-doctor-btn" class="btn btn-consult-doctor" type="button" onclick="window.openDoctorConsultModal()">
+                <span>🩺 Better to Consult a Doctor</span>
+              </button>
+              <a href="tel:104" class="btn btn-outline" style="border-color: #2563eb; color: #1e40af; font-weight: 700;">
+                <span>📞 Call 104 (Free Health Helpline)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
         <!-- Results Header Card with Severity Badge (Requirement 2 & 8) -->
         <div class="results-header-card">
           <div class="results-top-meta">
@@ -843,6 +903,83 @@
         <span style="font-size: 0.85rem; color: #64748b;">Position injury in frame</span>
         <button id="camera-shutter-btn" class="shutter-btn" aria-label="Take Photo"></button>
         <span style="font-size: 0.85rem; color: #64748b;">Tap to Capture</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Doctor Consultation & Professional Care Modal (Requirement 3 & 6) -->
+  <div id="doctor-consult-modal" class="step-guide-modal" role="dialog" aria-modal="true" style="display: none;">
+    <div class="step-guide-box" style="max-width: 620px;">
+      <div class="step-guide-header">
+        <div>
+          <span style="font-size: 0.8rem; text-transform: uppercase; color: #1e40af; font-weight: 800; letter-spacing: 0.5px;">FirstAid+ Medical Guidance</span>
+          <h3 style="font-size: 1.3rem; margin-top: 2px;">🩺 Better to Consult a Doctor</h3>
+        </div>
+        <button id="doctor-modal-close-btn" class="modal-close-btn" aria-label="Close" onclick="window.closeDoctorConsultModal()">✕</button>
+      </div>
+
+      <div class="step-guide-body" style="padding: 20px 24px;">
+        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
+          <strong style="color: #1e3a8a; display: block; margin-bottom: 4px; font-size: 0.98rem;">Your health is important.</strong>
+          <p style="color: #334155; font-size: 0.92rem; margin: 0;">
+            Please don't rely on uncertain information or self-medicate based on guesses. A qualified physician can diagnose your symptoms safely.
+          </p>
+        </div>
+
+        <h4 style="font-size: 0.95rem; text-transform: uppercase; color: #475569; letter-spacing: 0.5px; margin-bottom: 12px;">Quick Ways to Get Medical Advice:</h4>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+          <!-- Option 1: 104 National Health Helpline -->
+          <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #ffffff;">
+            <div>
+              <div style="font-weight: 700; color: #0f172a; font-size: 1rem;">📞 104 — National Health Helpline (India)</div>
+              <div style="font-size: 0.85rem; color: #64748b;">Free 24x7 government medical advice & health tele-counseling</div>
+            </div>
+            <a href="tel:104" class="btn btn-primary" style="background: #1e40af; border-color: #1e3a8a; font-size: 0.88rem; padding: 8px 14px;">Call 104</a>
+          </div>
+
+          <!-- Option 2: Find Nearby Hospitals on Map -->
+          <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #ffffff;">
+            <div>
+              <div style="font-weight: 700; color: #0f172a; font-size: 1rem;">📍 Find Nearest Clinic / Hospital</div>
+              <div style="font-size: 0.85rem; color: #64748b;">Open Google Maps to view verified doctors and medical clinics near you</div>
+            </div>
+            <a href="https://www.google.com/maps/search/hospital+clinic+near+me" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size: 0.88rem; padding: 8px 14px;">Open Map</a>
+          </div>
+
+          <!-- Option 3: eSanjeevani Online OPD -->
+          <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #ffffff;">
+            <div>
+              <div style="font-weight: 700; color: #0f172a; font-size: 1rem;">🌐 eSanjeevani National Teleconsultation</div>
+              <div style="font-size: 0.85rem; color: #64748b;">Ministry of Health (Govt of India) free doctor video tele-OPD</div>
+            </div>
+            <a href="https://esanjeevani.mohfw.gov.in/" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size: 0.88rem; padding: 8px 14px;">Visit Portal</a>
+          </div>
+
+          <!-- Option 4: Urgent Emergency 112 -->
+          <div style="border: 1px solid #fecaca; border-radius: 8px; padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #fef2f2;">
+            <div>
+              <div style="font-weight: 700; color: #b91c1c; font-size: 1rem;">🚨 Serious or Sudden Emergency?</div>
+              <div style="font-size: 0.85rem; color: #7f1d1d;">Call 112 (National Emergency) or 108 (Ambulance) immediately</div>
+            </div>
+            <a href="tel:112" class="btn btn-emergency" style="font-size: 0.88rem; padding: 8px 14px;">Call 112</a>
+          </div>
+        </div>
+
+        <!-- Checklist for Doctor Visit -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+          <strong style="color: #0f172a; display: block; margin-bottom: 6px; font-size: 0.9rem;">📋 Questions to prepare for your doctor:</strong>
+          <ul style="padding-left: 20px; font-size: 0.85rem; color: #475569; display: flex; flex-direction: column; gap: 4px;">
+            <li>Exactly when did your symptoms begin and how quickly did they start?</li>
+            <li>What makes the symptom feel better or worse?</li>
+            <li>Have you taken any painkillers, antacids, or home remedies?</li>
+            <li>Do you have any preexisting health conditions or allergies?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step-guide-footer" style="padding: 14px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+        <button class="btn btn-secondary" type="button" onclick="window.closeDoctorConsultModal()">Close</button>
       </div>
     </div>
   </div>

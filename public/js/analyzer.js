@@ -510,15 +510,50 @@ class SmartAnalyzerController {
     const severityText = document.getElementById("results-severity-text");
     const severityDesc = document.getElementById("results-severity-desc");
 
+    // Serious Red Flag Emergency Alert Banner (Requirement 4)
+    const emergencyAlertCard = document.getElementById("results-emergency-alert-card");
+    const emergencyAlertTitle = document.getElementById("emergency-alert-title");
+    const emergencyAlertDesc = document.getElementById("emergency-alert-desc");
+
+    if (emergencyAlertCard) {
+      if (result.confidenceTier === "emergency" || result.isLifeThreatening || (result.emergencyCallRequired && severity === "critical")) {
+        emergencyAlertCard.style.display = "flex";
+        if (emergencyAlertTitle) {
+          emergencyAlertTitle.textContent = result.safetyWarning || "POTENTIAL MEDICAL EMERGENCY DETECTED";
+        }
+        if (emergencyAlertDesc) {
+          emergencyAlertDesc.textContent = "The described symptoms suggest an acute, potentially life-threatening situation. Do not delay seeking professional medical care. In India, call 112 or 108 immediately.";
+        }
+      } else {
+        emergencyAlertCard.style.display = "none";
+      }
+    }
+
+    // Unknown Problem & Uncertainty Card (Requirement 3 & 6)
+    const unknownCard = document.getElementById("results-unknown-problem-card");
+    if (unknownCard) {
+      if (result.isUnknownProblem) {
+        unknownCard.style.display = "block";
+      } else {
+        unknownCard.style.display = "none";
+      }
+    }
+
     if (severityBadge) {
       severityBadge.className = `severity-badge-large ${severity}`;
     }
     if (severityText) {
-      severityText.textContent = result.severity || "Moderate";
+      if (result.isUnknownProblem) {
+        severityText.textContent = "Medical Evaluation Needed";
+      } else {
+        severityText.textContent = `${result.severity || "Moderate"} Severity`;
+      }
     }
 
     let severityExplanation = "Medical evaluation may be needed.";
-    if (severity === "low") {
+    if (result.isUnknownProblem) {
+      severityExplanation = "Uncertain or unverified problem — safe medical advice from a doctor is advised.";
+    } else if (severity === "low") {
       severityExplanation = "Low — Basic first aid may be sufficient, but monitor the condition.";
     } else if (severity === "moderate") {
       severityExplanation = "Moderate — Medical evaluation may be needed.";
@@ -529,10 +564,25 @@ class SmartAnalyzerController {
     }
     if (severityDesc) severityDesc.textContent = severityExplanation;
 
-    // 3. Engine & Mode Badge (Requirement 7)
+    // 3. Engine & Mode Badge (Requirement 5 - Confidence Tier without fabricated percentages)
     const engineBadge = document.getElementById("results-engine-badge");
     if (engineBadge) {
-      if (result.isDemoMode) {
+      if (result.isUnknownProblem) {
+        engineBadge.className = "engine-badge demo-mode";
+        engineBadge.innerHTML = `🛡️ Professional Doctor Consultation Required`;
+      } else if (result.confidenceTier === "emergency") {
+        engineBadge.className = "engine-badge demo-mode";
+        engineBadge.style.background = "#fee2e2";
+        engineBadge.style.color = "#991b1b";
+        engineBadge.style.borderColor = "#fca5a5";
+        engineBadge.innerHTML = `🚨 High-Priority Emergency Protocol`;
+      } else if (result.confidenceTier === "high") {
+        engineBadge.className = "engine-badge ai-mode";
+        engineBadge.innerHTML = `✅ High-Confidence First Aid Protocol`;
+      } else if (result.confidenceTier === "partial") {
+        engineBadge.className = "engine-badge demo-mode";
+        engineBadge.innerHTML = `⚠️ Partial Match — General Supportive Care`;
+      } else if (result.isDemoMode) {
         engineBadge.className = "engine-badge demo-mode";
         engineBadge.innerHTML = `📋 Visual Heuristic Analysis (Offline Guide Mode)`;
       } else {
@@ -580,9 +630,13 @@ class SmartAnalyzerController {
     const diagramBox = document.getElementById("results-action-diagram-box");
     const diagramImg = document.getElementById("results-action-diagram-img");
     if (diagramBox && diagramImg) {
-      diagramImg.src = diagram.url;
-      diagramImg.alt = diagram.alt;
-      diagramBox.style.display = "block";
+      if (result.isUnknownProblem) {
+        diagramBox.style.display = "none"; // Hide diagram when problem is unknown to prevent false expectations
+      } else {
+        diagramImg.src = diagram.url;
+        diagramImg.alt = diagram.alt;
+        diagramBox.style.display = "block";
+      }
     }
 
     const stepsList = document.getElementById("results-first-aid-steps-list");
@@ -656,18 +710,23 @@ class SmartAnalyzerController {
 
     // Construct clean speech narrative
     const r = this.currentAnalysisResult;
-    let narrative = `First Aid Guidance for ${r.possibleEmergency}. `;
-    narrative += `Severity is ${r.severity}. `;
-    narrative += `What might have happened: ${r.whatHappened}. `;
-    narrative += `Immediate first aid steps: `;
-    (r.immediateFirstAid || []).forEach((step, i) => {
-      narrative += `Step ${i + 1}. ${step}. `;
-    });
-    narrative += `What not to do: `;
-    (r.whatNotToDo || []).forEach(d => {
-      narrative += `${d}. `;
-    });
-    narrative += `When to get medical help: ${r.whenToGetHelp}. `;
+    let narrative = "";
+    if (r.isUnknownProblem) {
+      narrative = "Medical Consultation Recommended. We are unable to provide reliable guidance for this problem. It is better to consult a doctor for proper medical advice. Your health is important. Please do not rely on uncertain information or self-medicate based on guesses. What you can do: Rest quietly in a comfortable space. Do not take unprescribed medicines. Stay hydrated. Please consult a qualified doctor or call 104 in India.";
+    } else {
+      narrative = `First Aid Guidance for ${r.possibleEmergency}. `;
+      narrative += `Severity is ${r.severity}. `;
+      narrative += `What might have happened: ${r.whatHappened}. `;
+      narrative += `Immediate first aid steps: `;
+      (r.immediateFirstAid || []).forEach((step, i) => {
+        narrative += `Step ${i + 1}. ${step}. `;
+      });
+      narrative += `What not to do: `;
+      (r.whatNotToDo || []).forEach(d => {
+        narrative += `${d}. `;
+      });
+      narrative += `When to get medical help: ${r.whenToGetHelp}. `;
+    }
 
     this.speechUtterance = new SpeechSynthesisUtterance(narrative);
     this.speechUtterance.rate = 0.95; // Clear emergency pace

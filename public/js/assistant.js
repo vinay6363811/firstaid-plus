@@ -75,16 +75,45 @@ class SmartAssistantController {
   renderAssistantResponse(data) {
     const guide = data.structuredGuide;
     const detectedName = data.detectedEmergency || "Emergency Condition";
+    const isUnknown = Boolean(data.isUnknownProblem || guide?.isUnknownProblem);
+    const isEmergency = Boolean(data.isLifeThreatening || data.confidenceTier === "emergency" || guide?.confidenceTier === "emergency");
+
+    let badgeClass = "detected-emergency-badge";
+    let badgeText = `⚠️ Possible ${this.escapeHtml(detectedName)} detected`;
+
+    if (isUnknown) {
+      badgeClass = "detected-emergency-badge";
+      badgeText = `🩺 Medical Consultation Recommended`;
+    } else if (isEmergency) {
+      badgeClass = "detected-emergency-badge";
+      badgeText = `🚨 POTENTIAL EMERGENCY: ${this.escapeHtml(detectedName)}`;
+    }
 
     let html = `
-      <div class="detected-emergency-badge">⚠️ Possible ${this.escapeHtml(detectedName)} detected</div>
-      <div style="margin: 8px 0; font-size: 0.95rem; line-height: 1.5;">
+      <div class="${badgeClass}" style="${isEmergency ? 'background: #fef2f2; border-color: #fca5a5; color: #991b1b; font-weight: 800;' : (isUnknown ? 'background: #eff6ff; border-color: #93c5fd; color: #1e40af; font-weight: 700;' : '')}">
+        ${badgeText}
+      </div>
+      <div style="margin: 8px 0; font-size: 0.95rem; line-height: 1.5; color: #334155;">
         ${this.formatMarkdownToHtml(data.reply)}
       </div>
     `;
 
-    // Add immediate action buttons if guide available
-    if (guide) {
+    // Add action buttons
+    if (isUnknown) {
+      html += `
+        <div class="chat-quick-actions">
+          <button class="chat-action-btn consult-doctor" onclick="window.openDoctorConsultModal()">
+            🩺 Better to Consult a Doctor
+          </button>
+          <a class="chat-action-btn" href="tel:104" style="background: #ffffff; border-color: #2563eb; color: #1e40af;">
+            📞 Call 104 (Free Health Advice)
+          </a>
+          <a class="chat-action-btn call" href="tel:112">
+            Call 112
+          </a>
+        </div>
+      `;
+    } else if (guide) {
       html += `
         <div class="chat-quick-actions">
           <button class="chat-action-btn guide" onclick="window.launchStepGuideFromChat('${guide.id}')">
@@ -99,6 +128,9 @@ class SmartAssistantController {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
             Call 112
           </a>
+          <button class="chat-action-btn consult-doctor" onclick="window.openDoctorConsultModal()" style="font-size: 0.8rem;">
+            🩺 Consult Doctor
+          </button>
         </div>
       `;
     }

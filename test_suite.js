@@ -82,6 +82,66 @@ async function runTests() {
     assert(snakeData.possibleEmergency.toLowerCase().includes('snake'), 'Detects snakebite emergency');
     assert(snakeData.emergencyCallRequired === true, 'Snakebite requires urgent emergency call');
 
+    // Scenario E: Everyday Headache with Typo ("headake")
+    const resHeadache = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'I have a terrible headake and throbbing temple pain' })
+    });
+    const headacheData = await resHeadache.json();
+    assert(headacheData.possibleEmergency.toLowerCase().includes('headache') || headacheData.possibleEmergency.toLowerCase().includes('head'), 'Detects headache despite typo');
+    assert(headacheData.immediateFirstAid.length >= 3, 'Provides safe supportive care steps for headache');
+
+    // Scenario F: Fever & Chills with Typo ("feever")
+    const resFever = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'My friend has high feever with chills and body hot' })
+    });
+    const feverData = await resFever.json();
+    assert(feverData.possibleEmergency.toLowerCase().includes('fever') || feverData.possibleEmergency.toLowerCase().includes('flu'), 'Detects fever and flu');
+
+    // Scenario G: Stomach Pain with Typo ("stomac")
+    const resStomach = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'Severe stomac pain and acidity after dinner' })
+    });
+    const stomachData = await resStomach.json();
+    assert(stomachData.possibleEmergency.toLowerCase().includes('stomach') || stomachData.possibleEmergency.toLowerCase().includes('gastritis') || stomachData.possibleEmergency.toLowerCase().includes('gastric'), 'Detects stomach discomfort');
+
+    // Scenario H: Toothache with Typo ("tooth ake")
+    const resTooth = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'Terrible tooth ake and swollen gum' })
+    });
+    const toothData = await resTooth.json();
+    assert(toothData.possibleEmergency.toLowerCase().includes('tooth'), 'Detects toothache oral care');
+
+    // Scenario I: Serious Red Flag Emergency Detection
+    const resRedFlag = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'Sudden severe crushing chest pain radiating to left arm and cant breathe' })
+    });
+    const redFlagData = await resRedFlag.json();
+    assert(redFlagData.confidenceTier === 'emergency', 'Red flag classified as emergency tier');
+    assert(redFlagData.emergencyCallRequired === true, 'Red flag triggers mandatory 112 emergency call');
+
+    // Scenario J: Unknown Problem & Uncertainty Handling (Requirement 3 & 6)
+    const resUnknown = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'unusual purple floating quantum sensations inside my elbow code 999' })
+    });
+    const unknownData = await resUnknown.json();
+    assert(unknownData.isUnknownProblem === true, 'Unrecognized symptom correctly flagged as unknown problem');
+    assert(unknownData.confidenceTier === 'unknown', 'Confidence tier is unknown');
+    assert(unknownData.primaryMessage.includes("unable to provide reliable guidance"), 'Includes exact required doctor advice message');
+    assert(unknownData.secondaryMessage.includes("don't rely on uncertain information"), 'Includes exact health importance caution');
+    assert(unknownData.consultDoctorButton === true, 'Provides Better to Consult a Doctor button');
+
     console.log('\n--- 3. Testing Photo / Vision Emergency Analysis ---');
     // Sample base64 test image (mock burn)
     const mockBurnBase64 = 'data:image/jpeg;base64,' + Buffer.from('TEST_IMAGE_BUFFER_BURN_SCALD').toString('base64');
@@ -127,6 +187,17 @@ async function runTests() {
     assert(assistantData.reply.includes('What NOT to do'), 'Assistant provides what NOT to do');
     assert(assistantData.structuredGuide !== null, 'Assistant returns structured guide object');
 
+    // Assistant with Unknown Problem:
+    const resAssistantUnknown = await fetch('http://127.0.0.1:3000/api/chat-assistant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'weird sensations inside my kidney 999 unknown issue' })
+    });
+    const assistantUnknownData = await resAssistantUnknown.json();
+    assert(assistantUnknownData.isUnknownProblem === true, 'Assistant identifies unknown problem');
+    assert(assistantUnknownData.reply.includes('Medical Consultation Recommended'), 'Assistant recommends doctor consultation');
+    assert(assistantUnknownData.reply.includes("unable to provide reliable guidance"), 'Assistant provides exact doctor advice message');
+
     console.log('\n--- 5. Testing Guides Library & Assets ---');
     const resGuides = await fetch('http://127.0.0.1:3000/api/guides');
     const guidesData = await resGuides.json();
@@ -139,7 +210,7 @@ async function runTests() {
     assert(htmlText.includes('Call 112') || htmlText.includes('tel:112'), 'HTML has Call 112 emergency button');
     assert(htmlText.includes('FirstAid+ is an educational first-aid assistant'), 'HTML has mandatory safety banner');
 
-    console.log('\n🎉 ALL 20 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n🎉 ALL 28 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);

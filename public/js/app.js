@@ -149,12 +149,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const input = document.getElementById("problem-description-input");
     const counter = document.getElementById("char-counter");
     const presets = {
-      head: "Grandmother has sudden face drooping on one side and slurred speech.",
+      head: "Severe throbbing headache in temples and forehead for the past 4 hours.",
       airway: "Child is choking on food, cannot breathe or cough, hands clutched to neck.",
       chest: "Sudden severe crushing chest pressure radiating into left arm and shortness of breath.",
       arm: "My friend accidentally spilled boiling water on his hand and wrist.",
-      leg: "Tripped on stairs, twisted ankle severely, swollen and cannot put weight.",
-      systemic: "Person having violent shaking, jerking convulsions, foaming at the mouth."
+      leg: "Sudden painful muscle cramp in right calf, leg feels locked.",
+      systemic: "Person having high fever, severe chills, shivering, and body aches."
     };
     if (input && presets[region]) {
       input.value = presets[region];
@@ -254,5 +254,37 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
   }
+
+  // Global Doctor Consultation Modal Controllers (Requirement 3 & 6)
+  window.openDoctorConsultModal = () => {
+    const modal = document.getElementById("doctor-consult-modal");
+    if (modal) {
+      modal.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+  };
+
+  window.closeDoctorConsultModal = () => {
+    const modal = document.getElementById("doctor-consult-modal");
+    if (modal) {
+      modal.style.display = "none";
+      document.body.style.overflow = "";
+    }
+  };
+
+  const doctorModal = document.getElementById("doctor-consult-modal");
+  if (doctorModal) {
+    doctorModal.addEventListener("click", (e) => {
+      if (e.target === doctorModal) {
+        window.closeDoctorConsultModal();
+      }
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      window.closeDoctorConsultModal();
+    }
+  });
 });
 

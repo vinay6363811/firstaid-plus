@@ -187,6 +187,13 @@ function analyzePhotoLocal(base64Data, metadata = {}) {
 
   if (isUncertain) {
     result.uncertaintyNotice = "Image analysis cannot confirm the type or severity of this injury. Please seek professional medical evaluation if you are concerned.";
+    result.confidenceTier = "unknown";
+    result.isUnknownProblem = true;
+    result.primaryMessage = "We're unable to provide reliable guidance for this image. It's better to consult a doctor for proper medical advice.";
+    result.secondaryMessage = "Your health is important. Please don't rely on uncertain information or self-medicate based on guesses.";
+    result.consultDoctorButton = true;
+  } else {
+    result.confidenceTier = guide.confidenceTier || (guide.severity === "Critical" ? "emergency" : "high");
   }
 
   return result;
