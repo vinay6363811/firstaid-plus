@@ -5,12 +5,18 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Global text-to-speech helpers
-  window.speakText = (text) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.95;
-    window.speechSynthesis.speak(u);
+  window.speakText = (text, lang) => {
+    if (window.speechEngine) {
+      window.speechEngine.speak({
+        text: text,
+        lang: lang
+      });
+    } else if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    }
   };
 
   window.playAlertBeep = () => {
@@ -259,6 +265,89 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
   }
+
+  // Voice Customization Settings Manager (Female Voice Preference & Speed)
+  function initVoiceSettings() {
+    if (!window.speechEngine) return;
+    const se = window.speechEngine;
+
+    const genderSelect = document.getElementById("voice-gender-select");
+    const styleSelect = document.getElementById("voice-style-select");
+    const speedSelect = document.getElementById("voice-speed-select");
+    const volumeSlider = document.getElementById("voice-volume-slider");
+    const volumeVal = document.getElementById("voice-volume-val");
+    const autoSpeakToggle = document.getElementById("voice-auto-speak-toggle");
+    const previewBtn = document.getElementById("preview-voice-btn");
+    const activeVoiceLabel = document.getElementById("active-voice-detected-label");
+
+    // Initialize UI from saved settings
+    if (genderSelect) genderSelect.value = se.settings.gender || "female";
+    if (styleSelect) styleSelect.value = se.settings.style || "calm";
+    if (speedSelect) speedSelect.value = se.settings.speed || "normal";
+    if (volumeSlider) {
+      const volPct = Math.round((se.settings.volume || 1.0) * 100);
+      volumeSlider.value = volPct;
+      if (volumeVal) volumeVal.textContent = `${volPct}%`;
+    }
+    if (autoSpeakToggle) autoSpeakToggle.checked = !!se.settings.autoSpeak;
+
+    function updateDiagnosticLabel() {
+      if (!activeVoiceLabel) return;
+      const match = se.getBestVoice("en-IN", se.settings.gender);
+      if (match && match.voice) {
+        const genderText = match.isFemale ? "👩 Female Voice" : "🎙️ Voice";
+        activeVoiceLabel.textContent = `Active: ${match.voice.name} (${genderText})`;
+      } else {
+        activeVoiceLabel.textContent = "Active: Browser Default TTS Voice";
+      }
+    }
+
+    updateDiagnosticLabel();
+    if (typeof window.speechSynthesis !== "undefined") {
+      window.speechSynthesis.onvoiceschanged = () => updateDiagnosticLabel();
+    }
+
+    // Listeners
+    if (genderSelect) {
+      genderSelect.addEventListener("change", (e) => {
+        se.saveSettings({ gender: e.target.value });
+        updateDiagnosticLabel();
+      });
+    }
+
+    if (styleSelect) {
+      styleSelect.addEventListener("change", (e) => {
+        se.saveSettings({ style: e.target.value });
+      });
+    }
+
+    if (speedSelect) {
+      speedSelect.addEventListener("change", (e) => {
+        se.saveSettings({ speed: e.target.value });
+      });
+    }
+
+    if (volumeSlider) {
+      volumeSlider.addEventListener("input", (e) => {
+        const pct = parseInt(e.target.value, 10);
+        if (volumeVal) volumeVal.textContent = `${pct}%`;
+        se.saveSettings({ volume: pct / 100 });
+      });
+    }
+
+    if (autoSpeakToggle) {
+      autoSpeakToggle.addEventListener("change", (e) => {
+        se.saveSettings({ autoSpeak: e.target.checked });
+      });
+    }
+
+    if (previewBtn) {
+      previewBtn.addEventListener("click", () => {
+        se.previewVoice();
+      });
+    }
+  }
+  initVoiceSettings();
 
   // Global Doctor Consultation Modal Controllers (Requirement 3 & 6)
   window.openDoctorConsultModal = () => {

@@ -59,8 +59,11 @@ class SmartAnalyzerController {
     // Voice Guidance Elements
     this.voicePlayBtn = document.getElementById("voice-play-btn");
     this.voicePauseBtn = document.getElementById("voice-pause-btn");
+    this.voiceResumeBtn = document.getElementById("voice-resume-btn");
     this.voiceStopBtn = document.getElementById("voice-stop-btn");
     this.voiceWave = document.getElementById("voice-wave-anim");
+    this.voiceLangBadge = document.getElementById("voice-lang-badge");
+    this.voiceStatusSubtext = document.getElementById("voice-status-subtext");
 
     // Camera Modal Elements
     this.cameraModal = document.getElementById("camera-modal");
@@ -195,6 +198,7 @@ class SmartAnalyzerController {
     // Voice Guidance Controls
     if (this.voicePlayBtn) this.voicePlayBtn.addEventListener("click", () => this.playVoiceGuidance());
     if (this.voicePauseBtn) this.voicePauseBtn.addEventListener("click", () => this.pauseVoiceGuidance());
+    if (this.voiceResumeBtn) this.voiceResumeBtn.addEventListener("click", () => this.resumeVoiceGuidance());
     if (this.voiceStopBtn) this.voiceStopBtn.addEventListener("click", () => this.stopVoiceGuidance());
   }
 
@@ -680,6 +684,34 @@ class SmartAnalyzerController {
     if (this.inputSection) this.inputSection.style.display = "none";
     if (this.resultsView) this.resultsView.classList.add("active");
 
+    // 9. Sync with Language Detection & Female Voice Matching
+    const inputText = (this.problemText ? this.problemText.value : "") || (this.previewContextInput ? this.previewContextInput.value : "");
+    const detectedLang = window.speechEngine ? window.speechEngine.detectLanguage(inputText) : { code: 'en-IN', name: 'English (India)' };
+    result.detectedLanguage = detectedLang;
+
+    // Update Voice Badge and Subtext
+    if (this.voiceLangBadge) {
+      const bestVoice = window.speechEngine ? window.speechEngine.getBestVoice(detectedLang.code, window.speechEngine.settings.gender) : null;
+      const genderTag = (bestVoice && bestVoice.isFemale) ? "👩 Female Voice" : "🎙️ Voice";
+      this.voiceLangBadge.textContent = `${genderTag} (${detectedLang.name})`;
+    }
+
+    if (this.voiceStatusSubtext) {
+      const bestVoice = window.speechEngine ? window.speechEngine.getBestVoice(detectedLang.code, window.speechEngine.settings.gender) : null;
+      if (bestVoice && bestVoice.fallbackUsed) {
+        this.voiceStatusSubtext.textContent = `${detectedLang.name} voice not on device — Speaking in Indian English female voice.`;
+      } else {
+        this.voiceStatusSubtext.textContent = `Reassuring female medical assistant instructions in ${detectedLang.name}`;
+      }
+    }
+
+    this.resetVoiceControls();
+
+    // Auto-Speak if enabled in settings
+    if (window.speechEngine && window.speechEngine.settings && window.speechEngine.settings.autoSpeak) {
+      setTimeout(() => this.playVoiceGuidance(), 400);
+    }
+
     // Sync with 3D Human Body Visualization
     if (window.bodyVisualization && typeof window.bodyVisualization.scanAndHighlightSymptoms === 'function') {
       const symptomQuery = (result.possibleEmergency || result.title || '') + ' ' + (result.whatHappened || '');
@@ -696,79 +728,96 @@ class SmartAnalyzerController {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // --- Voice Guidance (Requirement 3.G) ---
+  // --- Voice Guidance with Female Voice & Language Matching ---
   playVoiceGuidance() {
-    if (!window.speechSynthesis) {
+    if (!window.speechEngine || !window.speechEngine.supported) {
       alert("Text-to-speech is not supported on this browser.");
       return;
     }
 
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-      this.isSpeaking = true;
-      if (this.voiceWave) this.voiceWave.classList.add("playing");
+    if (window.speechEngine.isPaused) {
+      this.resumeVoiceGuidance();
       return;
     }
 
     if (!this.currentAnalysisResult) return;
 
-    window.speechSynthesis.cancel();
+    const detectedLang = this.currentAnalysisResult.detectedLanguage || 
+      (window.speechEngine ? window.speechEngine.detectLanguage(this.problemText ? this.problemText.value : '') : { code: 'en-IN', name: 'English (India)' });
 
-    // Construct clean speech narrative
-    const r = this.currentAnalysisResult;
-    let narrative = "";
-    if (r.isUnknownProblem) {
-      narrative = "Medical Consultation Recommended. We are unable to provide reliable guidance for this problem. It is better to consult a doctor for proper medical advice. Your health is important. Please do not rely on uncertain information or self-medicate based on guesses. What you can do: Rest quietly in a comfortable space. Do not take unprescribed medicines. Stay hydrated. Please consult a qualified doctor or call 104 in India.";
-    } else {
-      narrative = `First Aid Guidance for ${r.possibleEmergency}. `;
-      narrative += `Severity is ${r.severity}. `;
-      narrative += `What might have happened: ${r.whatHappened}. `;
-      narrative += `Immediate first aid steps: `;
-      (r.immediateFirstAid || []).forEach((step, i) => {
-        narrative += `Step ${i + 1}. ${step}. `;
-      });
-      narrative += `What not to do: `;
-      (r.whatNotToDo || []).forEach(d => {
-        narrative += `${d}. `;
-      });
-      narrative += `When to get medical help: ${r.whenToGetHelp}. `;
+    const narrative = window.speechEngine.buildNarrative(this.currentAnalysisResult, detectedLang);
+
+    const match = window.speechEngine.speak({
+      text: narrative,
+      lang: detectedLang,
+      onStart: (voiceMatch) => {
+        this.isSpeaking = true;
+        if (this.voiceWave) this.voiceWave.classList.add("playing");
+        if (this.voicePlayBtn) this.voicePlayBtn.style.display = "none";
+        if (this.voiceResumeBtn) this.voiceResumeBtn.style.display = "none";
+        if (this.voicePauseBtn) this.voicePauseBtn.style.display = "inline-flex";
+
+        if (this.voiceStatusSubtext) {
+          if (voiceMatch && voiceMatch.voice) {
+            const genderLabel = voiceMatch.isFemale ? "Reassuring Female Voice" : "Medical Assistant Voice";
+            this.voiceStatusSubtext.textContent = `Speaking via ${genderLabel} (${voiceMatch.voice.name})`;
+          }
+        }
+      },
+      onEnd: () => {
+        this.resetVoiceControls();
+      },
+      onPause: () => {
+        if (this.voiceWave) this.voiceWave.classList.remove("playing");
+        if (this.voicePauseBtn) this.voicePauseBtn.style.display = "none";
+        if (this.voiceResumeBtn) this.voiceResumeBtn.style.display = "inline-flex";
+      },
+      onResume: () => {
+        if (this.voiceWave) this.voiceWave.classList.add("playing");
+        if (this.voiceResumeBtn) this.voiceResumeBtn.style.display = "none";
+        if (this.voicePauseBtn) this.voicePauseBtn.style.display = "inline-flex";
+      },
+      onError: () => {
+        this.resetVoiceControls();
+      }
+    });
+
+    if (match && match.fallbackUsed && this.voiceStatusSubtext) {
+      this.voiceStatusSubtext.textContent = `${detectedLang.name} voice not on device — Speaking in Indian English female voice.`;
     }
-
-    this.speechUtterance = new SpeechSynthesisUtterance(narrative);
-    this.speechUtterance.rate = 0.95; // Clear emergency pace
-    this.speechUtterance.pitch = 1.0;
-
-    this.speechUtterance.onstart = () => {
-      this.isSpeaking = true;
-      if (this.voiceWave) this.voiceWave.classList.add("playing");
-    };
-
-    this.speechUtterance.onend = () => {
-      this.isSpeaking = false;
-      if (this.voiceWave) this.voiceWave.classList.remove("playing");
-    };
-
-    this.speechUtterance.onerror = () => {
-      this.isSpeaking = false;
-      if (this.voiceWave) this.voiceWave.classList.remove("playing");
-    };
-
-    window.speechSynthesis.speak(this.speechUtterance);
   }
 
   pauseVoiceGuidance() {
-    if (window.speechSynthesis && this.isSpeaking) {
-      window.speechSynthesis.pause();
+    if (window.speechEngine) {
+      window.speechEngine.pause();
       if (this.voiceWave) this.voiceWave.classList.remove("playing");
+      if (this.voicePauseBtn) this.voicePauseBtn.style.display = "none";
+      if (this.voiceResumeBtn) this.voiceResumeBtn.style.display = "inline-flex";
+    }
+  }
+
+  resumeVoiceGuidance() {
+    if (window.speechEngine) {
+      window.speechEngine.resume();
+      if (this.voiceWave) this.voiceWave.classList.add("playing");
+      if (this.voiceResumeBtn) this.voiceResumeBtn.style.display = "none";
+      if (this.voicePauseBtn) this.voicePauseBtn.style.display = "inline-flex";
     }
   }
 
   stopVoiceGuidance() {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      this.isSpeaking = false;
-      if (this.voiceWave) this.voiceWave.classList.remove("playing");
+    if (window.speechEngine) {
+      window.speechEngine.stop();
     }
+    this.resetVoiceControls();
+  }
+
+  resetVoiceControls() {
+    this.isSpeaking = false;
+    if (this.voiceWave) this.voiceWave.classList.remove("playing");
+    if (this.voicePlayBtn) this.voicePlayBtn.style.display = "inline-flex";
+    if (this.voicePauseBtn) this.voicePauseBtn.style.display = "none";
+    if (this.voiceResumeBtn) this.voiceResumeBtn.style.display = "none";
   }
 }
 

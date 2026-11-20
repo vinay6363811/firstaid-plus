@@ -230,7 +230,30 @@ async function runTests() {
     assert(bodyJsText.includes('BodyVisualizationController'), 'bodyVisualization.js contains body visualization engine');
     assert(bodyJsText.includes('SYMPTOM_MAP'), 'bodyVisualization.js contains comprehensive anatomical symptom map');
 
-    console.log('\n🎉 ALL 35 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n--- 7. Testing Female Voice Selection & Speech Engine ---');
+    const speechEngineRes = await fetch('http://127.0.0.1:3000/js/speechEngine.js');
+    assert(speechEngineRes.status === 200, 'speechEngine.js is served with HTTP 200');
+    const speechEngineJs = await speechEngineRes.text();
+    assert(speechEngineJs.includes('SpeechEngine'), 'speechEngine.js defines SpeechEngine class');
+    assert(speechEngineJs.includes('detectLanguage'), 'speechEngine.js has detectLanguage method');
+    assert(speechEngineJs.includes('getBestVoice'), 'speechEngine.js has getBestVoice method');
+    assert(speechEngineJs.includes('FEMALE_MARKERS'), 'speechEngine.js includes female voice markers');
+    assert(speechEngineJs.includes('MALE_MARKERS'), 'speechEngine.js includes male avoidance markers');
+
+    // Verify HTML has all voice controls and settings
+    assert(htmlText.includes('id="voice-play-btn"'), 'HTML has 🔊 Listen button');
+    assert(htmlText.includes('id="voice-pause-btn"'), 'HTML has ⏸ Pause button');
+    assert(htmlText.includes('id="voice-resume-btn"'), 'HTML has ▶ Resume button');
+    assert(htmlText.includes('id="voice-stop-btn"'), 'HTML has ⏹ Stop button');
+    assert(htmlText.includes('id="voice-gender-select"'), 'HTML has Voice Gender Preference setting');
+    assert(htmlText.includes('value="female" selected'), 'Female Voice is selected by default');
+    assert(htmlText.includes('id="voice-style-select"'), 'HTML has Voice Style persona setting');
+    assert(htmlText.includes('id="voice-speed-select"'), 'HTML has Speaking Speed setting');
+    assert(htmlText.includes('id="voice-volume-slider"'), 'HTML has Volume adjustment slider');
+    assert(htmlText.includes('id="preview-voice-btn"'), 'HTML has Preview Voice button');
+    assert(htmlText.includes('id="voice-auto-speak-toggle"'), 'HTML has Auto-speak toggle');
+
+    console.log('\n🎉 ALL 47 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);
