@@ -193,6 +193,90 @@
           </li>
         </ul>
       </nav>
+
+      <!-- Global Language Change Icon & Dropdown -->
+      <div class="global-lang-dropdown-container" id="global-lang-dropdown-container">
+        <button id="global-lang-toggle-btn" class="global-lang-btn" type="button" aria-expanded="false" aria-haspopup="true" title="Change Language / ಭಾಷೆ ಬದಲಿಸಿ / भाषा बदलें">
+          <span class="lang-icon">🌐</span>
+          <span id="global-lang-current-label">Language: Auto</span>
+          <span class="lang-chevron">▾</span>
+        </button>
+        <div id="global-lang-menu" class="global-lang-menu" role="menu">
+          <div class="lang-menu-header">Select Language / ಭಾಷೆ / भाषा</div>
+          <button type="button" class="lang-menu-item active" data-lang="auto" role="menuitem">
+            <span class="lang-item-flag">🔄</span>
+            <div class="lang-item-text">
+              <strong>Auto-Detect</strong>
+              <small>Auto match typed language</small>
+            </div>
+            <span class="lang-check" id="check-auto">✓</span>
+          </button>
+          <button type="button" class="lang-menu-item" data-lang="kn-IN" role="menuitem">
+            <span class="lang-item-flag">🇮🇳</span>
+            <div class="lang-item-text">
+              <strong>ಕನ್ನಡ (Kannada)</strong>
+              <small>ಮಹಿಳಾ ಧ್ವನಿ ಬೆಂಬಲ</small>
+            </div>
+            <span class="lang-check" id="check-kn-IN"></span>
+          </button>
+          <button type="button" class="lang-menu-item" data-lang="hi-IN" role="menuitem">
+            <span class="lang-item-flag">🇮🇳</span>
+            <div class="lang-item-text">
+              <strong>हिन्दी (Hindi)</strong>
+              <small>महिला आवाज समर्थन</small>
+            </div>
+            <span class="lang-check" id="check-hi-IN"></span>
+          </button>
+          <button type="button" class="lang-menu-item" data-lang="en-IN" role="menuitem">
+            <span class="lang-item-flag">🇮🇳</span>
+            <div class="lang-item-text">
+              <strong>English (India)</strong>
+              <small>Indian Female Voice</small>
+            </div>
+            <span class="lang-check" id="check-en-IN"></span>
+          </button>
+          <button type="button" class="lang-menu-item" data-lang="te-IN" role="menuitem">
+            <span class="lang-item-flag">🇮🇳</span>
+            <div class="lang-item-text">
+              <strong>తెలుగు (Telugu)</strong>
+              <small>మహిళా స్వరం</small>
+            </div>
+            <span class="lang-check" id="check-te-IN"></span>
+          </button>
+          <button type="button" class="lang-menu-item" data-lang="ta-IN" role="menuitem">
+            <span class="lang-item-flag">🇮🇳</span>
+            <div class="lang-item-text">
+              <strong>தமிழ் (Tamil)</strong>
+              <small>பெண் குரல் ஆதரவு</small>
+            </div>
+            <span class="lang-check" id="check-ta-IN"></span>
+          </button>
+          <button type="button" class="lang-menu-item" data-lang="ml-IN" role="menuitem">
+            <span class="lang-item-flag">🇮🇳</span>
+            <div class="lang-item-text">
+              <strong>മലയാളം (Malayalam)</strong>
+              <small>സ്ത്രീ ശബ്ദം</small>
+            </div>
+            <span class="lang-check" id="check-ml-IN"></span>
+          </button>
+          <button type="button" class="lang-menu-item" data-lang="bn-IN" role="menuitem">
+            <span class="lang-item-flag">🇮🇳</span>
+            <div class="lang-item-text">
+              <strong>বাংলা (Bengali)</strong>
+              <small>মহিলা ভয়েস</small>
+            </div>
+            <span class="lang-check" id="check-bn-IN"></span>
+          </button>
+          <button type="button" class="lang-menu-item" data-lang="mr-IN" role="menuitem">
+            <span class="lang-item-flag">🇮🇳</span>
+            <div class="lang-item-text">
+              <strong>मराठी (Marathi)</strong>
+              <small>स्त्री आवाज</small>
+            </div>
+            <span class="lang-check" id="check-mr-IN"></span>
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -333,6 +417,44 @@
                     </button>
                     <button type="button" class="example-chip" data-prompt="I have an unusual strange purple tingling feeling with random unidentifiable sensations.">
                       ❓ Unknown problem test
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Input & Voice Language Selector Toolbar -->
+                <div class="input-lang-toolbar" id="input-lang-toolbar">
+                  <div class="lang-toolbar-header">
+                    <span class="lang-toolbar-icon">🌐</span>
+                    <span class="lang-toolbar-title">Language / ಭಾಷೆ / भाषा:</span>
+                    <span id="active-lang-indicator" class="active-lang-tag">🔄 Auto-Detect</span>
+                  </div>
+                  <div class="lang-pills-row" id="lang-pills-container">
+                    <button type="button" class="lang-pill active" data-lang="auto" title="Auto-detect typed language">
+                      <span>🔄 Auto-Detect</span>
+                    </button>
+                    <button type="button" class="lang-pill" data-lang="kn-IN" title="Kannada (ಕನ್ನಡ)">
+                      <span>🇮🇳 ಕನ್ನಡ (Kannada)</span>
+                    </button>
+                    <button type="button" class="lang-pill" data-lang="hi-IN" title="Hindi (हिन्दी)">
+                      <span>🇮🇳 हिन्दी (Hindi)</span>
+                    </button>
+                    <button type="button" class="lang-pill" data-lang="en-IN" title="English (India)">
+                      <span>🇮🇳 English (India)</span>
+                    </button>
+                    <button type="button" class="lang-pill" data-lang="te-IN" title="Telugu (తెలుగు)">
+                      <span>🇮🇳 తెలుగు (Telugu)</span>
+                    </button>
+                    <button type="button" class="lang-pill" data-lang="ta-IN" title="Tamil (தமிழ்)">
+                      <span>🇮🇳 தமிழ் (Tamil)</span>
+                    </button>
+                    <button type="button" class="lang-pill" data-lang="ml-IN" title="Malayalam (മലയാളം)">
+                      <span>🇮🇳 മലയാളം (Malayalam)</span>
+                    </button>
+                    <button type="button" class="lang-pill" data-lang="bn-IN" title="Bengali (বাংলা)">
+                      <span>🇮🇳 বাংলা (Bengali)</span>
+                    </button>
+                    <button type="button" class="lang-pill" data-lang="mr-IN" title="Marathi (मराठी)">
+                      <span>🇮🇳 मराठी (Marathi)</span>
                     </button>
                   </div>
                 </div>
@@ -567,6 +689,9 @@
                   <div style="font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <span>Voice Guidance</span>
                     <span id="voice-lang-badge" class="num-pill" style="font-size: 0.72rem; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-weight: 700;">👩 Female Voice (English)</span>
+                    <button id="voice-change-lang-btn" class="voice-change-lang-btn" type="button" title="Change voice language">
+                      <span>🌐 Change Language</span>
+                    </button>
                   </div>
                   <div id="voice-status-subtext" style="font-size: 0.85rem; color: #64748b;">Reassuring female medical assistant instructions</div>
                 </div>
@@ -1312,6 +1437,22 @@
           </div>
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 14px;">
+            <!-- Preferred Language Selector -->
+            <div>
+              <label for="settings-language-select" style="font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 5px;">🌐 Language Preference / ಭಾಷೆ / भाषा:</label>
+              <select id="settings-language-select" class="optional-context-input" style="width: 100%; margin-bottom: 0;">
+                <option value="auto" selected>🔄 Auto-Detect (Auto match typed text)</option>
+                <option value="kn-IN">🇮🇳 ಕನ್ನಡ (Kannada) - ಮಹಿಳಾ ಧ್ವನಿ</option>
+                <option value="hi-IN">🇮🇳 हिन्दी (Hindi) - महिला आवाज</option>
+                <option value="en-IN">🇮🇳 English (India) - Female Voice</option>
+                <option value="te-IN">🇮🇳 తెలుగు (Telugu) - మహిళా స్వరం</option>
+                <option value="ta-IN">🇮🇳 தமிழ் (Tamil) - பெண் குரல்</option>
+                <option value="ml-IN">🇮🇳 മലയാളം (Malayalam) - സ്ത്രീ ശബ്ദം</option>
+                <option value="bn-IN">🇮🇳 বাংলা (Bengali) - মহিলা ভয়েস</option>
+                <option value="mr-IN">🇮🇳 मराठी (Marathi) - स्त्री आवाज</option>
+              </select>
+            </div>
+
             <!-- Voice Gender Preference -->
             <div>
               <label for="voice-gender-select" style="font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 5px;">Voice Gender Preference:</label>

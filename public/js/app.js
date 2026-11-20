@@ -349,6 +349,169 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   initVoiceSettings();
 
+  // =========================================================================
+  // Language Change Controller (Global Header Icon + Input Toolbar Pills)
+  // =========================================================================
+  function initLanguageSelector() {
+    if (!window.speechEngine) return;
+    const se = window.speechEngine;
+
+    const dropdownContainer = document.getElementById("global-lang-dropdown-container");
+    const toggleBtn = document.getElementById("global-lang-toggle-btn");
+    const currentLabel = document.getElementById("global-lang-current-label");
+    const menuItems = document.querySelectorAll(".lang-menu-item");
+    const pills = document.querySelectorAll(".lang-pill");
+    const activeIndicator = document.getElementById("active-lang-indicator");
+    const settingsLangSelect = document.getElementById("settings-language-select");
+    const voiceChangeBtn = document.getElementById("voice-change-lang-btn");
+    const problemInput = document.getElementById("problem-description-input");
+
+    const PLACEHOLDERS = {
+      'kn-IN': 'ಏನಾಯಿತು ಎಂದು ವಿವರಿಸಿ... ಉದಾಹರಣೆಗೆ: ವ್ಯಕ್ತಿಯೊಬ್ಬರು ಬಿದ್ದು ಮೊಣಕಾಲಿನಿಂದ ರಕ್ತಸ್ರಾವವಾಗುತ್ತಿದೆ.',
+      'hi-IN': 'क्या हुआ बताएं... उदाहरण: एक व्यक्ति गिर गया और उसके घुटने से खून बह रहा है।',
+      'te-IN': 'ఏమి జరిగిందో వివరించండి... ఉదాహరణ: ఒక వ్యక్తి కిందపడి మోకాలి నుండి రక్తం కారుతోంది.',
+      'ta-IN': 'என்ன நடந்தது என்று விவரிக்கவும்... உதாரணம்: ஒருவர் கீழே விழுந்து முழங்காலில் ரத்தம் வழிகிறது.',
+      'ml-IN': 'എന്താണ് സംഭവിച്ചതെന്ന് വിവരിക്കുക... ഉദാഹരണത്തിന്: ഒരാൾ വീണു കാൽമുട്ടിൽ നിന്ന് രക്തസ്രാവമുണ്ട്.',
+      'bn-IN': 'কী হয়েছে বর্ণনা করুন... उदाहरण: একজন পড়ে গিয়ে হাঁটু থেকে রক্ত পড়ছে।',
+      'mr-IN': 'काय झाले ते सांगा... उदाहरण: एक व्यक्ती पडली आणि गुडघ्यातून रक्त येत आहे.',
+      'en-IN': 'Describe what happened... Example: A person fell down and is bleeding from their knee.',
+      'auto': 'Describe what happened... Example: A person fell down and is bleeding from their knee.'
+    };
+
+    function updateLanguageUI(langCode) {
+      const code = langCode || se.settings.selectedLanguage || 'auto';
+      const langObj = se.supportedLanguages[code];
+
+      // 1. Update Header Button Label
+      if (currentLabel) {
+        if (code === 'auto') {
+          currentLabel.textContent = 'Language: Auto';
+        } else if (langObj) {
+          currentLabel.textContent = `Language: ${langObj.nativeName || langObj.name}`;
+        }
+      }
+
+      // 2. Update Header Dropdown Checks
+      menuItems.forEach((item) => {
+        const itemCode = item.getAttribute("data-lang");
+        const checkSpan = item.querySelector(".lang-check");
+        if (itemCode === code) {
+          item.classList.add("active");
+          if (checkSpan) checkSpan.textContent = '✓';
+        } else {
+          item.classList.remove("active");
+          if (checkSpan) checkSpan.textContent = '';
+        }
+      });
+
+      // 3. Update Input Toolbar Pills
+      pills.forEach((pill) => {
+        const pillCode = pill.getAttribute("data-lang");
+        if (pillCode === code) {
+          pill.classList.add("active");
+        } else {
+          pill.classList.remove("active");
+        }
+      });
+
+      // 4. Update Active Tag Badge
+      if (activeIndicator) {
+        if (code === 'auto') {
+          activeIndicator.textContent = '🔄 Auto-Detect';
+        } else if (langObj) {
+          activeIndicator.textContent = `🇮🇳 ${langObj.nativeName} (${langObj.name})`;
+        }
+      }
+
+      // 5. Update Settings Dropdown
+      if (settingsLangSelect) {
+        settingsLangSelect.value = code;
+      }
+
+      // 6. Update Textarea Placeholder if empty
+      if (problemInput && (!problemInput.value || problemInput.value.trim() === '')) {
+        problemInput.placeholder = PLACEHOLDERS[code] || PLACEHOLDERS['auto'];
+      }
+
+      // 7. Update Voice Lang Badge in Results Card
+      const voiceBadge = document.getElementById("voice-lang-badge");
+      if (voiceBadge) {
+        const targetCode = code === 'auto' ? 'en-IN' : code;
+        const targetObj = se.supportedLanguages[targetCode] || se.supportedLanguages['en-IN'];
+        const bestVoice = se.getBestVoice(targetCode, se.settings.gender);
+        const genderTag = (bestVoice && bestVoice.isFemale) ? "👩 Female Voice" : "🎙️ Voice";
+        voiceBadge.textContent = `${genderTag} (${targetObj.name})`;
+      }
+    }
+
+    // Toggle Dropdown
+    if (toggleBtn && dropdownContainer) {
+      toggleBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = dropdownContainer.classList.contains("open");
+        dropdownContainer.classList.toggle("open", !isOpen);
+        toggleBtn.setAttribute("aria-expanded", String(!isOpen));
+      });
+    }
+
+    // Close Dropdown on Click Outside
+    document.addEventListener("click", (e) => {
+      if (dropdownContainer && dropdownContainer.classList.contains("open")) {
+        if (!dropdownContainer.contains(e.target)) {
+          dropdownContainer.classList.remove("open");
+          if (toggleBtn) toggleBtn.setAttribute("aria-expanded", "false");
+        }
+      }
+    });
+
+    // Dropdown Item Click
+    menuItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const langCode = item.getAttribute("data-lang");
+        se.setLanguage(langCode);
+        if (dropdownContainer) dropdownContainer.classList.remove("open");
+        if (toggleBtn) toggleBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    // Input Toolbar Pill Click
+    pills.forEach((pill) => {
+      pill.addEventListener("click", () => {
+        const langCode = pill.getAttribute("data-lang");
+        se.setLanguage(langCode);
+      });
+    });
+
+    // Settings Dropdown Change
+    if (settingsLangSelect) {
+      settingsLangSelect.addEventListener("change", (e) => {
+        se.setLanguage(e.target.value);
+      });
+    }
+
+    // Voice Card "Change Language" Button
+    if (voiceChangeBtn) {
+      voiceChangeBtn.addEventListener("click", () => {
+        if (dropdownContainer) {
+          dropdownContainer.classList.add("open");
+          if (toggleBtn) {
+            toggleBtn.setAttribute("aria-expanded", "true");
+            toggleBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+      });
+    }
+
+    // Listen to custom event from SpeechEngine
+    window.addEventListener("firstaid-language-changed", (e) => {
+      updateLanguageUI(e.detail ? e.detail.langCode : null);
+    });
+
+    // Initial sync
+    updateLanguageUI(se.settings.selectedLanguage || 'auto');
+  }
+  initLanguageSelector();
+
   // Global Doctor Consultation Modal Controllers (Requirement 3 & 6)
   window.openDoctorConsultModal = () => {
     const modal = document.getElementById("doctor-consult-modal");

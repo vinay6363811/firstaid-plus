@@ -253,7 +253,18 @@ async function runTests() {
     assert(htmlText.includes('id="preview-voice-btn"'), 'HTML has Preview Voice button');
     assert(htmlText.includes('id="voice-auto-speak-toggle"'), 'HTML has Auto-speak toggle');
 
-    console.log('\n🎉 ALL 47 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n--- 8. Testing Language Change Icon & Multi-Lingual Controls ---');
+    assert(htmlText.includes('id="global-lang-toggle-btn"'), 'HTML has global language change icon button in header');
+    assert(htmlText.includes('id="global-lang-menu"'), 'HTML has global language dropdown menu');
+    assert(htmlText.includes('id="input-lang-toolbar"'), 'HTML has input language toolbar above symptom box');
+    assert(htmlText.includes('class="lang-pill'), 'HTML has 1-click language pills');
+    assert(htmlText.includes('data-lang="kn-IN"'), 'HTML includes Kannada language selector');
+    assert(htmlText.includes('data-lang="hi-IN"'), 'HTML includes Hindi language selector');
+    assert(htmlText.includes('data-lang="en-IN"'), 'HTML includes Indian English language selector');
+    assert(htmlText.includes('id="settings-language-select"'), 'HTML has language preference select in Settings');
+    assert(htmlText.includes('id="voice-change-lang-btn"'), 'HTML has quick change language button in Voice Player');
+
+    console.log('\n🎉 ALL 56 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);

@@ -686,7 +686,7 @@ class SmartAnalyzerController {
 
     // 9. Sync with Language Detection & Female Voice Matching
     const inputText = (this.problemText ? this.problemText.value : "") || (this.previewContextInput ? this.previewContextInput.value : "");
-    const detectedLang = window.speechEngine ? window.speechEngine.detectLanguage(inputText) : { code: 'en-IN', name: 'English (India)' };
+    const detectedLang = window.speechEngine ? window.speechEngine.getActiveLanguage(inputText) : { code: 'en-IN', name: 'English (India)' };
     result.detectedLanguage = detectedLang;
 
     // Update Voice Badge and Subtext

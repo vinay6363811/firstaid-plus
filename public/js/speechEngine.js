@@ -51,6 +51,7 @@
       this.isSpeaking = false;
       this.isPaused = false;
       this.settings = this.loadSettings();
+      this.supportedLanguages = SUPPORTED_LANGUAGES;
 
       if (this.supported) {
         this.loadVoices();
@@ -62,11 +63,12 @@
 
     loadSettings() {
       const defaults = {
-        gender: 'female',   // 'female' (default), 'male', 'any'
-        style: 'calm',       // 'calm' (default), 'natural', 'friendly'
-        speed: 'normal',     // 'slow', 'normal' (default), 'fast'
-        volume: 1.0,         // 0.0 - 1.0
-        autoSpeak: false     // true / false
+        gender: 'female',            // 'female' (default), 'male', 'any'
+        style: 'calm',                // 'calm' (default), 'natural', 'friendly'
+        speed: 'normal',              // 'slow', 'normal' (default), 'fast'
+        volume: 1.0,                  // 0.0 - 1.0
+        autoSpeak: false,              // true / false
+        selectedLanguage: 'auto'      // 'auto', 'en-IN', 'kn-IN', 'hi-IN', etc.
       };
 
       try {
@@ -76,6 +78,26 @@
         }
       } catch (e) {}
       return defaults;
+    }
+
+    setLanguage(langCode) {
+      this.settings.selectedLanguage = langCode || 'auto';
+      this.saveSettings({ selectedLanguage: this.settings.selectedLanguage });
+      if (typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('firstaid-language-changed', {
+          detail: { 
+            langCode: this.settings.selectedLanguage,
+            language: SUPPORTED_LANGUAGES[this.settings.selectedLanguage] || null
+          }
+        }));
+      }
+    }
+
+    getActiveLanguage(text) {
+      if (this.settings.selectedLanguage && this.settings.selectedLanguage !== 'auto') {
+        return SUPPORTED_LANGUAGES[this.settings.selectedLanguage] || SUPPORTED_LANGUAGES['en-IN'];
+      }
+      return this.detectLanguage(text);
     }
 
     saveSettings(newSettings) {
