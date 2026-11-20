@@ -433,10 +433,14 @@
       const utterance = new SpeechSynthesisUtterance(text);
       this.currentUtterance = utterance;
 
-      if (voiceMatch.voice) {
+      if (voiceMatch.voice && !voiceMatch.fallbackUsed) {
         utterance.voice = voiceMatch.voice;
         utterance.lang = voiceMatch.voice.lang || langObj.code;
       } else {
+        // If device has no local voice object matching this language (fallbackUsed is true),
+        // do not force an English synthesizer to pronounce Indic scripts.
+        // Leaving utterance.voice unset allows browsers (like Chrome/Edge) to route the utterance
+        // to their native regional online speech synthesizer matching utterance.lang.
         utterance.lang = langObj.code;
       }
 
@@ -510,18 +514,29 @@
     }
 
     previewVoice(customLang) {
-      const lang = customLang || 'en-IN';
+      const activeCode = customLang || (this.settings.selectedLanguage !== 'auto' ? this.settings.selectedLanguage : 'en-IN');
+      const langObj = SUPPORTED_LANGUAGES[activeCode] || SUPPORTED_LANGUAGES['en-IN'];
       let previewText = "Hello! I am your FirstAid+ medical assistant. Stay calm, take a deep breath, and let's follow the first aid steps together.";
       
-      if (lang.startsWith('kn')) {
-        previewText = "ನಮಸ್ಕಾರ, ನಾನು ನಿಮ್ಮ ಫಸ್ಟ್‌ಏಡ್ ಪ್ಲಸ್ ಸಹಾಯಕ. ಶಾಂತರಾಗಿರಿ, ನಿಮ್ಮ ಪ್ರಥಮ ಚಿಕಿತ್ಸೆಗೆ ನಾನು ಇಲ್ಲಿದ್ದೇನೆ.";
-      } else if (lang.startsWith('hi')) {
+      if (activeCode.startsWith('kn')) {
+        previewText = "ನಮಸ್ಕಾರ, ನಾನು ನಿಮ್ಮ ಫಸ್ಟ್‌ಏಡ್ ಪ್ಲಸ್ ವೈದ್ಯಕೀಯ ಸಹಾಯಕ. ಶಾಂತರಾಗಿರಿ, ನಿಮ್ಮ ಪ್ರಥಮ ಚಿಕಿತ್ಸೆಗೆ ನಾನು ಇಲ್ಲಿದ್ದೇನೆ.";
+      } else if (activeCode.startsWith('hi')) {
         previewText = "नमस्ते! मैं आपकी फर्स्टएड प्लस मेडिकल सहायक हूँ। शांत रहें, मैं आपकी सहायता के लिए तैयार हूँ।";
+      } else if (activeCode.startsWith('te')) {
+        previewText = "నమస్కారం! నేను మీ ఫస్ట్‌ఎయిడ్ ప్లస్ వైద్య సహాయకురాలిని. ప్రశాంతంగా ఉండండి, నేను మీకు సహాయం చేస్తాను.";
+      } else if (activeCode.startsWith('ta')) {
+        previewText = "வணக்கம்! நான் உங்கள் ஃபர்ஸ்ட் எய்ட் பிளஸ் மருத்துவ உதவியாளர். அமைதியாக இருங்கள், உங்களுக்கு உதவ நான் தயாராக உள்ளேன்.";
+      } else if (activeCode.startsWith('ml')) {
+        previewText = "നമസ്കാരം! ഞാൻ നിങ്ങളുടെ ഫസ്റ്റ് എയ്ഡ് പ്ലസ് മെഡിക്കൽ അസിസ്റ്റന്റാണ്. ശാന്തരായിരിക്കുക, സഹായിക്കാൻ ഞാൻ ഇവിടെയുണ്ട്.";
+      } else if (activeCode.startsWith('bn')) {
+        previewText = "নমস্কার! আমি আপনার ফার্স্টএইড প্লাস চিকিৎসা সহায়িকা। শান্ত থাকুন, আমি আপনাকে সাহায্য করতে প্রস্তুত।";
+      } else if (activeCode.startsWith('mr')) {
+        previewText = "नमस्कार! मी आपली फर्स्टएड प्लस वैद्यकीय सहाय्यक आहे. शांत राहा, मी आपल्या मदतीसाठी उपस्थित आहे.";
       }
 
       return this.speak({
         text: previewText,
-        lang: lang
+        lang: langObj
       });
     }
   }

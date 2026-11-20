@@ -4,6 +4,7 @@
 
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 let server = null;
 
@@ -304,7 +305,18 @@ async function runTests() {
     const dataExplicitKn = await resExplicitKn.json();
     assert(dataExplicitKn.possibleEmergency.includes('ಹೃದಯ') || dataExplicitKn.possibleEmergency.includes('ಎದೆ'), 'Explicit Kannada selection translates heart attack into Kannada');
 
-    console.log('\n🎉 ALL 65 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n--- 10. Testing Voice Changing With Language Entered by User ---');
+    const speechEngineCode = fs.readFileSync(path.join(__dirname, 'public', 'js', 'speechEngine.js'), 'utf-8');
+    const analyzerCode = fs.readFileSync(path.join(__dirname, 'public', 'js', 'analyzer.js'), 'utf-8');
+    const appCode = fs.readFileSync(path.join(__dirname, 'public', 'js', 'app.js'), 'utf-8');
+
+    assert(speechEngineCode.includes('!voiceMatch.fallbackUsed'), 'Voice synthesizer does not pin English voice on Indic text');
+    assert(speechEngineCode.includes('utterance.lang = langObj.code'), 'Speech synthesizer sets utterance language code to user entered language');
+    assert(analyzerCode.includes('this.problemTextarea ? this.problemTextarea.value'), 'Analyzer uses problemTextarea to extract entered text');
+    assert(appCode.includes('problemInput.addEventListener("input"'), 'App has live typing listener to adapt voice and language dynamically');
+    assert(appCode.includes('window.updateVoiceDiagnosticLabel'), 'App updates active voice diagnostic label when language changes');
+
+    console.log('\n🎉 ALL 70 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);

@@ -291,16 +291,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     if (autoSpeakToggle) autoSpeakToggle.checked = !!se.settings.autoSpeak;
 
-    function updateDiagnosticLabel() {
+    function updateDiagnosticLabel(langCode) {
       if (!activeVoiceLabel) return;
-      const match = se.getBestVoice("en-IN", se.settings.gender);
-      if (match && match.voice) {
+      const targetCode = langCode || (se.settings.selectedLanguage !== 'auto' ? se.settings.selectedLanguage : 'en-IN');
+      const langObj = se.supportedLanguages[targetCode] || se.supportedLanguages['en-IN'];
+      const match = se.getBestVoice(targetCode, se.settings.gender);
+      if (match && match.voice && !match.fallbackUsed) {
         const genderText = match.isFemale ? "👩 Female Voice" : "🎙️ Voice";
-        activeVoiceLabel.textContent = `Active: ${match.voice.name} (${genderText})`;
+        activeVoiceLabel.textContent = `Active (${langObj.name}): ${match.voice.name} (${genderText})`;
       } else {
-        activeVoiceLabel.textContent = "Active: Browser Default TTS Voice";
+        activeVoiceLabel.textContent = `Active (${langObj.name}): Regional Web / Online Voice (Auto-Matched)`;
       }
     }
+    window.updateVoiceDiagnosticLabel = updateDiagnosticLabel;
 
     updateDiagnosticLabel();
     if (typeof window.speechSynthesis !== "undefined") {
@@ -628,14 +631,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         problemInput.placeholder = PLACEHOLDERS[code] || PLACEHOLDERS['auto'];
       }
 
-      // 7. Update Voice Lang Badge in Results Card
+      // 7. Update Voice Lang Badge & Subtext in Results Card
+      const targetCode = code === 'auto' ? 'en-IN' : code;
+      const targetObj = se.supportedLanguages[targetCode] || se.supportedLanguages['en-IN'];
+      const bestVoice = se.getBestVoice(targetCode, se.settings.gender);
+
       const voiceBadge = document.getElementById("voice-lang-badge");
       if (voiceBadge) {
-        const targetCode = code === 'auto' ? 'en-IN' : code;
-        const targetObj = se.supportedLanguages[targetCode] || se.supportedLanguages['en-IN'];
-        const bestVoice = se.getBestVoice(targetCode, se.settings.gender);
         const genderTag = (bestVoice && bestVoice.isFemale) ? "👩 Female Voice" : "🎙️ Voice";
         voiceBadge.textContent = `${genderTag} (${targetObj.name})`;
+      }
+
+      const voiceStatusSub = document.getElementById("voice-status-subtext");
+      if (voiceStatusSub) {
+        voiceStatusSub.textContent = `Reassuring female medical assistant instructions in ${targetObj.name}`;
+      }
+
+      if (typeof window.updateVoiceDiagnosticLabel === 'function') {
+        window.updateVoiceDiagnosticLabel(targetCode);
       }
 
       // 8. Update Section Title, Region Selector, Example Chips & Action Buttons
@@ -738,6 +751,28 @@ document.addEventListener("DOMContentLoaded", async () => {
             toggleBtn.scrollIntoView({ behavior: "smooth", block: "center" });
           }
         }
+      });
+    }
+
+    // Live Voice & Language Matching from entered symptom text (Live Auto-adaptation)
+    if (problemInput) {
+      let typeTimeout = null;
+      problemInput.addEventListener("input", (e) => {
+        clearTimeout(typeTimeout);
+        typeTimeout = setTimeout(() => {
+          const val = (e.target.value || "").trim();
+          if (val.length >= 2) {
+            const detected = se.detectLanguage(val);
+            if (detected && detected.code) {
+              // Automatically switch voice and UI when user types in any supported language
+              if (se.settings.selectedLanguage === 'auto' || !se.settings.selectedLanguage) {
+                updateLanguageUI(detected.code);
+              }
+            }
+          } else if (val.length === 0 && (se.settings.selectedLanguage === 'auto' || !se.settings.selectedLanguage)) {
+            updateLanguageUI('auto');
+          }
+        }, 180);
       });
     }
 

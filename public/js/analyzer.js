@@ -112,6 +112,8 @@ class SmartAnalyzerController {
           const len = prompt.length;
           if (this.charCounter) this.charCounter.textContent = `${len} characters`;
           this.problemTextarea.focus();
+          // Dispatch input event so language detection and voice update immediately
+          this.problemTextarea.dispatchEvent(new Event("input", { bubbles: true }));
         }
       });
     });
@@ -738,7 +740,7 @@ class SmartAnalyzerController {
     if (this.resultsView) this.resultsView.classList.add("active");
 
     // 9. Sync with Language Detection & Female Voice Matching
-    const inputText = (this.problemText ? this.problemText.value : "") || (this.previewContextInput ? this.previewContextInput.value : "");
+    const inputText = (this.problemTextarea ? this.problemTextarea.value : "") || (this.previewContextInput ? this.previewContextInput.value : "");
     const detectedLang = result.detectedLanguage || 
       (window.speechEngine ? window.speechEngine.getActiveLanguage(inputText) : { code: 'en-IN', name: 'English (India)' });
     result.detectedLanguage = detectedLang;
@@ -796,8 +798,9 @@ class SmartAnalyzerController {
 
     if (!this.currentAnalysisResult) return;
 
+    const inputText = (this.problemTextarea ? this.problemTextarea.value : "") || (this.previewContextInput ? this.previewContextInput.value : "");
     const detectedLang = this.currentAnalysisResult.detectedLanguage || 
-      (window.speechEngine ? window.speechEngine.detectLanguage(this.problemText ? this.problemText.value : '') : { code: 'en-IN', name: 'English (India)' });
+      (window.speechEngine ? window.speechEngine.getActiveLanguage(inputText) : { code: 'en-IN', name: 'English (India)' });
 
     const narrative = window.speechEngine.buildNarrative(this.currentAnalysisResult, detectedLang);
 

@@ -172,7 +172,9 @@ Adhere strictly to these rules:
       whatNotToDo: aiResult.whatNotToDo || [],
       whenToGetHelp: aiResult.whenToGetHelp,
       emergencyCallRequired: Boolean(aiResult.emergencyCallRequired || aiResult.severity === "Critical"),
-      safetyDisclaimer: "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India."
+      safetyDisclaimer: "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India.",
+      detectedLanguage: activeLang,
+      uiLabels: translateResult({}, activeLang.code).uiLabels
     };
   } catch (error) {
     console.error("Gemini text analysis failed, falling back to local engine:", error.message);
@@ -280,13 +282,15 @@ CRITICAL PHOTO ANALYSIS RULES:
       whenToGetHelp: aiResult.whenToGetHelp,
       emergencyCallRequired: Boolean(aiResult.emergencyCallRequired || aiResult.severity === "Critical"),
       uncertaintyNotice: aiResult.uncertaintyNotice || null,
-      safetyDisclaimer: "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India."
+      safetyDisclaimer: "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India.",
+      detectedLanguage: activeLang,
+      uiLabels: translateResult({}, activeLang.code).uiLabels
     };
   } catch (error) {
     console.error("Gemini Vision failed, falling back to local heuristic analyzer:", error.message);
     const local = analyzePhotoLocal(base64Data, { description });
     local.fallbackReason = error.message;
-    return local;
+    return translateResult(local, activeLang.code);
   }
 }
 
