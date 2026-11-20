@@ -1,7 +1,7 @@
 /**
  * FirstAid+ Interactive Human Body Visualization Engine
  * High-performance, holographic medical anatomical model (Front & Back views).
- * Real-time symptom mapping, interactive 3D orbital drag, organ-specific pulsing,
+ * Real-time symptom mapping, interactive 3D orbital drag, organ-specific blinking & pulsing,
  * systemic fever/fatigue auras, and bidirectional synchronization with FirstAid+ triage.
  */
 
@@ -12,10 +12,10 @@
   const SYMPTOM_MAP = [
     {
       id: 'heart',
-      name: 'Chest & Heart (Cardiac)',
+      name: 'Chest & Heart (Cardiac Focus)',
       label: 'HEART / CHEST',
-      keywords: ['heart', 'chest', 'chest pain', 'angina', 'palpitation', 'heartbeat', 'crushing chest', 'cardiac', 'myocardial', 'heart attack'],
-      frontZones: ['zone-heart', 'zone-chest'],
+      keywords: ['heart', 'chest', 'chest pain', 'angina', 'palpitation', 'palpitations', 'heartbeat', 'crushing chest', 'cardiac', 'myocardial', 'heart attack', 'chest pressure', 'tightness in chest'],
+      frontZones: ['zone-heart', 'zone-lungs'],
       backZones: ['zone-back-upper'],
       view: 'front',
       color: '#ef4444',
@@ -25,7 +25,7 @@
       id: 'lungs',
       name: 'Lungs & Respiratory Airway',
       label: 'LUNGS / AIRWAY',
-      keywords: ['breath', 'breathing', 'lung', 'lungs', 'shortness of breath', 'asthma', 'wheeze', 'wheezing', 'suffocating', 'choking', 'airway', 'gasping', 'cant breathe', "cannot breathe"],
+      keywords: ['breath', 'breathing', 'lung', 'lungs', 'shortness of breath', 'asthma', 'wheeze', 'wheezing', 'suffocating', 'choking', 'airway', 'gasping', 'cant breathe', 'cannot breathe', 'cough', 'coughing'],
       frontZones: ['zone-lungs', 'zone-throat'],
       backZones: ['zone-back-upper'],
       view: 'front',
@@ -36,7 +36,7 @@
       id: 'head',
       name: 'Head & Cranium (Neurological)',
       label: 'HEAD / CRANIUM',
-      keywords: ['head', 'headache', 'migraine', 'forehead', 'temple', 'temples', 'dizzy', 'dizziness', 'vertigo', 'concussion', 'head trauma', 'slurred speech', 'face drooping', 'stroke', 'brain', 'scalp'],
+      keywords: ['head', 'headache', 'migraine', 'forehead', 'temple', 'temples', 'dizzy', 'dizziness', 'vertigo', 'concussion', 'head trauma', 'slurred speech', 'face drooping', 'stroke', 'brain', 'scalp', 'head ache'],
       frontZones: ['zone-head', 'zone-eyes'],
       backZones: ['zone-head-back'],
       view: 'front',
@@ -58,7 +58,7 @@
       id: 'jaw',
       name: 'Jaw & Dental / Oral Region',
       label: 'JAW / TEETH',
-      keywords: ['tooth', 'teeth', 'toothache', 'jaw', 'gum', 'gums', 'mouth', 'dental', 'tongue', 'tooth ake'],
+      keywords: ['tooth', 'teeth', 'toothache', 'jaw', 'gum', 'gums', 'mouth', 'dental', 'tongue', 'tooth ake', 'tooth ache'],
       frontZones: ['zone-jaw'],
       backZones: [],
       view: 'front',
@@ -69,7 +69,7 @@
       id: 'throat',
       name: 'Throat & Cervical Neck',
       label: 'NECK / THROAT',
-      keywords: ['throat', 'sore throat', 'swallow', 'swallowing', 'neck', 'vocal', 'pharynx', 'larynx', 'tonsil', 'choking on food'],
+      keywords: ['throat', 'sore throat', 'swallow', 'swallowing', 'neck', 'vocal', 'pharynx', 'larynx', 'tonsil', 'choking on food', 'clutched to neck'],
       frontZones: ['zone-throat'],
       backZones: ['zone-neck-back'],
       view: 'front',
@@ -80,8 +80,8 @@
       id: 'stomach',
       name: 'Abdomen & Digestive System',
       label: 'STOMACH / ABDOMEN',
-      keywords: ['stomach', 'abdomen', 'abdominal', 'belly', 'gut', 'acidity', 'gastritis', 'nausea', 'vomit', 'vomiting', 'diarrhea', 'indigestion', 'bloating', 'food poisoning', 'colic', 'stomac', 'belly pain'],
-      frontZones: ['zone-stomach'],
+      keywords: ['stomach', 'abdomen', 'abdominal', 'belly', 'gut', 'acidity', 'gastritis', 'nausea', 'vomit', 'vomiting', 'diarrhea', 'indigestion', 'bloating', 'food poisoning', 'colic', 'stomac', 'belly pain', 'stomach ache', 'stomach pain'],
+      frontZones: ['zone-stomach', 'zone-pelvis'],
       backZones: ['zone-back-lower'],
       view: 'front',
       color: '#f97316',
@@ -91,7 +91,7 @@
       id: 'back',
       name: 'Spine & Dorsal Back',
       label: 'SPINE / BACK',
-      keywords: ['back', 'back pain', 'spine', 'spinal', 'lower back', 'lumbago', 'slip disc', 'vertebra', 'lumbar', 'sciatica', 'mid back', 'upper back'],
+      keywords: ['back', 'back pain', 'spine', 'spinal', 'lower back', 'lumbago', 'slip disc', 'vertebra', 'lumbar', 'sciatica', 'mid back', 'upper back', 'spine/back'],
       frontZones: [],
       backZones: ['zone-spine', 'zone-back-upper', 'zone-back-lower'],
       view: 'back',
@@ -157,7 +157,7 @@
       id: 'ankles',
       name: 'Ankles & Achilles',
       label: 'ANKLES / SPRAIN',
-      keywords: ['ankle', 'ankles', 'sprain', 'twisted ankle', 'twisted foot', 'ankle pain', 'swollen ankle', 'cannot put weight'],
+      keywords: ['ankle', 'ankles', 'sprain', 'sprained', 'twisted ankle', 'twisted foot', 'ankle pain', 'swollen ankle', 'cannot put weight', 'twist'],
       frontZones: ['zone-ankle-left', 'zone-ankle-right'],
       backZones: ['zone-heels-back'],
       view: 'front',
@@ -201,9 +201,9 @@
       id: 'systemic',
       name: 'Whole Body Systemic State',
       label: 'WHOLE BODY (SYSTEMIC)',
-      keywords: ['fever', 'weakness', 'fatigue', 'chills', 'shivering', 'body pain', 'body ache', 'viral', 'unwell', 'dehydration', 'exhaustion', 'fainting', 'faint', 'malaise', 'lethargy', 'pale', 'high fever', 'flu'],
-      frontZones: ['zone-aura-front'],
-      backZones: ['zone-aura-back'],
+      keywords: ['fever', 'weakness', 'fatigue', 'chills', 'shivering', 'body pain', 'body ache', 'viral', 'unwell', 'dehydration', 'exhaustion', 'fainting', 'faint', 'malaise', 'lethargy', 'pale', 'high fever', 'flu', 'temperature'],
+      frontZones: [],
+      backZones: [],
       view: 'front',
       color: '#fbbf24',
       pulseType: 'aura'
@@ -228,7 +228,7 @@
       this.isDragging = false;
       this.activeTargets = new Set();
       this.systemicActive = false;
-      this.systemicType = null; // 'fever', 'fatigue', 'general'
+      this.systemicType = null;
 
       this.animFrameId = null;
 
@@ -247,12 +247,23 @@
       // Listen for when intro animation completes
       window.addEventListener('firstaid-intro-complete', () => {
         this.container.classList.add('ready-visible');
+        this.checkInitialInput();
       });
 
       // Also ensure it is visible if user visits directly or intro finishes
       setTimeout(() => {
-        if (this.container) this.container.classList.add('ready-visible');
+        if (this.container) {
+          this.container.classList.add('ready-visible');
+          this.checkInitialInput();
+        }
       }, 5200);
+    }
+
+    checkInitialInput() {
+      const textarea = document.getElementById('problem-description-input');
+      if (textarea && textarea.value.trim().length > 0) {
+        this.scanAndHighlightSymptoms(textarea.value);
+      }
     }
 
     bindControls() {
@@ -293,7 +304,6 @@
         if (!this.isDragging) return;
         const deltaX = clientX - this.dragStartX;
         this.rotationAngle += deltaX * 0.45;
-        // Clamp rotation between -60deg and +60deg for natural inspection
         this.rotationAngle = Math.max(-60, Math.min(60, this.rotationAngle));
         this.dragStartX = clientX;
         this.update3DTransform();
@@ -341,7 +351,8 @@
           this.hideTooltip();
         });
 
-        zone.addEventListener('click', () => {
+        zone.addEventListener('click', (e) => {
+          e.stopPropagation();
           const targetId = zone.getAttribute('data-target-id');
           const organName = zone.getAttribute('data-organ-name');
           if (targetId) {
@@ -353,14 +364,34 @@
 
     bindSymptomInputListener() {
       const textarea = document.getElementById('problem-description-input');
+      const chatInput = document.getElementById('chat-user-input');
+      const contextInput = document.getElementById('preview-context-input');
+
+      const triggerScan = (val) => {
+        this.scanAndHighlightSymptoms(val);
+      };
+
       if (textarea) {
-        // Real-time debounced symptom analysis as user types
-        let debounceTimer = null;
-        textarea.addEventListener('input', () => {
-          clearTimeout(debounceTimer);
-          debounceTimer = setTimeout(() => {
-            this.scanAndHighlightSymptoms(textarea.value);
-          }, 180);
+        ['input', 'keyup', 'change', 'paste'].forEach(evt => {
+          textarea.addEventListener(evt, () => {
+            setTimeout(() => triggerScan(textarea.value), 30);
+          });
+        });
+      }
+
+      if (chatInput) {
+        ['input', 'keyup', 'change', 'paste'].forEach(evt => {
+          chatInput.addEventListener(evt, () => {
+            setTimeout(() => triggerScan(chatInput.value), 30);
+          });
+        });
+      }
+
+      if (contextInput) {
+        ['input', 'keyup', 'change', 'paste'].forEach(evt => {
+          contextInput.addEventListener(evt, () => {
+            setTimeout(() => triggerScan(contextInput.value), 30);
+          });
         });
       }
 
@@ -369,7 +400,16 @@
       chips.forEach(chip => {
         chip.addEventListener('click', () => {
           const prompt = chip.getAttribute('data-prompt') || '';
-          setTimeout(() => this.scanAndHighlightSymptoms(prompt), 50);
+          setTimeout(() => triggerScan(prompt), 50);
+        });
+      });
+
+      // Quick zone locator chips
+      const quickChips = document.querySelectorAll('.quick-zone-chip');
+      quickChips.forEach(qChip => {
+        qChip.addEventListener('click', () => {
+          const text = qChip.textContent || '';
+          setTimeout(() => triggerScan(text), 50);
         });
       });
 
@@ -387,7 +427,6 @@
       const loop = () => {
         if (this.isAutoRotating && !this.isDragging) {
           t += 0.018;
-          // Gentle sinusoidal swaying between -18deg and +18deg
           this.rotationAngle = Math.sin(t) * 16;
           this.update3DTransform();
         }
@@ -472,7 +511,7 @@
         target.frontZones.forEach(zoneClass => {
           const els = this.container.querySelectorAll(`.${zoneClass}`);
           els.forEach(el => {
-            el.classList.add('highlighted-zone', `pulse-${target.pulseType}`);
+            el.classList.add('highlighted-zone', 'blinking-zone', `pulse-${target.pulseType}`);
             el.style.setProperty('--zone-glow-color', target.color);
           });
         });
@@ -481,7 +520,7 @@
         target.backZones.forEach(zoneClass => {
           const els = this.container.querySelectorAll(`.${zoneClass}`);
           els.forEach(el => {
-            el.classList.add('highlighted-zone', `pulse-${target.pulseType}`);
+            el.classList.add('highlighted-zone', 'blinking-zone', `pulse-${target.pulseType}`);
             el.style.setProperty('--zone-glow-color', target.color);
           });
         });
@@ -495,7 +534,7 @@
         }
       });
 
-      // Intelligent View Switching: if symptom is primarily on back (e.g. spine/back/kidneys) and user is on front, prompt or switch!
+      // Intelligent View Switching: if symptom is primarily on back and user is on front, switch!
       if (shouldSwitchBack && !shouldSwitchFront && this.currentView !== 'back') {
         this.switchView('back');
       } else if (shouldSwitchFront && this.currentView === 'back' && !shouldSwitchBack) {
@@ -505,7 +544,7 @@
       // Update HUD Labels
       const primaryTarget = matchedTargets[0];
       const combinedLabel = targetLabels.slice(0, 3).join(' • ');
-      this.setHudStatus(`TARGET: ${combinedLabel}`, primaryTarget.name);
+      this.setHudStatus(`⚡ BLINKING: ${combinedLabel}`, primaryTarget.name, true);
     }
 
     activateSystemicAura(type = 'fever') {
@@ -523,16 +562,26 @@
       this.systemicActive = false;
       this.systemicType = null;
 
-      const allHighlighted = this.container.querySelectorAll('.highlighted-zone');
+      // Safe DOM class removal on SVG elements (Never direct assignment to read-only className)
+      const allHighlighted = this.container.querySelectorAll('.highlighted-zone, .blinking-zone');
       allHighlighted.forEach(el => {
-        el.className = el.className.baseVal 
-          ? el.className.baseVal.replace(/highlighted-zone|pulse-[a-z]+/g, '').trim()
-          : el.className.replace(/highlighted-zone|pulse-[a-z]+/g, '').trim();
+        el.classList.remove(
+          'highlighted-zone',
+          'blinking-zone',
+          'pulse-cardiac',
+          'pulse-respiratory',
+          'pulse-focal',
+          'pulse-focus',
+          'pulse-neural',
+          'pulse-visceral',
+          'pulse-surface',
+          'pulse-aura'
+        );
       });
 
       const auras = this.container.querySelectorAll('.body-systemic-aura');
       auras.forEach(aura => {
-        aura.className = 'body-systemic-aura';
+        aura.classList.remove('active-aura', 'aura-fever', 'aura-fatigue', 'aura-general');
       });
     }
 
@@ -540,13 +589,14 @@
       this.clearActiveHighlights();
       this.rotationAngle = 0;
       this.switchView('front');
-      this.setHudStatus('IDLE MONITORING', 'All Systems Normal');
+      this.setHudStatus('IDLE MONITORING', 'All Systems Normal', false);
       this.update3DTransform();
     }
 
-    setHudStatus(statusTag, organDetails) {
+    setHudStatus(statusTag, organDetails, isBlinking = false) {
       if (this.hudStatusLabel) {
         this.hudStatusLabel.textContent = statusTag;
+        this.hudStatusLabel.classList.toggle('blinking-status', isBlinking);
       }
       if (this.hudOrganName) {
         this.hudOrganName.textContent = organDetails;

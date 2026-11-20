@@ -2765,59 +2765,137 @@ body {
 }
 
 /* ==========================================================================
-   ACTIVE SYMPTOM HIGHLIGHTING & PULSE EFFECTS
+   ACTIVE SYMPTOM HIGHLIGHTING & BLINK EFFECTS
+   High-visibility animated organ flashing, beacon radar pulse, and thermal wave.
    ========================================================================== */
 
-.anatomy-zone.highlighted-zone .zone-surface {
+/* 1. Organ Surface Blink / Flash Animation */
+.anatomy-zone.highlighted-zone .zone-surface,
+.anatomy-zone.blinking-zone .zone-surface {
   fill: var(--zone-glow-color, #ef4444) !important;
-  fill-opacity: 0.55 !important;
-  stroke: var(--zone-glow-color, #ef4444) !important;
-  stroke-width: 2.2px !important;
-  filter: drop-shadow(0 0 16px var(--zone-glow-color, #ef4444)) !important;
+  stroke: #ffffff !important;
+  animation: organHighIntensityBlink 0.9s ease-in-out infinite alternate !important;
 }
 
-.anatomy-zone.highlighted-zone .zone-target-beacon {
+@keyframes organHighIntensityBlink {
+  0% {
+    fill-opacity: 0.22;
+    stroke: var(--zone-glow-color, #ef4444);
+    stroke-opacity: 0.6;
+    stroke-width: 1.8px;
+    filter: drop-shadow(0 0 6px var(--zone-glow-color, #ef4444));
+  }
+  45% {
+    fill-opacity: 0.82;
+    stroke: #ffffff;
+    stroke-opacity: 1;
+    stroke-width: 3.5px;
+    filter: drop-shadow(0 0 22px var(--zone-glow-color, #ef4444)) drop-shadow(0 0 10px #ffffff);
+  }
+  100% {
+    fill-opacity: 0.95;
+    stroke: #ffffff;
+    stroke-opacity: 1;
+    stroke-width: 4.5px;
+    filter: drop-shadow(0 0 32px var(--zone-glow-color, #ef4444)) drop-shadow(0 0 16px #ffffff);
+  }
+}
+
+/* 2. Target Beacon Radar Pulse / Blink */
+.anatomy-zone.highlighted-zone .zone-target-beacon,
+.anatomy-zone.blinking-zone .zone-target-beacon {
   fill: #ffffff !important;
-  opacity: 1 !important;
-  filter: drop-shadow(0 0 8px #ffffff);
+  stroke: var(--zone-glow-color, #ef4444) !important;
+  stroke-width: 3px !important;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: beaconBlinkWave 0.9s cubic-bezier(0.16, 1, 0.3, 1) infinite !important;
 }
 
-/* Cardiac Pulse (Chest / Heart pain) */
+@keyframes beaconBlinkWave {
+  0% {
+    opacity: 1;
+    transform: scale(0.85);
+    filter: drop-shadow(0 0 6px #ffffff);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(2.2);
+    filter: drop-shadow(0 0 20px var(--zone-glow-color, #ef4444)) drop-shadow(0 0 10px #ffffff);
+  }
+  100% {
+    opacity: 0.35;
+    transform: scale(1.1);
+  }
+}
+
+/* 3. Cardiac Double-Thump Blink (Chest / Heart Pain) */
+.anatomy-zone.highlighted-zone .organ-heart-body,
+.anatomy-zone.blinking-zone .organ-heart-body,
 .anatomy-zone.highlighted-zone.pulse-cardiac .organ-heart-body {
-  animation: cardiacThump 1.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cardiacBlinkThump 0.95s cubic-bezier(0.2, 0.8, 0.3, 1) infinite !important;
 }
 
-@keyframes cardiacThump {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px #ef4444); }
-  14% { transform: scale(1.35); filter: drop-shadow(0 0 24px #ff1a40); }
-  28% { transform: scale(0.95); }
-  42% { transform: scale(1.18); filter: drop-shadow(0 0 16px #ef4444); }
+@keyframes cardiacBlinkThump {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px #ef4444);
+  }
+  15% {
+    transform: scale(1.45);
+    filter: drop-shadow(0 0 32px #ff0033) drop-shadow(0 0 16px #ffffff);
+  }
+  28% {
+    transform: scale(0.95);
+  }
+  45% {
+    transform: scale(1.28);
+    filter: drop-shadow(0 0 22px #ef4444);
+  }
 }
 
-/* Respiratory Pulse (Lungs / Airway) */
+/* 4. Respiratory Expansion & Blink (Lungs / Airway) */
+.anatomy-zone.highlighted-zone .organ-lung,
+.anatomy-zone.blinking-zone .organ-lung,
 .anatomy-zone.highlighted-zone.pulse-respiratory .organ-lung {
-  animation: respiratoryBreathe 2.4s ease-in-out infinite;
-  transform-origin: 150px 158px;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lungBlinkExpand 1.6s ease-in-out infinite !important;
 }
 
-@keyframes respiratoryBreathe {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px #06b6d4); }
-  50% { transform: scale(1.1); filter: drop-shadow(0 0 18px #22d3ee); }
+@keyframes lungBlinkExpand {
+  0%, 100% {
+    fill-opacity: 0.3;
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px #06b6d4);
+  }
+  50% {
+    fill-opacity: 0.85;
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 28px #22d3ee) drop-shadow(0 0 12px #ffffff);
+  }
 }
 
-/* Focal Beacon Pulse (Ankles, Knees, Head, Joints) */
-.anatomy-zone.highlighted-zone.pulse-focal .zone-target-beacon,
-.anatomy-zone.highlighted-zone.pulse-focus .zone-target-beacon,
-.anatomy-zone.highlighted-zone.pulse-neural .zone-target-beacon {
-  animation: focalBeaconGlow 1.5s ease-in-out infinite alternate;
+/* 5. Spine Segmented Vertebrae Blink (Back View) */
+.anatomy-zone.highlighted-zone.zone-spine circle,
+.anatomy-zone.blinking-zone.zone-spine circle {
+  animation: spineVertebraeBlink 0.9s ease-in-out infinite alternate !important;
 }
 
-@keyframes focalBeaconGlow {
-  0% { transform: scale(1); opacity: 0.75; }
-  100% { transform: scale(1.7); opacity: 1; filter: drop-shadow(0 0 12px #ffffff); }
+@keyframes spineVertebraeBlink {
+  0% {
+    fill: #e11d48;
+    filter: drop-shadow(0 0 4px #e11d48);
+  }
+  100% {
+    fill: #ffffff;
+    filter: drop-shadow(0 0 18px #ff2b56) drop-shadow(0 0 8px #ffffff);
+  }
 }
 
-/* Whole Body Systemic Aura (Fever, Fatigue, Chills, Viral) */
+/* 6. Whole Body Systemic Aura Thermal Wave Blink (Fever / Systemic) */
 .body-systemic-aura {
   opacity: 0;
   pointer-events: none;
@@ -2830,23 +2908,43 @@ body {
 
 .body-systemic-aura.active-aura .aura-silhouette {
   fill: url(#systemicAuraGrad);
-  stroke: #f59e0b;
-  stroke-width: 4px;
+  stroke-width: 4.5px;
   stroke-dasharray: 8 4;
-  animation: heatWaveAura 2.2s ease-in-out infinite alternate;
+  animation: heatWaveBlinkAura 1.4s ease-in-out infinite alternate !important;
 }
 
-@keyframes heatWaveAura {
+@keyframes heatWaveBlinkAura {
   0% {
-    stroke-opacity: 0.4;
+    stroke: #f59e0b;
+    stroke-opacity: 0.35;
     filter: drop-shadow(0 0 10px #f59e0b);
     transform: scale(0.995);
   }
-  100% {
-    stroke-opacity: 0.95;
-    filter: drop-shadow(0 0 25px #ef4444);
-    transform: scale(1.02);
+  50% {
+    stroke: #ef4444;
+    stroke-opacity: 1;
+    filter: drop-shadow(0 0 35px #ef4444) drop-shadow(0 0 15px #f59e0b);
+    transform: scale(1.025);
   }
+  100% {
+    stroke: #ff2b56;
+    stroke-opacity: 0.9;
+    filter: drop-shadow(0 0 45px #ff2b56);
+    transform: scale(1.01);
+  }
+}
+
+/* Active HUD status blink tag */
+.hud-status-badge.blinking-status {
+  background: rgba(220, 38, 38, 0.4) !important;
+  border-color: #ef4444 !important;
+  color: #fecaca !important;
+  animation: hudBadgeBlink 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes hudBadgeBlink {
+  0% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
+  100% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.95); }
 }
 
 /* Corner HUD Crosshairs */
