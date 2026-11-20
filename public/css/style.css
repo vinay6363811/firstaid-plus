@@ -2499,5 +2499,522 @@ body {
   }
 }
 
+/* ==========================================================================
+   INTERACTIVE 3D HUMAN BODY ANATOMY VISUALIZATION
+   Holographic medical locator, real-time symptom response, front/back views,
+   organ beacons, cardiac pulse, and systemic whole-body auras.
+   ========================================================================== */
+
+/* Main Analyzer Split Layout (2 Columns on Desktop) */
+.analyzer-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.95fr);
+  gap: 28px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.analyzer-main-column {
+  min-width: 0;
+  width: 100%;
+}
+
+.analyzer-body-column {
+  position: sticky;
+  top: 76px;
+  z-index: 30;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Holographic Medical HUD Container */
+.interactive-body-container {
+  background: linear-gradient(155deg, #070d18 0%, #0d172a 60%, #081120 100%);
+  border: 1.5px solid rgba(56, 189, 248, 0.28);
+  border-radius: 18px;
+  padding: 16px 16px 14px 16px;
+  box-shadow: 
+    0 16px 36px -8px rgba(0, 0, 0, 0.7),
+    0 0 24px rgba(14, 165, 233, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  opacity: 0.96;
+  transition: all 0.3s ease;
+}
+
+.interactive-body-container:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 
+    0 20px 42px -10px rgba(0, 0, 0, 0.8),
+    0 0 30px rgba(14, 165, 233, 0.2);
+}
+
+/* Top HUD Status Bar */
+.body-hud-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.16);
+  margin-bottom: 12px;
+}
+
+.hud-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+  animation: hudDotPulse 1.8s infinite;
+}
+
+.hud-title {
+  font-family: ui-monospace, SFMono-Regular, "Courier New", monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #38bdf8;
+  text-transform: uppercase;
+}
+
+.hud-status-badge {
+  font-family: ui-monospace, SFMono-Regular, "Courier New", monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #bae6fd;
+  background: rgba(3, 105, 161, 0.4);
+  border: 1px solid rgba(14, 165, 233, 0.5);
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+/* Detected Target Organ Focus Banner */
+.body-target-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  backdrop-filter: blur(6px);
+}
+
+.target-indicator-ring {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.target-icon {
+  font-size: 1rem;
+}
+
+.target-text-group {
+  min-width: 0;
+  flex: 1;
+}
+
+.target-label-micro {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.target-organ-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+/* 3D Perspective Stage Wrapper */
+.body-stage-wrapper {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 45%, rgba(14, 165, 233, 0.08) 0%, rgba(7, 13, 24, 0.9) 70%);
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.body-model-3d-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out;
+}
+
+.body-model-3d-wrapper:active {
+  cursor: grabbing;
+}
+
+/* SVG Anatomical Model */
+.svg-anatomy {
+  width: 100%;
+  height: 100%;
+  max-width: 250px;
+  max-height: 400px;
+  overflow: visible;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.8));
+}
+
+.body-contour {
+  transition: all 0.3s ease;
+}
+
+.internal-organ-detail {
+  fill: none;
+  stroke: #38bdf8;
+  stroke-width: 1.2;
+  stroke-opacity: 0.4;
+}
+
+/* Interactive Anatomical Zones */
+.anatomy-zone {
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anatomy-zone .zone-surface {
+  fill: rgba(30, 58, 138, 0.15);
+  stroke: rgba(56, 189, 248, 0.35);
+  stroke-width: 1.2;
+  transition: all 0.25s ease;
+}
+
+.anatomy-zone .zone-target-beacon {
+  fill: #38bdf8;
+  opacity: 0.4;
+  transition: all 0.25s ease;
+}
+
+/* Hovering on body part */
+.anatomy-zone:hover .zone-surface {
+  fill: rgba(56, 189, 248, 0.38) !important;
+  stroke: #38bdf8 !important;
+  stroke-width: 2px !important;
+  filter: drop-shadow(0 0 10px #38bdf8);
+}
+
+.anatomy-zone:hover .zone-target-beacon {
+  fill: #ffffff !important;
+  opacity: 1 !important;
+  r: 6px !important;
+}
+
+/* Specific Internal Organ Styling */
+.organ-lung {
+  fill: rgba(6, 182, 212, 0.22) !important;
+  stroke: rgba(6, 182, 212, 0.6) !important;
+}
+
+.organ-heart-body {
+  fill: #b91c1c;
+  stroke: #ff4d6d;
+  stroke-width: 1.8;
+  filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+  transform-origin: 158px 158px;
+}
+
+.organ-heart-halo {
+  fill: rgba(239, 68, 68, 0.18) !important;
+  stroke: rgba(239, 68, 68, 0.4) !important;
+}
+
+.organ-stomach {
+  fill: rgba(249, 115, 22, 0.22) !important;
+  stroke: rgba(249, 115, 22, 0.5) !important;
+}
+
+.organ-spine-track {
+  fill: rgba(225, 29, 72, 0.15) !important;
+  stroke: rgba(225, 29, 72, 0.5) !important;
+}
+
+/* ==========================================================================
+   ACTIVE SYMPTOM HIGHLIGHTING & PULSE EFFECTS
+   ========================================================================== */
+
+.anatomy-zone.highlighted-zone .zone-surface {
+  fill: var(--zone-glow-color, #ef4444) !important;
+  fill-opacity: 0.55 !important;
+  stroke: var(--zone-glow-color, #ef4444) !important;
+  stroke-width: 2.2px !important;
+  filter: drop-shadow(0 0 16px var(--zone-glow-color, #ef4444)) !important;
+}
+
+.anatomy-zone.highlighted-zone .zone-target-beacon {
+  fill: #ffffff !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px #ffffff);
+}
+
+/* Cardiac Pulse (Chest / Heart pain) */
+.anatomy-zone.highlighted-zone.pulse-cardiac .organ-heart-body {
+  animation: cardiacThump 1.2s ease-in-out infinite;
+}
+
+@keyframes cardiacThump {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px #ef4444); }
+  14% { transform: scale(1.35); filter: drop-shadow(0 0 24px #ff1a40); }
+  28% { transform: scale(0.95); }
+  42% { transform: scale(1.18); filter: drop-shadow(0 0 16px #ef4444); }
+}
+
+/* Respiratory Pulse (Lungs / Airway) */
+.anatomy-zone.highlighted-zone.pulse-respiratory .organ-lung {
+  animation: respiratoryBreathe 2.4s ease-in-out infinite;
+  transform-origin: 150px 158px;
+}
+
+@keyframes respiratoryBreathe {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px #06b6d4); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 18px #22d3ee); }
+}
+
+/* Focal Beacon Pulse (Ankles, Knees, Head, Joints) */
+.anatomy-zone.highlighted-zone.pulse-focal .zone-target-beacon,
+.anatomy-zone.highlighted-zone.pulse-focus .zone-target-beacon,
+.anatomy-zone.highlighted-zone.pulse-neural .zone-target-beacon {
+  animation: focalBeaconGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes focalBeaconGlow {
+  0% { transform: scale(1); opacity: 0.75; }
+  100% { transform: scale(1.7); opacity: 1; filter: drop-shadow(0 0 12px #ffffff); }
+}
+
+/* Whole Body Systemic Aura (Fever, Fatigue, Chills, Viral) */
+.body-systemic-aura {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.body-systemic-aura.active-aura {
+  opacity: 1;
+}
+
+.body-systemic-aura.active-aura .aura-silhouette {
+  fill: url(#systemicAuraGrad);
+  stroke: #f59e0b;
+  stroke-width: 4px;
+  stroke-dasharray: 8 4;
+  animation: heatWaveAura 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes heatWaveAura {
+  0% {
+    stroke-opacity: 0.4;
+    filter: drop-shadow(0 0 10px #f59e0b);
+    transform: scale(0.995);
+  }
+  100% {
+    stroke-opacity: 0.95;
+    filter: drop-shadow(0 0 25px #ef4444);
+    transform: scale(1.02);
+  }
+}
+
+/* Corner HUD Crosshairs */
+.body-hud-corner {
+  position: absolute;
+  font-family: ui-monospace, SFMono-Regular, "Courier New", monospace;
+  font-size: 0.85rem;
+  color: rgba(56, 189, 248, 0.45);
+  pointer-events: none;
+}
+
+.corner-tl { top: 8px; left: 8px; }
+.corner-tr { top: 8px; right: 8px; }
+.corner-bl { bottom: 8px; left: 8px; }
+.corner-br { bottom: 8px; right: 8px; }
+
+/* Interactive Floating Tooltip */
+.body-hover-tooltip {
+  position: absolute;
+  display: none;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid #38bdf8;
+  color: #f8fafc;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 50;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+/* Interactive Toolbar Controls */
+.body-controls-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 0.8fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.body-ctrl-btn {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  backdrop-filter: blur(6px);
+}
+
+.body-ctrl-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.6);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.body-ctrl-btn.active {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+/* Quick Region Chips Bar */
+.body-quick-chips {
+  margin-bottom: 12px;
+}
+
+.quick-chips-title {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.quick-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quick-zone-chip {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quick-zone-chip:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Medical Educational Disclaimer */
+.body-disclaimer-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  color: #94a3b8;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.disclaimer-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.body-disclaimer-box strong {
+  color: #cbd5e1;
+}
+
+/* Mobile & Tablet Responsiveness */
+@media (max-width: 991px) {
+  .analyzer-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .analyzer-body-column {
+    position: static;
+    margin-top: 10px;
+    order: -1; /* Display right below intro banner for clear context on mobile */
+  }
+  .body-stage-wrapper {
+    height: 360px;
+  }
+  .svg-anatomy {
+    max-height: 340px;
+  }
+}
+
+@media (max-width: 640px) {
+  .body-stage-wrapper {
+    height: 320px;
+  }
+  .svg-anatomy {
+    max-height: 300px;
+  }
+  .body-controls-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+  #body-reset-btn {
+    grid-column: span 2;
+  }
+}
+
+
 
 

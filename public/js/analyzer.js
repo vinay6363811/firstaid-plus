@@ -680,6 +680,12 @@ class SmartAnalyzerController {
     if (this.inputSection) this.inputSection.style.display = "none";
     if (this.resultsView) this.resultsView.classList.add("active");
 
+    // Sync with 3D Human Body Visualization
+    if (window.bodyVisualization && typeof window.bodyVisualization.scanAndHighlightSymptoms === 'function') {
+      const symptomQuery = (result.possibleEmergency || result.title || '') + ' ' + (result.whatHappened || '');
+      window.bodyVisualization.scanAndHighlightSymptoms(symptomQuery);
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 

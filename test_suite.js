@@ -218,7 +218,19 @@ async function runTests() {
     const splashJsText = await resSplashJs.text();
     assert(splashJsText.includes('CinematicIntroController'), 'splashIntro.js contains intro controller');
 
-    console.log('\n🎉 ALL 30 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n--- 6. Testing Interactive Human Body Visualization ---');
+    assert(htmlText.includes('interactive-body-container'), 'HTML contains interactive body container');
+    assert(htmlText.includes('svg-anatomy-front'), 'HTML includes front view anatomical model');
+    assert(htmlText.includes('svg-anatomy-back'), 'HTML includes back view anatomical model');
+    assert(htmlText.includes('body-model-3d-wrapper'), 'HTML includes 3D perspective stage');
+
+    const resBodyJs = await fetch('http://127.0.0.1:3000/js/bodyVisualization.js');
+    assert(resBodyJs.ok, 'bodyVisualization.js script is successfully served');
+    const bodyJsText = await resBodyJs.text();
+    assert(bodyJsText.includes('BodyVisualizationController'), 'bodyVisualization.js contains body visualization engine');
+    assert(bodyJsText.includes('SYMPTOM_MAP'), 'bodyVisualization.js contains comprehensive anatomical symptom map');
+
+    console.log('\n🎉 ALL 35 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);

@@ -224,442 +224,802 @@
         <img src="assets/steps-guide.svg" alt="How FirstAid+ Works: 1. Describe or Snap, 2. Instant Severity Triage, 3. Immediate Action" style="width: 100%; height: auto; display: block; border-radius: 12px;">
       </div>
 
-      <!-- Segmented Input Mode Tabs -->
-      <div class="analyzer-tabs" role="tablist">
-        <button id="tab-text-btn" class="tab-btn active" role="tab" aria-selected="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-          <span>Describe Problem</span>
-        </button>
-        <button id="tab-photo-btn" class="tab-btn" role="tab" aria-selected="false">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-          <span>Analyze Photograph</span>
-        </button>
-        <button id="tab-chat-btn" class="tab-btn" role="tab" aria-selected="false">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span>Smart Assistant (Chat)</span>
-        </button>
-      </div>
-
-      <!-- Input Section Wrapper -->
-      <div id="analyzer-input-section">
+      <!-- Segmented Input Mode Tabs & Layout Grid -->
+      <div class="analyzer-layout-grid">
         
-        <!-- Tab 1: Describe the Problem (Requirement 1.A) -->
-        <div id="tab-text-content" class="analyzer-tab-content active">
-          <div class="analyzer-card">
-            <div class="card-title-row">
-              <h2>
-                <span>📝 Describe What Happened</span>
-              </h2>
-            </div>
-
-            <!-- Visual Anatomy & Body Region Selector -->
-            <div style="margin-bottom: 16px;">
-              <span class="chips-label">🎯 Visual Body Region Selector (Tap to filter symptoms):</span>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 6px;">
-                <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('head')">
-                  <span style="font-size: 1.3rem;">🧠</span>
-                  <span>Head / Face</span>
-                </button>
-                <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('airway')">
-                  <span style="font-size: 1.3rem;">🫁</span>
-                  <span>Airway / Throat</span>
-                </button>
-                <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('chest')">
-                  <span style="font-size: 1.3rem;">🫀</span>
-                  <span>Chest / Heart</span>
-                </button>
-                <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('arm')">
-                  <span style="font-size: 1.3rem;">🩸</span>
-                  <span>Arm / Hand</span>
-                </button>
-                <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('leg')">
-                  <span style="font-size: 1.3rem;">🦵</span>
-                  <span>Leg / Ankle</span>
-                </button>
-                <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('systemic')">
-                  <span style="font-size: 1.3rem;">⚡</span>
-                  <span>Whole Body</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Example Prompt Chips (Requirement 1.A) -->
-            <div class="example-chips-container">
-              <span class="chips-label">Quick Example Prompts (Click to test):</span>
-              <div class="chips-row">
-                <button type="button" class="example-chip" data-prompt="My friend accidentally spilled boiling water on his hand.">
-                  🔥 Boiling water on hand
-                </button>
-                <button type="button" class="example-chip" data-prompt="A person fell down and is bleeding heavily from their knee with a deep cut.">
-                  🩸 Deep bleeding knee cut
-                </button>
-                <button type="button" class="example-chip" data-prompt="Child is choking on food, cannot breathe or cough, hands clutched to neck.">
-                  🫁 Choking & cannot breathe
-                </button>
-                <button type="button" class="example-chip" data-prompt="Grandmother has sudden face drooping on one side and slurred speech.">
-                  🧠 Face drooping & slurred speech
-                </button>
-                <button type="button" class="example-chip" data-prompt="Sudden severe crushing chest pressure radiating into left arm and shortness of breath.">
-                  ❤️ Crushing chest pain
-                </button>
-                <button type="button" class="example-chip" data-prompt="Tripped on stairs, twisted ankle severely, swollen and cannot put weight.">
-                  🦴 Twisted swollen ankle
-                </button>
-                <button type="button" class="example-chip" data-prompt="Bitten by a snake on foot, two puncture fang marks visible with burning pain.">
-                  🐍 Snakebite puncture marks
-                </button>
-                <button type="button" class="example-chip" data-prompt="Adult person collapsed on the floor, unresponsive and not breathing normally.">
-                  ⚡ Unconscious & not breathing
-                </button>
-                <button type="button" class="example-chip" data-prompt="Severe throbbing headache in temples and forehead for the past 4 hours.">
-                  🤕 Severe headache
-                </button>
-                <button type="button" class="example-chip" data-prompt="High fever with shivering chills and body aches since yesterday.">
-                  🌡️ High fever & chills
-                </button>
-                <button type="button" class="example-chip" data-prompt="Sharp stomach pain, bloating, and burning acidity after dinner.">
-                  🤢 Stomach pain & acidity
-                </button>
-                <button type="button" class="example-chip" data-prompt="Terrible throbbing toothache with swollen gums on lower jaw.">
-                  🦷 Toothache & swollen gum
-                </button>
-                <button type="button" class="example-chip" data-prompt="Red itchy hives and rash spreading on arms after wearing new sweater.">
-                  🔴 Skin rash & itching
-                </button>
-                <button type="button" class="example-chip" data-prompt="I have an unusual strange purple tingling feeling with random unidentifiable sensations.">
-                  ❓ Unknown problem test
-                </button>
-              </div>
-            </div>
-
-            <!-- Textarea Input (Requirement 1.A) -->
-            <div class="textarea-wrapper">
-              <textarea 
-                id="problem-description-input" 
-                class="problem-textarea" 
-                placeholder="Describe what happened... Example: A person fell down and is bleeding from their knee."
-                rows="5"
-              ></textarea>
-            </div>
-
-            <!-- Buttons & Actions (Requirement 1.A) -->
-            <div class="textarea-actions">
-              <div class="char-counter" id="char-counter">0 characters</div>
-              <div class="btn-group">
-                <button id="clear-text-btn" class="btn btn-secondary" type="button">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                  <span>Clear</span>
-                </button>
-                <button id="analyze-text-btn" class="btn btn-primary" type="button">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                  <span>Analyze Problem</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Loading Indicator for Text (Requirement 1.A & 8) -->
-            <div id="analyzer-status-box" class="analyzing-status-box">
-              <div class="spinner"></div>
-              <div id="analyzer-step-text" class="analyzing-step-text">Evaluating medical indicators...</div>
-            </div>
+        <!-- Left Column: Input Tabs, Problem Textarea, Results -->
+        <div class="analyzer-main-column">
+          <!-- Segmented Input Mode Tabs -->
+          <div class="analyzer-tabs" role="tablist">
+            <button id="tab-text-btn" class="tab-btn active" role="tab" aria-selected="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              <span>Describe Problem</span>
+            </button>
+            <button id="tab-photo-btn" class="tab-btn" role="tab" aria-selected="false">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <span>Analyze Photograph</span>
+            </button>
+            <button id="tab-chat-btn" class="tab-btn" role="tab" aria-selected="false">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <span>Smart Assistant (Chat)</span>
+            </button>
           </div>
-        </div>
 
-        <!-- Tab 2: Analyze a Photograph (Requirement 1.B & 4) -->
-        <div id="tab-photo-content" class="analyzer-tab-content">
-          <div class="analyzer-card">
-            <div class="card-title-row">
-              <h2>
-                <span>📷 Upload or Capture Injury Photo</span>
-              </h2>
-            </div>
-
-            <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 16px;">
-              Upload a clear photograph of a visible injury, accident scene, burn, swelling, bleeding, or other visible signs.
-            </p>
-
-            <!-- Sample Injury Photos Strip (Instant One-Click Testing) -->
-            <div class="sample-images-section">
-              <span class="chips-label">Or Click a Demonstration Injury Sample to Test:</span>
-              <div id="sample-images-grid" class="sample-grid"></div>
-            </div>
-
-            <!-- Drag and Drop Zone (Requirement 1.B) -->
-            <div id="photo-dropzone" class="dropzone-container">
-              <div class="dropzone-icon">📁</div>
-              <div class="dropzone-text">
-                <h3>Drag & Drop Injury Photo Here</h3>
-                <p>Accepts JPG, JPEG, PNG, and WEBP formats (Max 20MB)</p>
-              </div>
-              <div class="upload-button-row">
-                <button type="button" id="upload-photo-btn" class="btn btn-secondary">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                  <span>Upload Photo</span>
-                </button>
-                <button type="button" id="camera-capture-btn" class="btn btn-outline">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                  <span>Use Camera</span>
-                </button>
-              </div>
-              <input type="file" id="photo-file-input" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" capture="environment" style="display: none;">
-            </div>
-
-            <!-- Image Preview Card with Animated Scanner Beam (Requirement 1.B & 8) -->
-            <div id="image-preview-card" class="image-preview-card">
-              <div class="preview-content">
-                <!-- Scanner Frame with Laser Beam Effect -->
-                <div id="scanner-frame" class="scanner-frame">
-                  <img id="preview-img" class="preview-img" src="" alt="Injury Preview">
-                  <div class="scan-beam"></div>
-                  <div class="scanner-grid-overlay"></div>
+          <!-- Input Section Wrapper -->
+          <div id="analyzer-input-section">
+            
+            <!-- Tab 1: Describe the Problem (Requirement 1.A) -->
+            <div id="tab-text-content" class="analyzer-tab-content active">
+              <div class="analyzer-card">
+                <div class="card-title-row">
+                  <h2>
+                    <span>📝 Describe What Happened</span>
+                  </h2>
                 </div>
 
-                <!-- Preview File Details -->
-                <div class="preview-details">
-                  <div>
-                    <div class="file-meta-row">
-                      <div id="preview-file-name" class="file-name">injury_photo.jpg</div>
-                      <div id="preview-file-specs" class="file-specs">Format: JPEG • Size: 1.2 MB</div>
-                    </div>
-
-                    <label for="preview-context-input" style="font-size: 0.82rem; color: #64748b; display: block; margin-bottom: 4px;">
-                      Add brief context (Optional):
-                    </label>
-                    <input type="text" id="preview-context-input" class="optional-context-input" placeholder="e.g. Happened 15 mins ago, hot cooking oil splash">
-
-                    <!-- Upload / Analysis Progress Bar -->
-                    <div id="upload-progress-bar" class="progress-bar-container">
-                      <div id="upload-progress-fill" class="progress-bar-fill"></div>
-                    </div>
-                  </div>
-
-                  <div class="btn-group" style="margin-top: 12px;">
-                    <button type="button" id="remove-image-btn" class="btn btn-secondary">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                      <span>Remove / Change Image</span>
+                <!-- Visual Anatomy & Body Region Selector -->
+                <div style="margin-bottom: 16px;">
+                  <span class="chips-label">🎯 Visual Body Region Selector (Tap to filter symptoms):</span>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 6px;">
+                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('head')">
+                      <span style="font-size: 1.3rem;">🧠</span>
+                      <span>Head / Face</span>
                     </button>
-                    <button type="button" id="analyze-image-btn" class="btn btn-primary">
+                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('airway')">
+                      <span style="font-size: 1.3rem;">🫁</span>
+                      <span>Airway / Throat</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('chest')">
+                      <span style="font-size: 1.3rem;">🫀</span>
+                      <span>Chest / Heart</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('arm')">
+                      <span style="font-size: 1.3rem;">🩸</span>
+                      <span>Arm / Hand</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('leg')">
+                      <span style="font-size: 1.3rem;">🦵</span>
+                      <span>Leg / Ankle</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('systemic')">
+                      <span style="font-size: 1.3rem;">⚡</span>
+                      <span>Whole Body</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Example Prompt Chips (Requirement 1.A) -->
+                <div class="example-chips-container">
+                  <span class="chips-label">Quick Example Prompts (Click to test):</span>
+                  <div class="chips-row">
+                    <button type="button" class="example-chip" data-prompt="My friend accidentally spilled boiling water on his hand.">
+                      🔥 Boiling water on hand
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="A person fell down and is bleeding heavily from their knee with a deep cut.">
+                      🩸 Deep bleeding knee cut
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Child is choking on food, cannot breathe or cough, hands clutched to neck.">
+                      🫁 Choking & cannot breathe
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Grandmother has sudden face drooping on one side and slurred speech.">
+                      🧠 Face drooping & slurred speech
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Sudden severe crushing chest pressure radiating into left arm and shortness of breath.">
+                      ❤️ Crushing chest pain
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Tripped on stairs, twisted ankle severely, swollen and cannot put weight.">
+                      🦴 Twisted swollen ankle
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Bitten by a snake on foot, two puncture fang marks visible with burning pain.">
+                      🐍 Snakebite puncture marks
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Adult person collapsed on the floor, unresponsive and not breathing normally.">
+                      ⚡ Unconscious & not breathing
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Severe throbbing headache in temples and forehead for the past 4 hours.">
+                      🤕 Severe headache
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="High fever with shivering chills and body aches since yesterday.">
+                      🌡️ High fever & chills
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Sharp stomach pain, bloating, and burning acidity after dinner.">
+                      🤢 Stomach pain & acidity
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Terrible throbbing toothache with swollen gums on lower jaw.">
+                      🦷 Toothache & swollen gum
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="Red itchy hives and rash spreading on arms after wearing new sweater.">
+                      🔴 Skin rash & itching
+                    </button>
+                    <button type="button" class="example-chip" data-prompt="I have an unusual strange purple tingling feeling with random unidentifiable sensations.">
+                      ❓ Unknown problem test
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Textarea Input (Requirement 1.A) -->
+                <div class="textarea-wrapper">
+                  <textarea 
+                    id="problem-description-input" 
+                    class="problem-textarea" 
+                    placeholder="Describe what happened... Example: A person fell down and is bleeding from their knee."
+                    rows="5"
+                  ></textarea>
+                </div>
+
+                <!-- Buttons & Actions (Requirement 1.A) -->
+                <div class="textarea-actions">
+                  <div class="char-counter" id="char-counter">0 characters</div>
+                  <div class="btn-group">
+                    <button id="clear-text-btn" class="btn btn-secondary" type="button">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                      <span>Clear</span>
+                    </button>
+                    <button id="analyze-text-btn" class="btn btn-primary" type="button">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                      <span>Analyze Image</span>
+                      <span>Analyze Problem</span>
                     </button>
                   </div>
+                </div>
+
+                <!-- Loading Indicator for Text (Requirement 1.A & 8) -->
+                <div id="analyzer-status-box" class="analyzing-status-box">
+                  <div class="spinner"></div>
+                  <div id="analyzer-step-text" class="analyzing-step-text">Evaluating medical indicators...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2: Analyze a Photograph (Requirement 1.B & 4) -->
+            <div id="tab-photo-content" class="analyzer-tab-content">
+              <div class="analyzer-card">
+                <div class="card-title-row">
+                  <h2>
+                    <span>📷 Upload or Capture Injury Photo</span>
+                  </h2>
+                </div>
+
+                <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 16px;">
+                  Upload a clear photograph of a visible injury, accident scene, burn, swelling, bleeding, or other visible signs.
+                </p>
+
+                <!-- Sample Injury Photos Strip (Instant One-Click Testing) -->
+                <div class="sample-images-section">
+                  <span class="chips-label">Or Click a Demonstration Injury Sample to Test:</span>
+                  <div id="sample-images-grid" class="sample-grid"></div>
+                </div>
+
+                <!-- Drag and Drop Zone (Requirement 1.B) -->
+                <div id="photo-dropzone" class="dropzone-container">
+                  <div class="dropzone-icon">📁</div>
+                  <div class="dropzone-text">
+                    <h3>Drag & Drop Injury Photo Here</h3>
+                    <p>Accepts JPG, JPEG, PNG, and WEBP formats (Max 20MB)</p>
+                  </div>
+                  <div class="upload-button-row">
+                    <button type="button" id="upload-photo-btn" class="btn btn-secondary">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                      <span>Upload Photo</span>
+                    </button>
+                    <button type="button" id="camera-capture-btn" class="btn btn-outline">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                      <span>Use Camera</span>
+                    </button>
+                  </div>
+                  <input type="file" id="photo-file-input" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" capture="environment" style="display: none;">
+                </div>
+
+                <!-- Image Preview Card with Animated Scanner Beam (Requirement 1.B & 8) -->
+                <div id="image-preview-card" class="image-preview-card">
+                  <div class="preview-content">
+                    <!-- Scanner Frame with Laser Beam Effect -->
+                    <div id="scanner-frame" class="scanner-frame">
+                      <img id="preview-img" class="preview-img" src="" alt="Injury Preview">
+                      <div class="scan-beam"></div>
+                      <div class="scanner-grid-overlay"></div>
+                    </div>
+
+                    <!-- Preview File Details -->
+                    <div class="preview-details">
+                      <div>
+                        <div class="file-meta-row">
+                          <div id="preview-file-name" class="file-name">injury_photo.jpg</div>
+                          <div id="preview-file-specs" class="file-specs">Format: JPEG • Size: 1.2 MB</div>
+                        </div>
+
+                        <label for="preview-context-input" style="font-size: 0.82rem; color: #64748b; display: block; margin-bottom: 4px;">
+                          Add brief context (Optional):
+                        </label>
+                        <input type="text" id="preview-context-input" class="optional-context-input" placeholder="e.g. Happened 15 mins ago, hot cooking oil splash">
+
+                        <!-- Upload / Analysis Progress Bar -->
+                        <div id="upload-progress-bar" class="progress-bar-container">
+                          <div id="upload-progress-fill" class="progress-bar-fill"></div>
+                        </div>
+                      </div>
+
+                      <div class="btn-group" style="margin-top: 12px;">
+                        <button type="button" id="remove-image-btn" class="btn btn-secondary">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                          <span>Remove / Change Image</span>
+                        </button>
+                        <button type="button" id="analyze-image-btn" class="btn btn-primary">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                          <span>Analyze Image</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Tab 3: Conversational Emergency Assistant (Requirement 6) -->
+            <div id="tab-chat-content" class="analyzer-tab-content">
+              <div class="assistant-chat-container">
+                <div id="chat-messages-container" class="chat-messages">
+                  <!-- Dynamically populated messages -->
+                </div>
+                <div class="chat-input-bar">
+                  <input 
+                    type="text" 
+                    id="chat-user-input" 
+                    class="chat-text-input" 
+                    placeholder="Type your emergency query (e.g., 'My friend burned his hand with boiling water')..."
+                  >
+                  <button id="chat-send-btn" class="btn btn-primary" type="button">
+                    <span>Send</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  </button>
                 </div>
               </div>
             </div>
 
           </div>
+
+          <!-- =================================================================== -->
+          <!-- ANALYSIS RESULTS PAGE (Requirement 2, 3, 4, 8)                       -->
+          <!-- =================================================================== -->
+          <div id="analyzer-results-view">
+            
+            <!-- Serious Red Flag Emergency Alert Banner (Requirement 4) -->
+            <div id="results-emergency-alert-card" class="emergency-alert-banner" style="display: none;">
+              <div class="emergency-alert-icon">🚨</div>
+              <div class="emergency-alert-content">
+                <h3 id="emergency-alert-title">POTENTIAL MEDICAL EMERGENCY DETECTED</h3>
+                <p id="emergency-alert-desc">The described symptoms suggest a serious or potentially life-threatening emergency. Do not wait or rely solely on app advice. Call emergency medical services immediately.</p>
+                <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                  <a href="tel:112" class="btn btn-emergency-pulse">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <span>CALL 112 IMMEDIATELY (INDIA)</span>
+                  </a>
+                  <a href="tel:108" class="btn btn-secondary" style="font-weight: 700; border-color: #ef4444; color: #b91c1c;">
+                    <span>Call 108 (Ambulance)</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Unknown Problem & Uncertainty Card (Requirement 3 & 6) -->
+            <div id="results-unknown-problem-card" class="unknown-problem-card" style="display: none;">
+              <div class="unknown-card-header">
+                <div class="unknown-card-icon">🩺</div>
+                <div>
+                  <h3 style="margin: 0; font-size: 1.2rem; color: #0f172a;">Medical Consultation Recommended</h3>
+                  <span class="unknown-card-tag">Safety & Reliability Notice</span>
+                </div>
+              </div>
+              <div class="unknown-card-body">
+                <div class="unknown-primary-quote">
+                  "We're unable to provide reliable guidance for this problem. It's better to consult a doctor for proper medical advice."
+                </div>
+                <p class="unknown-secondary-msg">
+                  Your health is important. Please don't rely on uncertain information or self-medicate based on guesses.
+                </p>
+                <div class="unknown-actions-row">
+                  <button id="results-consult-doctor-btn" class="btn btn-consult-doctor" type="button" onclick="window.openDoctorConsultModal()">
+                    <span>🩺 Better to Consult a Doctor</span>
+                  </button>
+                  <a href="tel:104" class="btn btn-outline" style="border-color: #2563eb; color: #1e40af; font-weight: 700;">
+                    <span>📞 Call 104 (Free Health Helpline)</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results Header Card with Severity Badge (Requirement 2 & 8) -->
+            <div class="results-header-card">
+              <div class="results-top-meta">
+                <div id="results-engine-badge" class="engine-badge demo-mode">
+                  📋 FirstAid+ Clinical Triage Protocol
+                </div>
+                <!-- Severity Level Badge (Requirement 2) -->
+                <div id="results-severity-badge" class="severity-badge-large moderate">
+                  <span class="status-dot"></span>
+                  <span id="results-severity-text">Moderate Severity</span>
+                </div>
+              </div>
+
+              <h2 id="results-emergency-title" class="results-emergency-title">Possible Superficial Cut / Bleeding Injury</h2>
+              <p id="results-severity-desc" class="results-severity-desc">Medical evaluation may be needed.</p>
+
+              <!-- Uncertainty Notice (Requirement 4) -->
+              <div id="results-uncertainty-alert" class="uncertainty-alert" style="display: none;">
+                <span>⚠️</span>
+                <div>Image analysis cannot confirm the type or severity of this injury. Please seek professional medical evaluation if you are concerned.</div>
+              </div>
+
+              <!-- Observable Features (Photo Analysis Rules - Requirement 4) -->
+              <div id="results-observable-features-box" class="observable-features-box" style="display: none;">
+                <h4>Visually Observable Physical Features:</h4>
+                <ul id="results-observable-features-list" class="features-list"></ul>
+              </div>
+            </div>
+
+            <!-- Voice Guidance Player (Requirement 3.G) -->
+            <div class="voice-guidance-card">
+              <div class="voice-info">
+                <div id="voice-wave-anim" class="voice-wave" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+                <div>
+                  <div style="font-weight: 700; font-size: 1.05rem;">Voice Guidance</div>
+                  <div style="font-size: 0.85rem; color: #64748b;">Listen to spoken first-aid instructions</div>
+                </div>
+              </div>
+              <div class="voice-controls">
+                <button id="voice-play-btn" class="btn btn-secondary" type="button">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span>Play Instructions</span>
+                </button>
+                <button id="voice-pause-btn" class="btn btn-secondary" type="button" title="Pause">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                </button>
+                <button id="voice-stop-btn" class="btn btn-secondary" type="button" title="Stop">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16"></rect></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Structured Results Grid (Requirement 3.A through 3.E) -->
+            <div class="results-grid">
+              
+              <!-- Card A: What might have happened? -->
+              <div class="result-card">
+                <div class="result-card-header">
+                  <div class="card-icon icon-blue">💡</div>
+                  <h3>A. What Might Have Happened?</h3>
+                </div>
+                <p id="results-what-happened-text" style="color: #475569; font-size: 0.98rem; line-height: 1.5;"></p>
+              </div>
+
+              <!-- Card B: Warning signs -->
+              <div class="result-card">
+                <div class="result-card-header">
+                  <div class="card-icon icon-amber">⚠️</div>
+                  <h3>B. Warning Signs to Look For</h3>
+                </div>
+                <ul id="results-warning-signs-list" style="list-style: none; display: flex; flex-direction: column; gap: 8px; color: #92400e; font-size: 0.95rem;"></ul>
+              </div>
+
+              <!-- Card C: Immediate first aid (Numbered steps) -->
+              <div class="result-card" style="grid-column: 1 / -1;">
+                <div class="result-card-header">
+                  <div class="card-icon icon-emerald">🩺</div>
+                  <h3>C. Immediate First Aid (Actionable Steps)</h3>
+                </div>
+
+                <!-- Dynamic Clinical Pictorial Action Diagram -->
+                <div id="results-action-diagram-box" style="margin-bottom: 20px; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; background: #ffffff;">
+                  <img id="results-action-diagram-img" src="" alt="First Aid Procedure Diagram" style="width: 100%; max-height: 240px; object-fit: contain; display: block; margin: 0 auto;">
+                </div>
+
+                <ol id="results-first-aid-steps-list" class="steps-list"></ol>
+              </div>
+
+              <!-- Card D: What NOT to do -->
+              <div class="result-card">
+                <div class="result-card-header">
+                  <div class="card-icon icon-red">⛔</div>
+                  <h3>D. What NOT to Do (Harmful Actions)</h3>
+                </div>
+                <ul id="results-dont-list" class="dont-list"></ul>
+              </div>
+
+              <!-- Card E: When to get medical help -->
+              <div class="result-card">
+                <div class="result-card-header">
+                  <div class="card-icon icon-purple">🏥</div>
+                  <h3>E. When to Get Medical Help</h3>
+                </div>
+                <p id="results-when-help-text" style="color: #475569; font-size: 0.98rem; line-height: 1.5;"></p>
+              </div>
+
+            </div>
+
+            <!-- Bottom Action Bar (Requirement 3.F, 8) -->
+            <div class="results-action-bar">
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button id="back-to-analyzer-btn" class="btn btn-secondary" type="button">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  <span>Back</span>
+                </button>
+                <button id="analyze-another-btn" class="btn btn-secondary" type="button">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                  <span>Analyze Another Problem</span>
+                </button>
+              </div>
+
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <!-- Start Step-by-Step Guide Button -->
+                <button id="results-start-guide-btn" class="btn btn-primary" type="button">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span>Start Step-by-Step Guide</span>
+                </button>
+
+                <!-- Card F: Emergency Action - CALL 112 (Requirement 3.F) -->
+                <a id="results-call-112-btn" class="btn btn-emergency" href="tel:112">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <span>CALL 112 (INDIA EMERGENCY)</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
-        <!-- Tab 3: Conversational Emergency Assistant (Requirement 6) -->
-        <div id="tab-chat-content" class="analyzer-tab-content">
-          <div class="assistant-chat-container">
-            <div id="chat-messages-container" class="chat-messages">
-              <!-- Dynamically populated messages -->
+        <!-- Right Column: Interactive 3D Human Body Visualization -->
+        <aside class="analyzer-body-column" id="analyzer-body-column" aria-label="Interactive Human Body Anatomy Model">
+          <div id="interactive-body-container" class="interactive-body-container">
+            
+            <!-- Top HUD Status Bar -->
+            <div class="body-hud-header">
+              <div class="hud-header-left">
+                <span class="hud-pulse-dot" aria-hidden="true"></span>
+                <span class="hud-title">3D ANATOMICAL LOCATOR</span>
+              </div>
+              <div class="hud-header-right">
+                <span id="body-hud-status-label" class="hud-status-badge">LIVE SYNC</span>
+              </div>
             </div>
-            <div class="chat-input-bar">
-              <input 
-                type="text" 
-                id="chat-user-input" 
-                class="chat-text-input" 
-                placeholder="Type your emergency query (e.g., 'My friend burned his hand with boiling water')..."
-              >
-              <button id="chat-send-btn" class="btn btn-primary" type="button">
-                <span>Send</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+
+            <!-- Target Organ / Symptom Focus Callout Banner -->
+            <div class="body-target-banner">
+              <div class="target-indicator-ring">
+                <span class="target-icon">🎯</span>
+              </div>
+              <div class="target-text-group">
+                <div class="target-label-micro">LOCATED REGION</div>
+                <div id="body-hud-organ-name" class="target-organ-name">Idle Monitoring (Enter symptom)</div>
+              </div>
+            </div>
+
+            <!-- 3D Perspective Stage Wrapper -->
+            <div class="body-stage-wrapper">
+              <div id="body-model-3d-wrapper" class="body-model-3d-wrapper" title="Click & drag horizontally to rotate model angle">
+                
+                <!-- FRONT VIEW ANATOMY SVG -->
+                <svg id="svg-anatomy-front" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <radialGradient id="systemicAuraGrad" cx="50%" cy="50%" r="50%">
+                      <stop offset="60%" stop-color="#fbbf24" stop-opacity="0.25"/>
+                      <stop offset="90%" stop-color="#f59e0b" stop-opacity="0.6"/>
+                      <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
+                    </radialGradient>
+                    <filter id="bodyGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="4" result="blur"/>
+                      <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                    <linearGradient id="bodySkinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#0f1f38" stop-opacity="0.85"/>
+                      <stop offset="50%" stop-color="#142646" stop-opacity="0.75"/>
+                      <stop offset="100%" stop-color="#0b172a" stop-opacity="0.9"/>
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Whole Body Systemic Aura (for Fever, Fatigue, Chills, Viral) -->
+                  <g id="body-systemic-aura-front" class="body-systemic-aura">
+                    <path class="aura-silhouette" d="M 150 12 C 122 12 108 30 108 55 C 108 75 120 90 134 98 L 130 114 C 95 124 74 140 68 180 L 40 240 C 34 252 44 262 56 256 L 78 220 L 92 230 C 96 265 106 280 110 320 L 108 420 L 104 480 L 88 522 C 86 528 92 534 100 534 L 140 534 L 144 480 L 146 380 L 150 340 L 154 380 L 156 480 L 160 534 L 200 534 C 208 534 214 528 212 522 L 196 480 L 192 420 L 190 320 C 194 280 204 265 208 230 L 222 220 L 244 256 C 256 262 266 252 260 240 L 232 180 C 226 140 205 124 170 114 L 166 98 C 180 90 192 75 192 55 C 192 30 178 12 150 12 Z"/>
+                  </g>
+
+                  <!-- Base Anatomical Silhouette (Front) -->
+                  <g class="anatomy-silhouette-group">
+                    <!-- Head & Neck -->
+                    <path class="body-contour" d="M 150 16 C 128 16 116 32 116 56 C 116 78 128 90 138 98 L 138 114 C 110 120 94 135 88 170 L 64 235 C 60 245 68 254 78 248 L 94 205 L 102 228 C 105 255 112 278 115 315 L 114 410 L 112 470 L 100 514 C 98 520 102 526 110 526 L 138 526 L 140 480 L 142 375 L 148 330 L 152 330 L 158 375 L 160 480 L 162 526 L 190 526 C 198 526 202 520 200 514 L 188 470 L 186 410 L 185 315 C 188 278 195 255 198 228 L 206 205 L 222 248 C 232 254 240 245 236 235 L 212 170 C 206 135 190 120 162 114 L 162 98 C 172 90 184 78 184 56 C 184 32 172 16 150 16 Z" fill="url(#bodySkinGrad)" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.45"/>
+                    <!-- Clavicles / Chest Lines -->
+                    <path d="M 120 120 Q 150 128 180 120" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.35" fill="none"/>
+                    <!-- Sternum line -->
+                    <line x1="150" y1="124" x2="150" y2="200" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3" stroke-opacity="0.3"/>
+                  </g>
+
+                  <!-- 1. Head & Brain (Neurological / Cranial) -->
+                  <g class="anatomy-zone zone-head" data-target-id="head" data-organ-name="Head & Brain (Cranium)">
+                    <ellipse cx="150" cy="54" rx="30" ry="36" class="zone-surface"/>
+                    <!-- Stylized brain cortex sulci -->
+                    <path d="M 140 40 Q 146 34 154 38 Q 162 44 156 52 Q 148 56 142 48" class="internal-organ-detail"/>
+                    <path d="M 136 56 Q 144 62 152 60 Q 160 62 164 56" class="internal-organ-detail"/>
+                    <circle cx="150" cy="54" r="5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 2. Eyes & Vision -->
+                  <g class="anatomy-zone zone-eyes" data-target-id="eyes" data-organ-name="Eyes & Optical Region">
+                    <ellipse cx="138" cy="50" rx="5" ry="3.5" class="zone-surface"/>
+                    <ellipse cx="162" cy="50" rx="5" ry="3.5" class="zone-surface"/>
+                    <circle cx="138" cy="50" r="1.5" fill="#38bdf8"/>
+                    <circle cx="162" cy="50" r="1.5" fill="#38bdf8"/>
+                  </g>
+
+                  <!-- 3. Jaw & Oral / Dental -->
+                  <g class="anatomy-zone zone-jaw" data-target-id="jaw" data-organ-name="Jaw & Teeth / Dental">
+                    <path d="M 138 72 Q 150 82 162 72 Q 150 78 138 72 Z" class="zone-surface"/>
+                    <circle cx="150" cy="74" r="3.5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 4. Throat & Cervical Airway -->
+                  <g class="anatomy-zone zone-throat" data-target-id="throat" data-organ-name="Throat & Upper Airway">
+                    <rect x="142" y="94" width="16" height="20" rx="4" class="zone-surface"/>
+                    <line x1="145" y1="104" x2="155" y2="104" stroke="#06b6d4" stroke-width="1.5" stroke-opacity="0.8"/>
+                    <circle cx="150" cy="104" r="3.5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 5. Shoulders (Bilateral) -->
+                  <g class="anatomy-zone zone-shoulder-left" data-target-id="shoulders" data-organ-name="Right Shoulder Joint">
+                    <circle cx="94" cy="126" r="13" class="zone-surface"/>
+                    <circle cx="94" cy="126" r="4" class="zone-target-beacon"/>
+                  </g>
+                  <g class="anatomy-zone zone-shoulder-right" data-target-id="shoulders" data-organ-name="Left Shoulder Joint">
+                    <circle cx="206" cy="126" r="13" class="zone-surface"/>
+                    <circle cx="206" cy="126" r="4" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 6. Lungs & Respiratory Tract -->
+                  <g class="anatomy-zone zone-lungs" data-target-id="lungs" data-organ-name="Lungs & Bronchial Tree">
+                    <!-- Left Lung (Viewer Right) -->
+                    <path d="M 160 134 C 172 136 182 148 180 174 C 176 184 164 186 156 180 C 154 165 156 142 160 134 Z" class="zone-surface organ-lung"/>
+                    <!-- Right Lung (Viewer Left) -->
+                    <path d="M 140 134 C 128 136 118 148 120 174 C 124 184 136 186 144 180 C 146 165 144 142 140 134 Z" class="zone-surface organ-lung"/>
+                  </g>
+
+                  <!-- 7. Heart (Cardiac Organ with Active Pulse) -->
+                  <g class="anatomy-zone zone-heart" data-target-id="heart" data-organ-name="Heart (Cardiac Focus)">
+                    <circle cx="159" cy="158" r="16" class="zone-surface organ-heart-halo"/>
+                    <path d="M 158 148 C 151 142 142 150 150 162 L 158 171 L 166 162 C 174 150 165 142 158 148 Z" class="organ-heart-body"/>
+                    <circle cx="158" cy="159" r="4" class="zone-target-beacon heart-active-beacon"/>
+                  </g>
+
+                  <!-- 8. Stomach & Abdomen -->
+                  <g class="anatomy-zone zone-stomach" data-target-id="stomach" data-organ-name="Stomach & Digestive Tract">
+                    <path d="M 134 195 Q 155 188 166 200 Q 170 218 148 224 Q 130 220 134 195 Z" class="zone-surface organ-stomach"/>
+                    <circle cx="150" cy="208" r="4.5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 9. Pelvis & Groin -->
+                  <g class="anatomy-zone zone-pelvis" data-target-id="stomach" data-organ-name="Pelvic & Lower Abdominal Area">
+                    <path d="M 124 242 Q 150 252 176 242 L 180 272 Q 150 278 120 272 Z" class="zone-surface"/>
+                  </g>
+
+                  <!-- 10. Arms & Forearms -->
+                  <g class="anatomy-zone zone-arm-left" data-target-id="arms" data-organ-name="Right Arm (Brachial)">
+                    <rect x="74" y="148" width="16" height="52" rx="7" transform="rotate(16 82 174)" class="zone-surface"/>
+                  </g>
+                  <g class="anatomy-zone zone-arm-right" data-target-id="arms" data-organ-name="Left Arm (Brachial)">
+                    <rect x="210" y="148" width="16" height="52" rx="7" transform="rotate(-16 218 174)" class="zone-surface"/>
+                  </g>
+
+                  <!-- 11. Hands & Wrists -->
+                  <g class="anatomy-zone zone-hand-left" data-target-id="hands" data-organ-name="Right Hand & Wrist">
+                    <circle cx="64" cy="242" r="12" class="zone-surface"/>
+                    <circle cx="64" cy="242" r="4" class="zone-target-beacon"/>
+                  </g>
+                  <g class="anatomy-zone zone-hand-right" data-target-id="hands" data-organ-name="Left Hand & Wrist">
+                    <circle cx="236" cy="242" r="12" class="zone-surface"/>
+                    <circle cx="236" cy="242" r="4" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 12. Thighs -->
+                  <g class="anatomy-zone zone-thigh-left" data-target-id="legs" data-organ-name="Right Thigh (Femoral)">
+                    <rect x="116" y="278" width="22" height="74" rx="10" transform="rotate(2 127 315)" class="zone-surface"/>
+                  </g>
+                  <g class="anatomy-zone zone-thigh-right" data-target-id="legs" data-organ-name="Left Thigh (Femoral)">
+                    <rect x="162" y="278" width="22" height="74" rx="10" transform="rotate(-2 173 315)" class="zone-surface"/>
+                  </g>
+
+                  <!-- 13. Knees (Patella) -->
+                  <g class="anatomy-zone zone-knee-left" data-target-id="knees" data-organ-name="Right Knee Joint (Patella)">
+                    <circle cx="126" cy="368" r="13" class="zone-surface"/>
+                    <circle cx="126" cy="368" r="4.5" class="zone-target-beacon"/>
+                  </g>
+                  <g class="anatomy-zone zone-knee-right" data-target-id="knees" data-organ-name="Left Knee Joint (Patella)">
+                    <circle cx="174" cy="368" r="13" class="zone-surface"/>
+                    <circle cx="174" cy="368" r="4.5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 14. Calves & Shins -->
+                  <g class="anatomy-zone zone-calf-left" data-target-id="legs" data-organ-name="Right Calf & Shin">
+                    <rect x="115" y="388" width="18" height="68" rx="8" class="zone-surface"/>
+                  </g>
+                  <g class="anatomy-zone zone-calf-right" data-target-id="legs" data-organ-name="Left Calf & Shin">
+                    <rect x="167" y="388" width="18" height="68" rx="8" class="zone-surface"/>
+                  </g>
+
+                  <!-- 15. Ankles (Focused Beacon) -->
+                  <g class="anatomy-zone zone-ankle-left" data-target-id="ankles" data-organ-name="Right Ankle Joint">
+                    <circle cx="123" cy="472" r="11" class="zone-surface"/>
+                    <circle cx="123" cy="472" r="4" class="zone-target-beacon"/>
+                  </g>
+                  <g class="anatomy-zone zone-ankle-right" data-target-id="ankles" data-organ-name="Left Ankle Joint">
+                    <circle cx="177" cy="472" r="11" class="zone-surface"/>
+                    <circle cx="177" cy="472" r="4" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 16. Feet & Toes -->
+                  <g class="anatomy-zone zone-foot-left" data-target-id="feet" data-organ-name="Right Foot & Toes">
+                    <path d="M 112 486 L 134 486 L 132 522 L 102 522 Z" class="zone-surface"/>
+                    <circle cx="118" cy="510" r="3.5" class="zone-target-beacon"/>
+                  </g>
+                  <g class="anatomy-zone zone-foot-right" data-target-id="feet" data-organ-name="Left Foot & Toes">
+                    <path d="M 166 486 L 188 486 L 198 522 L 168 522 Z" class="zone-surface"/>
+                    <circle cx="182" cy="510" r="3.5" class="zone-target-beacon"/>
+                  </g>
+
+                </svg>
+
+                <!-- BACK VIEW ANATOMY SVG (Toggled via Switch or Back Symptoms) -->
+                <svg id="svg-anatomy-back" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet" style="display: none;">
+                  <defs>
+                    <linearGradient id="bodySkinBackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#0c192e" stop-opacity="0.88"/>
+                      <stop offset="50%" stop-color="#11223e" stop-opacity="0.78"/>
+                      <stop offset="100%" stop-color="#091424" stop-opacity="0.92"/>
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Whole Body Systemic Aura (Back) -->
+                  <g id="body-systemic-aura-back" class="body-systemic-aura">
+                    <path class="aura-silhouette" d="M 150 12 C 122 12 108 30 108 55 C 108 75 120 90 134 98 L 130 114 C 95 124 74 140 68 180 L 40 240 C 34 252 44 262 56 256 L 78 220 L 92 230 C 96 265 106 280 110 320 L 108 420 L 104 480 L 88 522 C 86 528 92 534 100 534 L 140 534 L 144 480 L 146 380 L 150 340 L 154 380 L 156 480 L 160 534 L 200 534 C 208 534 214 528 212 522 L 196 480 L 192 420 L 190 320 C 194 280 204 265 208 230 L 222 220 L 244 256 C 256 262 266 252 260 240 L 232 180 C 226 140 205 124 170 114 L 166 98 C 180 90 192 75 192 55 C 192 30 178 12 150 12 Z"/>
+                  </g>
+
+                  <!-- Back Silhouette -->
+                  <g class="anatomy-silhouette-group">
+                    <path class="body-contour" d="M 150 16 C 128 16 116 32 116 56 C 116 78 128 90 138 98 L 138 114 C 110 120 94 135 88 170 L 64 235 C 60 245 68 254 78 248 L 94 205 L 102 228 C 105 255 112 278 115 315 L 114 410 L 112 470 L 100 514 C 98 520 102 526 110 526 L 138 526 L 140 480 L 142 375 L 148 330 L 152 330 L 158 375 L 160 480 L 162 526 L 190 526 C 198 526 202 520 200 514 L 188 470 L 186 410 L 185 315 C 188 278 195 255 198 228 L 206 205 L 222 248 C 232 254 240 245 236 235 L 212 170 C 206 135 190 120 162 114 L 162 98 C 172 90 184 78 184 56 C 184 32 172 16 150 16 Z" fill="url(#bodySkinBackGrad)" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.45"/>
+                    <!-- Scapular Winging lines -->
+                    <path d="M 122 135 Q 115 155 128 172" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.35" fill="none"/>
+                    <path d="M 178 135 Q 185 155 172 172" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.35" fill="none"/>
+                  </g>
+
+                  <!-- 1. Posterior Cranium / Occipital -->
+                  <g class="anatomy-zone zone-head-back" data-target-id="head" data-organ-name="Posterior Head & Occipital">
+                    <ellipse cx="150" cy="54" rx="30" ry="36" class="zone-surface"/>
+                    <circle cx="150" cy="62" r="5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 2. Cervical Spine & Nape -->
+                  <g class="anatomy-zone zone-neck-back" data-target-id="throat" data-organ-name="Nape & Cervical Spine">
+                    <rect x="142" y="94" width="16" height="20" rx="4" class="zone-surface"/>
+                    <circle cx="150" cy="104" r="3.5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 3. Spinal Column (Vertebrae chain - Cervical, Thoracic, Lumbar, Sacral) -->
+                  <g class="anatomy-zone zone-spine" data-target-id="back" data-organ-name="Vertebral Column (Entire Spine)">
+                    <rect x="145" y="116" width="10" height="140" rx="4" class="zone-surface organ-spine-track"/>
+                    <!-- Segmented vertebrae discs -->
+                    <circle cx="150" cy="122" r="3" fill="#e11d48"/>
+                    <circle cx="150" cy="138" r="3" fill="#e11d48"/>
+                    <circle cx="150" cy="154" r="3" fill="#e11d48"/>
+                    <circle cx="150" cy="170" r="3" fill="#e11d48"/>
+                    <circle cx="150" cy="186" r="3.5" fill="#e11d48"/>
+                    <circle cx="150" cy="202" r="3.5" fill="#e11d48"/>
+                    <circle cx="150" cy="218" r="4" fill="#e11d48"/>
+                    <circle cx="150" cy="234" r="4" fill="#e11d48"/>
+                    <circle cx="150" cy="250" r="4" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 4. Upper Back / Rhomboids -->
+                  <g class="anatomy-zone zone-back-upper" data-target-id="back" data-organ-name="Upper Back (Trapezius & Scapula)">
+                    <path d="M 120 125 L 180 125 L 175 180 L 125 180 Z" class="zone-surface"/>
+                  </g>
+
+                  <!-- 5. Lower Back (Lumbar) & Kidneys -->
+                  <g class="anatomy-zone zone-back-lower" data-target-id="back" data-organ-name="Lower Back (Lumbar) & Renal Flank">
+                    <path d="M 125 186 L 175 186 L 172 238 L 128 238 Z" class="zone-surface"/>
+                    <!-- Kidneys (Bilateral) -->
+                    <ellipse cx="132" cy="204" rx="7" ry="11" fill="#9333ea" fill-opacity="0.6"/>
+                    <ellipse cx="168" cy="204" rx="7" ry="11" fill="#9333ea" fill-opacity="0.6"/>
+                    <circle cx="132" cy="204" r="3" class="zone-target-beacon"/>
+                    <circle cx="168" cy="204" r="3" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 6. Gluteal Region -->
+                  <g class="anatomy-zone zone-glutes" data-target-id="back" data-organ-name="Gluteal & Sacrum">
+                    <path d="M 122 248 Q 150 242 178 248 L 182 288 Q 150 292 118 288 Z" class="zone-surface"/>
+                  </g>
+
+                  <!-- 7. Hamstrings -->
+                  <g class="anatomy-zone zone-hamstrings-back" data-target-id="legs" data-organ-name="Posterior Thighs (Hamstrings)">
+                    <rect x="116" y="294" width="22" height="66" rx="8" class="zone-surface"/>
+                    <rect x="162" y="294" width="22" height="66" rx="8" class="zone-surface"/>
+                  </g>
+
+                  <!-- 8. Posterior Knees (Popliteal) -->
+                  <g class="anatomy-zone zone-knees-back" data-target-id="knees" data-organ-name="Posterior Knees (Popliteal)">
+                    <circle cx="126" cy="368" r="12" class="zone-surface"/>
+                    <circle cx="174" cy="368" r="12" class="zone-surface"/>
+                    <circle cx="126" cy="368" r="4" class="zone-target-beacon"/>
+                    <circle cx="174" cy="368" r="4" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 9. Calves & Achilles -->
+                  <g class="anatomy-zone zone-calves-back" data-target-id="legs" data-organ-name="Calves & Achilles Tendons">
+                    <rect x="115" y="388" width="18" height="74" rx="8" class="zone-surface"/>
+                    <rect x="167" y="388" width="18" height="74" rx="8" class="zone-surface"/>
+                  </g>
+
+                  <!-- 10. Heels -->
+                  <g class="anatomy-zone zone-heels-back" data-target-id="feet" data-organ-name="Heels & Calcaneus">
+                    <circle cx="124" cy="492" r="11" class="zone-surface"/>
+                    <circle cx="176" cy="492" r="11" class="zone-surface"/>
+                    <circle cx="124" cy="492" r="3.5" class="zone-target-beacon"/>
+                    <circle cx="176" cy="492" r="3.5" class="zone-target-beacon"/>
+                  </g>
+                </svg>
+
+              </div>
+
+              <!-- Interactive Floating Tooltip -->
+              <div id="body-hover-tooltip" class="body-hover-tooltip" aria-hidden="true"></div>
+
+              <!-- Corner HUD Medical Crosshairs -->
+              <div class="body-hud-corner corner-tl">┌</div>
+              <div class="body-hud-corner corner-tr">┐</div>
+              <div class="body-hud-corner corner-bl">└</div>
+              <div class="body-hud-corner corner-br">┘</div>
+            </div>
+
+            <!-- Interactive Toolbar Controls -->
+            <div class="body-controls-toolbar">
+              <button id="body-view-toggle-btn" class="body-ctrl-btn" type="button" title="Switch between Front and Back views">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 4v12m0 0l4-4m-4 4l-4-4"/></svg>
+                <span>View: Front</span>
+              </button>
+
+              <button id="body-rotate-toggle-btn" class="body-ctrl-btn active" type="button" title="Toggle gentle idle rotation">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+                <span>Auto-Rotate: ON</span>
+              </button>
+
+              <button id="body-reset-btn" class="body-ctrl-btn" type="button" title="Reset model highlights to neutral">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                <span>Reset</span>
               </button>
             </div>
-          </div>
-        </div>
 
-      </div>
-
-      <!-- =================================================================== -->
-      <!-- ANALYSIS RESULTS PAGE (Requirement 2, 3, 4, 8)                       -->
-      <!-- =================================================================== -->
-      <div id="analyzer-results-view">
-        
-        <!-- Serious Red Flag Emergency Alert Banner (Requirement 4) -->
-        <div id="results-emergency-alert-card" class="emergency-alert-banner" style="display: none;">
-          <div class="emergency-alert-icon">🚨</div>
-          <div class="emergency-alert-content">
-            <h3 id="emergency-alert-title">POTENTIAL MEDICAL EMERGENCY DETECTED</h3>
-            <p id="emergency-alert-desc">The described symptoms suggest a serious or potentially life-threatening emergency. Do not wait or rely solely on app advice. Call emergency medical services immediately.</p>
-            <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
-              <a href="tel:112" class="btn btn-emergency-pulse">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                <span>CALL 112 IMMEDIATELY (INDIA)</span>
-              </a>
-              <a href="tel:108" class="btn btn-secondary" style="font-weight: 700; border-color: #ef4444; color: #b91c1c;">
-                <span>Call 108 (Ambulance)</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Unknown Problem & Uncertainty Card (Requirement 3 & 6) -->
-        <div id="results-unknown-problem-card" class="unknown-problem-card" style="display: none;">
-          <div class="unknown-card-header">
-            <div class="unknown-card-icon">🩺</div>
-            <div>
-              <h3 style="margin: 0; font-size: 1.2rem; color: #0f172a;">Medical Consultation Recommended</h3>
-              <span class="unknown-card-tag">Safety & Reliability Notice</span>
-            </div>
-          </div>
-          <div class="unknown-card-body">
-            <div class="unknown-primary-quote">
-              "We're unable to provide reliable guidance for this problem. It's better to consult a doctor for proper medical advice."
-            </div>
-            <p class="unknown-secondary-msg">
-              Your health is important. Please don't rely on uncertain information or self-medicate based on guesses.
-            </p>
-            <div class="unknown-actions-row">
-              <button id="results-consult-doctor-btn" class="btn btn-consult-doctor" type="button" onclick="window.openDoctorConsultModal()">
-                <span>🩺 Better to Consult a Doctor</span>
-              </button>
-              <a href="tel:104" class="btn btn-outline" style="border-color: #2563eb; color: #1e40af; font-weight: 700;">
-                <span>📞 Call 104 (Free Health Helpline)</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Results Header Card with Severity Badge (Requirement 2 & 8) -->
-        <div class="results-header-card">
-          <div class="results-top-meta">
-            <div id="results-engine-badge" class="engine-badge demo-mode">
-              📋 FirstAid+ Clinical Triage Protocol
-            </div>
-            <!-- Severity Level Badge (Requirement 2) -->
-            <div id="results-severity-badge" class="severity-badge-large moderate">
-              <span class="status-dot"></span>
-              <span id="results-severity-text">Moderate Severity</span>
-            </div>
-          </div>
-
-          <h2 id="results-emergency-title" class="results-emergency-title">Possible Superficial Cut / Bleeding Injury</h2>
-          <p id="results-severity-desc" class="results-severity-desc">Medical evaluation may be needed.</p>
-
-          <!-- Uncertainty Notice (Requirement 4) -->
-          <div id="results-uncertainty-alert" class="uncertainty-alert" style="display: none;">
-            <span>⚠️</span>
-            <div>Image analysis cannot confirm the type or severity of this injury. Please seek professional medical evaluation if you are concerned.</div>
-          </div>
-
-          <!-- Observable Features (Photo Analysis Rules - Requirement 4) -->
-          <div id="results-observable-features-box" class="observable-features-box" style="display: none;">
-            <h4>Visually Observable Physical Features:</h4>
-            <ul id="results-observable-features-list" class="features-list"></ul>
-          </div>
-        </div>
-
-        <!-- Voice Guidance Player (Requirement 3.G) -->
-        <div class="voice-guidance-card">
-          <div class="voice-info">
-            <div id="voice-wave-anim" class="voice-wave" aria-hidden="true">
-              <span></span><span></span><span></span><span></span>
-            </div>
-            <div>
-              <div style="font-weight: 700; font-size: 1.05rem;">Voice Guidance</div>
-              <div style="font-size: 0.85rem; color: #64748b;">Listen to spoken first-aid instructions</div>
-            </div>
-          </div>
-          <div class="voice-controls">
-            <button id="voice-play-btn" class="btn btn-secondary" type="button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              <span>Play Instructions</span>
-            </button>
-            <button id="voice-pause-btn" class="btn btn-secondary" type="button" title="Pause">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-            </button>
-            <button id="voice-stop-btn" class="btn btn-secondary" type="button" title="Stop">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16"></rect></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Structured Results Grid (Requirement 3.A through 3.E) -->
-        <div class="results-grid">
-          
-          <!-- Card A: What might have happened? -->
-          <div class="result-card">
-            <div class="result-card-header">
-              <div class="card-icon icon-blue">💡</div>
-              <h3>A. What Might Have Happened?</h3>
-            </div>
-            <p id="results-what-happened-text" style="color: #475569; font-size: 0.98rem; line-height: 1.5;"></p>
-          </div>
-
-          <!-- Card B: Warning signs -->
-          <div class="result-card">
-            <div class="result-card-header">
-              <div class="card-icon icon-amber">⚠️</div>
-              <h3>B. Warning Signs to Look For</h3>
-            </div>
-            <ul id="results-warning-signs-list" style="list-style: none; display: flex; flex-direction: column; gap: 8px; color: #92400e; font-size: 0.95rem;"></ul>
-          </div>
-
-          <!-- Card C: Immediate first aid (Numbered steps) -->
-          <div class="result-card" style="grid-column: 1 / -1;">
-            <div class="result-card-header">
-              <div class="card-icon icon-emerald">🩺</div>
-              <h3>C. Immediate First Aid (Actionable Steps)</h3>
+            <!-- Quick Region Click Bar -->
+            <div class="body-quick-chips">
+              <span class="quick-chips-title">Quick Anatomical Locators:</span>
+              <div class="quick-chips-row">
+                <button type="button" class="quick-zone-chip" onclick="window.filterByBodyRegion('head')">🧠 Head</button>
+                <button type="button" class="quick-zone-chip" onclick="window.filterByBodyRegion('chest')">🫀 Chest/Heart</button>
+                <button type="button" class="quick-zone-chip" onclick="window.filterByBodyRegion('airway')">🫁 Lungs</button>
+                <button type="button" class="quick-zone-chip" onclick="window.filterByBodyRegion('stomach')">🤢 Stomach</button>
+                <button type="button" class="quick-zone-chip" onclick="window.filterByBodyRegion('back')">🦴 Spine/Back</button>
+                <button type="button" class="quick-zone-chip" onclick="window.filterByBodyRegion('leg')">🦵 Ankle/Knee</button>
+                <button type="button" class="quick-zone-chip" onclick="window.filterByBodyRegion('systemic')">🌡️ Fever (Whole)</button>
+              </div>
             </div>
 
-            <!-- Dynamic Clinical Pictorial Action Diagram -->
-            <div id="results-action-diagram-box" style="margin-bottom: 20px; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; background: #ffffff;">
-              <img id="results-action-diagram-img" src="" alt="First Aid Procedure Diagram" style="width: 100%; max-height: 240px; object-fit: contain; display: block; margin: 0 auto;">
+            <!-- Medical Educational Disclaimer (Requirement 9) -->
+            <div class="body-disclaimer-box">
+              <span class="disclaimer-icon">ℹ️</span>
+              <span><strong>Anatomical Locator:</strong> For educational symptom identification only. Does not replace physician diagnosis. In emergencies, call 112 immediately.</span>
             </div>
 
-            <ol id="results-first-aid-steps-list" class="steps-list"></ol>
           </div>
-
-          <!-- Card D: What NOT to do -->
-          <div class="result-card">
-            <div class="result-card-header">
-              <div class="card-icon icon-red">⛔</div>
-              <h3>D. What NOT to Do (Harmful Actions)</h3>
-            </div>
-            <ul id="results-dont-list" class="dont-list"></ul>
-          </div>
-
-          <!-- Card E: When to get medical help -->
-          <div class="result-card">
-            <div class="result-card-header">
-              <div class="card-icon icon-purple">🏥</div>
-              <h3>E. When to Get Medical Help</h3>
-            </div>
-            <p id="results-when-help-text" style="color: #475569; font-size: 0.98rem; line-height: 1.5;"></p>
-          </div>
-
-        </div>
-
-        <!-- Bottom Action Bar (Requirement 3.F, 8) -->
-        <div class="results-action-bar">
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button id="back-to-analyzer-btn" class="btn btn-secondary" type="button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-              <span>Back</span>
-            </button>
-            <button id="analyze-another-btn" class="btn btn-secondary" type="button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-              <span>Analyze Another Problem</span>
-            </button>
-          </div>
-
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <!-- Start Step-by-Step Guide Button -->
-            <button id="results-start-guide-btn" class="btn btn-primary" type="button">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              <span>Start Step-by-Step Guide</span>
-            </button>
-
-            <!-- Card F: Emergency Action - CALL 112 (Requirement 3.F) -->
-            <a id="results-call-112-btn" class="btn btn-emergency" href="tel:112">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-              <span>CALL 112 (INDIA EMERGENCY)</span>
-            </a>
-          </div>
-        </div>
+        </aside>
 
       </div>
 
@@ -1084,6 +1444,7 @@
 
   <!-- Application Scripts -->
   <script src="js/splashIntro.js"></script>
+  <script src="js/bodyVisualization.js"></script>
   <script src="js/samples.js"></script>
   <script src="js/stepGuide.js"></script>
   <script src="js/metronome.js"></script>

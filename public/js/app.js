@@ -153,13 +153,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       airway: "Child is choking on food, cannot breathe or cough, hands clutched to neck.",
       chest: "Sudden severe crushing chest pressure radiating into left arm and shortness of breath.",
       arm: "My friend accidentally spilled boiling water on his hand and wrist.",
-      leg: "Sudden painful muscle cramp in right calf, leg feels locked.",
+      leg: "Tripped on stairs, twisted ankle severely, swollen and cannot put weight.",
+      stomach: "Sharp stomach pain, bloating, and burning acidity after dinner.",
+      back: "Severe lower back pain and spinal stiffness, difficulty bending or walking.",
       systemic: "Person having high fever, severe chills, shivering, and body aches."
     };
     if (input && presets[region]) {
       input.value = presets[region];
       if (counter) counter.textContent = `${presets[region].length} characters`;
       input.focus();
+      if (window.bodyVisualization && typeof window.bodyVisualization.scanAndHighlightSymptoms === 'function') {
+        window.bodyVisualization.scanAndHighlightSymptoms(presets[region]);
+      }
     }
   };
 
