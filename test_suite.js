@@ -263,6 +263,11 @@ async function runTests() {
     assert(htmlText.includes('data-lang="en-IN"'), 'HTML includes Indian English language selector');
     assert(htmlText.includes('id="settings-language-select"'), 'HTML has language preference select in Settings');
     assert(htmlText.includes('id="voice-change-lang-btn"'), 'HTML has quick change language button in Voice Player');
+    assert(htmlText.includes('id="section-describe-title"'), 'HTML has dynamic section describe title');
+    assert(htmlText.includes('id="region-selector-label"'), 'HTML has dynamic body region selector label');
+    assert(htmlText.includes('data-chip-id="burns"'), 'HTML has example prompt chips with language key IDs');
+    assert(htmlText.includes('id="clear-btn-text"'), 'HTML has dynamic clear button text');
+    assert(htmlText.includes('id="analyze-btn-text"'), 'HTML has dynamic analyze button text');
 
     console.log('\n--- 9. Testing Multilingual Output Matching Entered Language ---');
     // Scenario 1: Kannada symptom input -> Given answer must be in Kannada

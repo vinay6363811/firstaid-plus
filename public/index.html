@@ -337,85 +337,85 @@
               <div class="analyzer-card">
                 <div class="card-title-row">
                   <h2>
-                    <span>📝 Describe What Happened</span>
+                    <span id="section-describe-title">📝 Describe What Happened</span>
                   </h2>
                 </div>
 
                 <!-- Visual Anatomy & Body Region Selector -->
                 <div style="margin-bottom: 16px;">
-                  <span class="chips-label">🎯 Visual Body Region Selector (Tap to filter symptoms):</span>
+                  <span class="chips-label" id="region-selector-label">🎯 Visual Body Region Selector (Tap to filter symptoms):</span>
                   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 6px;">
-                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('head')">
+                    <button type="button" class="btn btn-secondary region-filter-btn" data-region="head" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('head')">
                       <span style="font-size: 1.3rem;">🧠</span>
-                      <span>Head / Face</span>
+                      <span id="region-head-text">Head / Face</span>
                     </button>
-                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('airway')">
+                    <button type="button" class="btn btn-secondary region-filter-btn" data-region="airway" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('airway')">
                       <span style="font-size: 1.3rem;">🫁</span>
-                      <span>Airway / Throat</span>
+                      <span id="region-airway-text">Airway / Throat</span>
                     </button>
-                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('chest')">
+                    <button type="button" class="btn btn-secondary region-filter-btn" data-region="chest" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('chest')">
                       <span style="font-size: 1.3rem;">🫀</span>
-                      <span>Chest / Heart</span>
+                      <span id="region-chest-text">Chest / Heart</span>
                     </button>
-                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('arm')">
+                    <button type="button" class="btn btn-secondary region-filter-btn" data-region="arm" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('arm')">
                       <span style="font-size: 1.3rem;">🩸</span>
-                      <span>Arm / Hand</span>
+                      <span id="region-arm-text">Arm / Hand</span>
                     </button>
-                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('leg')">
+                    <button type="button" class="btn btn-secondary region-filter-btn" data-region="leg" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('leg')">
                       <span style="font-size: 1.3rem;">🦵</span>
-                      <span>Leg / Ankle</span>
+                      <span id="region-leg-text">Leg / Ankle</span>
                     </button>
-                    <button type="button" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('systemic')">
+                    <button type="button" class="btn btn-secondary region-filter-btn" data-region="systemic" style="font-size: 0.8rem; padding: 6px 8px; flex-direction: column; gap: 2px;" onclick="window.filterByBodyRegion('systemic')">
                       <span style="font-size: 1.3rem;">⚡</span>
-                      <span>Whole Body</span>
+                      <span id="region-systemic-text">Whole Body</span>
                     </button>
                   </div>
                 </div>
 
                 <!-- Example Prompt Chips (Requirement 1.A) -->
                 <div class="example-chips-container">
-                  <span class="chips-label">Quick Example Prompts (Click to test):</span>
+                  <span class="chips-label" id="example-prompts-label">Quick Example Prompts (Click to test):</span>
                   <div class="chips-row">
-                    <button type="button" class="example-chip" data-prompt="My friend accidentally spilled boiling water on his hand.">
+                    <button type="button" class="example-chip" data-chip-id="burns" data-prompt="My friend accidentally spilled boiling water on his hand.">
                       🔥 Boiling water on hand
                     </button>
-                    <button type="button" class="example-chip" data-prompt="A person fell down and is bleeding heavily from their knee with a deep cut.">
+                    <button type="button" class="example-chip" data-chip-id="bleeding_knee" data-prompt="A person fell down and is bleeding heavily from their knee with a deep cut.">
                       🩸 Deep bleeding knee cut
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Child is choking on food, cannot breathe or cough, hands clutched to neck.">
+                    <button type="button" class="example-chip" data-chip-id="choking" data-prompt="Child is choking on food, cannot breathe or cough, hands clutched to neck.">
                       🫁 Choking & cannot breathe
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Grandmother has sudden face drooping on one side and slurred speech.">
+                    <button type="button" class="example-chip" data-chip-id="stroke" data-prompt="Grandmother has sudden face drooping on one side and slurred speech.">
                       🧠 Face drooping & slurred speech
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Sudden severe crushing chest pressure radiating into left arm and shortness of breath.">
+                    <button type="button" class="example-chip" data-chip-id="chest_pain" data-prompt="Sudden severe crushing chest pressure radiating into left arm and shortness of breath.">
                       ❤️ Crushing chest pain
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Tripped on stairs, twisted ankle severely, swollen and cannot put weight.">
+                    <button type="button" class="example-chip" data-chip-id="ankle_sprain" data-prompt="Tripped on stairs, twisted ankle severely, swollen and cannot put weight.">
                       🦴 Twisted swollen ankle
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Bitten by a snake on foot, two puncture fang marks visible with burning pain.">
+                    <button type="button" class="example-chip" data-chip-id="snakebite" data-prompt="Bitten by a snake on foot, two puncture fang marks visible with burning pain.">
                       🐍 Snakebite puncture marks
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Adult person collapsed on the floor, unresponsive and not breathing normally.">
+                    <button type="button" class="example-chip" data-chip-id="unconscious" data-prompt="Adult person collapsed on the floor, unresponsive and not breathing normally.">
                       ⚡ Unconscious & not breathing
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Severe throbbing headache in temples and forehead for the past 4 hours.">
+                    <button type="button" class="example-chip" data-chip-id="headache" data-prompt="Severe throbbing headache in temples and forehead for the past 4 hours.">
                       🤕 Severe headache
                     </button>
-                    <button type="button" class="example-chip" data-prompt="High fever with shivering chills and body aches since yesterday.">
+                    <button type="button" class="example-chip" data-chip-id="fever" data-prompt="High fever with shivering chills and body aches since yesterday.">
                       🌡️ High fever & chills
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Sharp stomach pain, bloating, and burning acidity after dinner.">
+                    <button type="button" class="example-chip" data-chip-id="stomach_pain" data-prompt="Sharp stomach pain, bloating, and burning acidity after dinner.">
                       🤢 Stomach pain & acidity
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Terrible throbbing toothache with swollen gums on lower jaw.">
+                    <button type="button" class="example-chip" data-chip-id="toothache" data-prompt="Terrible throbbing toothache with swollen gums on lower jaw.">
                       🦷 Toothache & swollen gum
                     </button>
-                    <button type="button" class="example-chip" data-prompt="Red itchy hives and rash spreading on arms after wearing new sweater.">
+                    <button type="button" class="example-chip" data-chip-id="skin_rash" data-prompt="Red itchy hives and rash spreading on arms after wearing new sweater.">
                       🔴 Skin rash & itching
                     </button>
-                    <button type="button" class="example-chip" data-prompt="I have an unusual strange purple tingling feeling with random unidentifiable sensations.">
+                    <button type="button" class="example-chip" data-chip-id="unknown" data-prompt="I have an unusual strange purple tingling feeling with random unidentifiable sensations.">
                       ❓ Unknown problem test
                     </button>
                   </div>
@@ -475,11 +475,11 @@
                   <div class="btn-group">
                     <button id="clear-text-btn" class="btn btn-secondary" type="button">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                      <span>Clear</span>
+                      <span id="clear-btn-text">Clear</span>
                     </button>
                     <button id="analyze-text-btn" class="btn btn-primary" type="button">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                      <span>Analyze Problem</span>
+                      <span id="analyze-btn-text">Analyze Problem</span>
                     </button>
                   </div>
                 </div>
