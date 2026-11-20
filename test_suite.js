@@ -209,8 +209,16 @@ async function runTests() {
     assert(htmlText.includes('Describe what happened... Example: A person fell down and is bleeding from their knee.'), 'HTML has exact required placeholder');
     assert(htmlText.includes('Call 112') || htmlText.includes('tel:112'), 'HTML has Call 112 emergency button');
     assert(htmlText.includes('FirstAid+ is an educational first-aid assistant'), 'HTML has mandatory safety banner');
+    assert(htmlText.includes('cinematic-welcome-intro'), 'HTML includes cinematic emergency welcome intro');
+    assert(htmlText.includes('WELCOME TO FIRSTAID+'), 'HTML includes exact welcome title');
+    assert(htmlText.includes('Be prepared. Stay calm. Save lives.'), 'HTML includes exact required emergency slogan');
 
-    console.log('\n🎉 ALL 28 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    const resSplashJs = await fetch('http://127.0.0.1:3000/js/splashIntro.js');
+    assert(resSplashJs.ok, 'splashIntro.js script is successfully served');
+    const splashJsText = await resSplashJs.text();
+    assert(splashJsText.includes('CinematicIntroController'), 'splashIntro.js contains intro controller');
+
+    console.log('\n🎉 ALL 30 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);
