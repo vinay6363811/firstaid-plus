@@ -6,6 +6,7 @@
 
 const { analyzeTextSymptoms, EMERGENCY_GUIDES, DEFAULT_GUIDE } = require('./knowledgeBase');
 const { analyzePhotoLocal } = require('./visualAnalyzer');
+const { detectLanguage, translateResult } = require('./multilingualService');
 
 let activeApiKey = process.env.GEMINI_API_KEY || "";
 
@@ -75,36 +76,46 @@ async function callGeminiApi(modelName, contents, systemInstruction) {
 /**
  * AI-assisted Text Analysis with Gemini
  */
-async function analyzeText(text) {
+async function analyzeText(text, targetLangCode) {
+  const activeLang = targetLangCode && targetLangCode !== 'auto'
+    ? { code: targetLangCode }
+    : detectLanguage(text);
+
   if (!hasApiKey()) {
     // Local Rule-Based Engine
     const local = analyzeTextSymptoms(text);
+    const localized = translateResult(local, activeLang.code);
     return {
       isDemoMode: false,
       engine: "FirstAid+ Local Clinical Knowledge Base",
-      possibleEmergency: local.possibleEmergency || local.title,
-      severity: local.severity,
-      confidenceTier: local.confidenceTier || "high",
-      isUnknownProblem: Boolean(local.isUnknownProblem),
-      primaryMessage: local.primaryMessage || null,
-      secondaryMessage: local.secondaryMessage || null,
-      consultDoctorButton: Boolean(local.consultDoctorButton || local.isUnknownProblem),
-      isLifeThreatening: Boolean(local.isLifeThreatening),
-      safetyWarning: local.safetyWarning || null,
-      uncertaintyNotice: local.uncertaintyNotice || null,
-      whatHappened: local.whatHappened,
-      warningSigns: local.warningSigns,
-      immediateFirstAid: local.immediateFirstAid,
-      whatNotToDo: local.whatNotToDo,
-      whenToGetHelp: local.whenToGetHelp,
-      emergencyCallRequired: Boolean(local.emergencyCallRequired),
-      safetyDisclaimer: "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India.",
-      matchedKeywords: local.matchedKeywords || []
+      possibleEmergency: localized.possibleEmergency || localized.title,
+      severity: localized.severity,
+      confidenceTier: localized.confidenceTier || "high",
+      isUnknownProblem: Boolean(localized.isUnknownProblem),
+      primaryMessage: localized.primaryMessage || null,
+      secondaryMessage: localized.secondaryMessage || null,
+      consultDoctorButton: Boolean(localized.consultDoctorButton || localized.isUnknownProblem),
+      isLifeThreatening: Boolean(localized.isLifeThreatening),
+      safetyWarning: localized.safetyWarning || null,
+      uncertaintyNotice: localized.uncertaintyNotice || null,
+      whatHappened: localized.whatHappened,
+      warningSigns: localized.warningSigns,
+      immediateFirstAid: localized.immediateFirstAid,
+      whatNotToDo: localized.whatNotToDo,
+      whenToGetHelp: localized.whenToGetHelp,
+      emergencyCallRequired: Boolean(localized.emergencyCallRequired),
+      safetyDisclaimer: localized.safetyDisclaimer || "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India.",
+      matchedKeywords: localized.matchedKeywords || [],
+      detectedLanguage: activeLang,
+      uiLabels: localized.uiLabels
     };
   }
 
   const systemPrompt = `You are FirstAid+, an educational first-aid emergency triage assistant.
 Analyze the user's description of a medical emergency, injury, or health complaint.
+${activeLang.code !== 'en-IN' ? `CRITICAL LANGUAGE REQUIREMENT:
+The user has entered or requested the response in: ${activeLang.code}.
+You MUST generate ALL titles, explanations, warningSigns, immediateFirstAid, whatNotToDo, and whenToGetHelp strictly in the user's language (e.g. Kannada, Hindi, etc.). Do not return English text.` : ''}
 Adhere strictly to these rules:
 1. Suggest a POSSIBLE emergency category or health complaint, never a definitive medical diagnosis.
 2. Rate severity strictly as one of:
@@ -166,27 +177,30 @@ Adhere strictly to these rules:
   } catch (error) {
     console.error("Gemini text analysis failed, falling back to local engine:", error.message);
     const local = analyzeTextSymptoms(text);
+    const localized = translateResult(local, activeLang.code);
     return {
       isDemoMode: false,
       engine: "FirstAid+ Local Clinical Engine (Fallback)",
       fallbackReason: error.message,
-      possibleEmergency: local.possibleEmergency || local.title,
-      severity: local.severity,
-      confidenceTier: local.confidenceTier || "high",
-      isUnknownProblem: Boolean(local.isUnknownProblem),
-      primaryMessage: local.primaryMessage || null,
-      secondaryMessage: local.secondaryMessage || null,
-      consultDoctorButton: Boolean(local.consultDoctorButton || local.isUnknownProblem),
-      isLifeThreatening: Boolean(local.isLifeThreatening),
-      safetyWarning: local.safetyWarning || null,
-      uncertaintyNotice: local.uncertaintyNotice || null,
-      whatHappened: local.whatHappened,
-      warningSigns: local.warningSigns,
-      immediateFirstAid: local.immediateFirstAid,
-      whatNotToDo: local.whatNotToDo,
-      whenToGetHelp: local.whenToGetHelp,
-      emergencyCallRequired: local.emergencyCallRequired,
-      safetyDisclaimer: "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India."
+      possibleEmergency: localized.possibleEmergency || localized.title,
+      severity: localized.severity,
+      confidenceTier: localized.confidenceTier || "high",
+      isUnknownProblem: Boolean(localized.isUnknownProblem),
+      primaryMessage: localized.primaryMessage || null,
+      secondaryMessage: localized.secondaryMessage || null,
+      consultDoctorButton: Boolean(localized.consultDoctorButton || localized.isUnknownProblem),
+      isLifeThreatening: Boolean(localized.isLifeThreatening),
+      safetyWarning: localized.safetyWarning || null,
+      uncertaintyNotice: localized.uncertaintyNotice || null,
+      whatHappened: localized.whatHappened,
+      warningSigns: localized.warningSigns,
+      immediateFirstAid: localized.immediateFirstAid,
+      whatNotToDo: localized.whatNotToDo,
+      whenToGetHelp: localized.whenToGetHelp,
+      emergencyCallRequired: localized.emergencyCallRequired,
+      safetyDisclaimer: localized.safetyDisclaimer || "FirstAid+ is an educational first-aid assistant. Text and photo analysis may be inaccurate and cannot diagnose injuries. Do not delay emergency care to use this app. If the person is in immediate danger, call 112 in India.",
+      detectedLanguage: activeLang,
+      uiLabels: localized.uiLabels
     };
   }
 }
@@ -194,10 +208,15 @@ Adhere strictly to these rules:
 /**
  * AI-assisted Photograph Analysis with Gemini Vision
  */
-async function analyzePhoto(base64Data, mimeType = "image/jpeg", description = "") {
+async function analyzePhoto(base64Data, mimeType = "image/jpeg", description = "", targetLangCode = "auto") {
+  const activeLang = targetLangCode && targetLangCode !== 'auto'
+    ? { code: targetLangCode }
+    : detectLanguage(description || '');
+
   if (!hasApiKey()) {
     // Return Local Rule & Visual Heuristic Engine
-    return analyzePhotoLocal(base64Data, { description });
+    const local = analyzePhotoLocal(base64Data, { description });
+    return translateResult(local, activeLang.code);
   }
 
   const cleanBase64 = base64Data.replace(/^data:image\/\w+;base64,/, '');

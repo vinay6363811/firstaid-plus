@@ -173,12 +173,12 @@ const server = http.createServer(async (req, res) => {
   // Smart Text Analysis Endpoint
   if (pathname === '/api/analyze-text' && method === 'POST') {
     try {
-      const { text, context } = await readJsonBody(req);
+      const { text, context, lang } = await readJsonBody(req);
       if (!text || typeof text !== 'string' || text.trim().length === 0) {
         return sendJson(res, 400, { error: 'Please provide a description of the problem.' });
       }
 
-      const result = await geminiService.analyzeText(text.trim());
+      const result = await geminiService.analyzeText(text.trim(), lang);
       return sendJson(res, 200, result);
     } catch (err) {
       console.error('Error analyzing text:', err);
@@ -196,12 +196,12 @@ const server = http.createServer(async (req, res) => {
   // Smart Photo Analysis Endpoint
   if (pathname === '/api/analyze-image' && method === 'POST') {
     try {
-      const { image, mimeType, description, filename } = await readJsonBody(req);
+      const { image, mimeType, description, filename, lang } = await readJsonBody(req);
       if (!image) {
         return sendJson(res, 400, { error: 'No image data received.' });
       }
 
-      const result = await geminiService.analyzePhoto(image, mimeType || 'image/jpeg', description || filename || '');
+      const result = await geminiService.analyzePhoto(image, mimeType || 'image/jpeg', description || filename || '', lang);
       return sendJson(res, 200, result);
     } catch (err) {
       console.error('Error analyzing photo:', err);

@@ -264,7 +264,42 @@ async function runTests() {
     assert(htmlText.includes('id="settings-language-select"'), 'HTML has language preference select in Settings');
     assert(htmlText.includes('id="voice-change-lang-btn"'), 'HTML has quick change language button in Voice Player');
 
-    console.log('\n🎉 ALL 56 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n--- 9. Testing Multilingual Output Matching Entered Language ---');
+    // Scenario 1: Kannada symptom input -> Given answer must be in Kannada
+    const resKn = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'ನನ್ನ ಸ್ನೇಹಿತನ ಕೈಗೆ ಬಿಸಿ ನೀರು ಚೆಲ್ಲಿತು' })
+    });
+    const dataKn = await resKn.json();
+    assert(dataKn.detectedLanguage && dataKn.detectedLanguage.code === 'kn-IN', 'Detects entered language as Kannada (kn-IN)');
+    assert(dataKn.possibleEmergency.includes('ಸುಟ್ಟ'), 'Given emergency title is in Kannada (ಸುಟ್ಟ ಗಾಯ)');
+    assert(dataKn.whatHappened.includes('ಬಿಸಿ ನೀರು') || dataKn.whatHappened.includes('ಚರ್ಮ'), 'Given what-happened explanation is in Kannada');
+    assert(dataKn.immediateFirstAid.some(step => step.includes('ನೀರು') || step.includes('ತಂಪಾದ')), 'Immediate first-aid steps are in Kannada');
+    assert(dataKn.whatNotToDo.some(dont => dont.includes('ಐಸ್') || dont.includes('ಮಂಜುಗಡ್ಡೆ')), 'What-not-to-do list is in Kannada');
+
+    // Scenario 2: Hindi symptom input -> Given answer must be in Hindi
+    const resHi = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'मेरे दोस्त के हाथ पर गर्म पानी गिर गया और जल गया' })
+    });
+    const dataHi = await resHi.json();
+    assert(dataHi.detectedLanguage && dataHi.detectedLanguage.code === 'hi-IN', 'Detects entered language as Hindi (hi-IN)');
+    assert(dataHi.possibleEmergency.includes('जलन') || dataHi.possibleEmergency.includes('जलना') || dataHi.possibleEmergency.includes('बर्न'), 'Given emergency title is in Hindi');
+    assert(dataHi.immediateFirstAid.some(step => step.includes('पानी') || step.includes('नल')), 'Immediate first-aid steps are in Hindi');
+    assert(dataHi.whatNotToDo.some(dont => dont.includes('बर्फ') || dont.includes('टूथपेस्ट')), 'What-not-to-do list is in Hindi');
+
+    // Scenario 3: Explicit target language option
+    const resExplicitKn = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'severe chest pain and left arm ache', lang: 'kn-IN' })
+    });
+    const dataExplicitKn = await resExplicitKn.json();
+    assert(dataExplicitKn.possibleEmergency.includes('ಹೃದಯ') || dataExplicitKn.possibleEmergency.includes('ಎದೆ'), 'Explicit Kannada selection translates heart attack into Kannada');
+
+    console.log('\n🎉 ALL 65 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);

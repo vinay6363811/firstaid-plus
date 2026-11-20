@@ -335,6 +335,61 @@
         return hiSpeech;
       }
 
+      if (lang.startsWith('te')) {
+        let teSpeech = `ప్రథమ చికిత్స మార్గదర్శకత్వం: ${r.possibleEmergency || 'ఆరోగ్య సమస్య'}. `;
+        (r.immediateFirstAid || []).forEach((step, i) => { teSpeech += `దశ ${i + 1}: ${step}. `; });
+        if (r.whatNotToDo && r.whatNotToDo.length) {
+          teSpeech += `చేయకూడనివి: `;
+          r.whatNotToDo.forEach(d => { teSpeech += `${d}. `; });
+        }
+        teSpeech += `అత్యవసర సహాయం కోసం 112 కు కాల్ చేయండి.`;
+        return teSpeech;
+      }
+
+      if (lang.startsWith('ta')) {
+        let taSpeech = `முதலுதவி வழிகாட்டுதல்: ${r.possibleEmergency || 'சுகாதார பிரச்சனை'}. `;
+        (r.immediateFirstAid || []).forEach((step, i) => { taSpeech += `படி ${i + 1}: ${step}. `; });
+        if (r.whatNotToDo && r.whatNotToDo.length) {
+          taSpeech += `செய்யக்கூடாதவை: `;
+          r.whatNotToDo.forEach(d => { taSpeech += `${d}. `; });
+        }
+        taSpeech += `அவசர உதவிக்கு 112-ஐ அழைக்கவும்.`;
+        return taSpeech;
+      }
+
+      if (lang.startsWith('ml')) {
+        let mlSpeech = `പ്രഥമശുശ്രൂഷാ മാർഗ്ഗനിർദ്ദേശം: ${r.possibleEmergency || 'ആരോഗ്യ പ്രശ്നം'}. `;
+        (r.immediateFirstAid || []).forEach((step, i) => { mlSpeech += `ഘട്ടം ${i + 1}: ${step}. `; });
+        if (r.whatNotToDo && r.whatNotToDo.length) {
+          mlSpeech += `ചെയ്യാൻ പാടില്ലാത്തവ: `;
+          r.whatNotToDo.forEach(d => { mlSpeech += `${d}. `; });
+        }
+        mlSpeech += `അടിയന്തര സഹായത്തിന് 112-ലേക്ക് വിളിക്കുക.`;
+        return mlSpeech;
+      }
+
+      if (lang.startsWith('bn')) {
+        let bnSpeech = `প্রাথমিক চিকিৎসা নির্দেশিকা: ${r.possibleEmergency || 'স্বাস্থ্য সমস্যা'}. `;
+        (r.immediateFirstAid || []).forEach((step, i) => { bnSpeech += `ধাপ ${i + 1}: ${step}. `; });
+        if (r.whatNotToDo && r.whatNotToDo.length) {
+          bnSpeech += `কী করবেন না: `;
+          r.whatNotToDo.forEach(d => { bnSpeech += `${d}. `; });
+        }
+        bnSpeech += `জরুরি সহায়তার জন্য ১১২ এ কল করুন।`;
+        return bnSpeech;
+      }
+
+      if (lang.startsWith('mr')) {
+        let mrSpeech = `प्रथमोपचार मार्गदर्शन: ${r.possibleEmergency || 'आरोग्य समस्या'}. `;
+        (r.immediateFirstAid || []).forEach((step, i) => { mrSpeech += `पायरी ${i + 1}: ${step}. `; });
+        if (r.whatNotToDo && r.whatNotToDo.length) {
+          mrSpeech += `काय करू नये: `;
+          r.whatNotToDo.forEach(d => { mrSpeech += `${d}. `; });
+        }
+        mrSpeech += `आपत्कालीन मदतीसाठी ११२ वर कॉल करा.`;
+        return mrSpeech;
+      }
+
       // 3. Caring, Reassuring Female English Narrative
       let speech = `Hello, I am your FirstAid+ assistant. Here is your first aid guidance for ${r.possibleEmergency || 'the condition'}. `;
       speech += `Triage severity is classified as ${r.severity || 'moderate'}. `;

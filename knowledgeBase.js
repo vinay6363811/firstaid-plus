@@ -1386,6 +1386,27 @@ function analyzeTextSymptoms(text) {
   let highestScore = 0;
   let matchedWords = [];
 
+  // Check Indic multilingual keywords (Kannada, Hindi, Telugu, Tamil, Malayalam, Bengali, Marathi)
+  try {
+    const { INDIC_SYMPTOM_KEYWORDS } = require('./multilingualService');
+    for (const item of INDIC_SYMPTOM_KEYWORDS) {
+      for (const kw of item.keywords) {
+        if (rawClean.includes(kw) || normalized.includes(kw)) {
+          const matchedGuide = EMERGENCY_GUIDES[item.guideId];
+          if (matchedGuide) {
+            let indicScore = kw.length >= 4 ? 6 : 4;
+            if (matchedGuide.severity === 'Critical') indicScore += 3;
+            if (indicScore > highestScore) {
+              highestScore = indicScore;
+              bestMatch = matchedGuide;
+              matchedWords = [kw];
+            }
+          }
+        }
+      }
+    }
+  } catch (err) {}
+
   for (const [key, guide] of Object.entries(EMERGENCY_GUIDES)) {
     let score = 0;
     const matched = [];

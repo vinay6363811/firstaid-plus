@@ -377,10 +377,14 @@ class SmartAnalyzerController {
     if (this.analyzeTextBtn) this.analyzeTextBtn.disabled = true;
 
     try {
+      const activeLang = window.speechEngine ? window.speechEngine.getActiveLanguage(text) : null;
       const response = await fetch("/api/analyze-text", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text })
+        body: JSON.stringify({
+          text: text,
+          lang: activeLang ? activeLang.code : "auto"
+        })
       });
 
       const result = await response.json();
@@ -424,6 +428,7 @@ class SmartAnalyzerController {
     }, 600);
 
     try {
+      const activeLang = window.speechEngine ? window.speechEngine.getActiveLanguage(context) : null;
       const response = await fetch("/api/analyze-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -431,7 +436,8 @@ class SmartAnalyzerController {
           image: this.selectedImageData,
           mimeType: this.selectedImageMime,
           filename: this.selectedImageFilename,
-          description: context
+          description: context,
+          lang: activeLang ? activeLang.code : "auto"
         })
       });
 
@@ -538,33 +544,80 @@ class SmartAnalyzerController {
     if (unknownCard) {
       if (result.isUnknownProblem) {
         unknownCard.style.display = "block";
+        const quoteEl = unknownCard.querySelector(".unknown-primary-quote");
+        const secEl = unknownCard.querySelector(".unknown-secondary-msg");
+        if (quoteEl && result.primaryMessage) quoteEl.textContent = `"${result.primaryMessage}"`;
+        if (secEl && result.secondaryMessage) secEl.textContent = result.secondaryMessage;
       } else {
         unknownCard.style.display = "none";
       }
     }
 
+    // Localize Card Headings if provided
+    if (result.uiLabels) {
+      const cardA = document.getElementById("card-a-heading");
+      const cardB = document.getElementById("card-b-heading");
+      const cardC = document.getElementById("card-c-heading");
+      const cardD = document.getElementById("card-d-heading");
+      const cardE = document.getElementById("card-e-heading");
+      if (cardA && result.uiLabels.whatHappened) cardA.textContent = result.uiLabels.whatHappened;
+      if (cardB && result.uiLabels.warningSigns) cardB.textContent = result.uiLabels.warningSigns;
+      if (cardC && result.uiLabels.firstAid) cardC.textContent = result.uiLabels.firstAid;
+      if (cardD && result.uiLabels.whatNotToDo) cardD.textContent = result.uiLabels.whatNotToDo;
+      if (cardE && result.uiLabels.whenHelp) cardE.textContent = result.uiLabels.whenHelp;
+    }
+
     if (severityBadge) {
       severityBadge.className = `severity-badge-large ${severity}`;
     }
+
+    const isKn = result.detectedLanguage && result.detectedLanguage.code === 'kn-IN';
+    const isHi = result.detectedLanguage && result.detectedLanguage.code === 'hi-IN';
+
     if (severityText) {
       if (result.isUnknownProblem) {
-        severityText.textContent = "Medical Evaluation Needed";
+        severityText.textContent = isKn ? "ವೈದ್ಯಕೀಯ ತಪಾಸಣೆ ಅಗತ್ಯವಿದೆ" : (isHi ? "चिकित्सकीय जांच आवश्यक" : "Medical Evaluation Needed");
       } else {
-        severityText.textContent = `${result.severity || "Moderate"} Severity`;
+        const sevName = isKn 
+          ? (severity === 'critical' ? 'ಅತ್ಯಂತ ಗಂಭೀರ' : severity === 'high' ? 'ಹೆಚ್ಚಿನ ತೀವ್ರತೆ' : severity === 'moderate' ? 'ಮಧ್ಯಮ ತೀವ್ರತೆ' : 'ಕಡಿಮೆ ತೀವ್ರತೆ')
+          : isHi
+          ? (severity === 'critical' ? 'अत्यंत गंभीर' : severity === 'high' ? 'उच्च गंभीरता' : severity === 'moderate' ? 'मध्यम गंभीरता' : 'निम्न गंभीरता')
+          : `${result.severity || "Moderate"} Severity`;
+        severityText.textContent = sevName;
       }
     }
 
     let severityExplanation = "Medical evaluation may be needed.";
     if (result.isUnknownProblem) {
-      severityExplanation = "Uncertain or unverified problem — safe medical advice from a doctor is advised.";
+      severityExplanation = isKn 
+        ? "ಅನಿಶ್ಚಿತ ಅಥವಾ ಪರಿಶೀಲಿಸದ ಸಮಸ್ಯೆ — ವೈದ್ಯರಿಂದ ನೇರ ಸಲಹೆ ಪಡೆಯುವುದು ಉತ್ತಮ."
+        : isHi 
+        ? "अनिश्चित समस्या — डॉक्टर से प्रत्यक्ष सलाह लेना बेहतर है।"
+        : "Uncertain or unverified problem — safe medical advice from a doctor is advised.";
     } else if (severity === "low") {
-      severityExplanation = "Low — Basic first aid may be sufficient, but monitor the condition.";
+      severityExplanation = isKn
+        ? "ಕಡಿಮೆ — ಮೂಲಭೂತ ಪ್ರಥಮ ಚಿಕಿತ್ಸೆ ಸಾಕಾಗಬಹುದು, ಆದರೆ ಸ್ಥಿತಿಯನ್ನು ಗಮನಿಸಿ."
+        : isHi
+        ? "निम्न — बुनियादी प्राथमिक उपचार पर्याप्त हो सकता है, स्थिति पर नजर रखें।"
+        : "Low — Basic first aid may be sufficient, but monitor the condition.";
     } else if (severity === "moderate") {
-      severityExplanation = "Moderate — Medical evaluation may be needed.";
+      severityExplanation = isKn
+        ? "ಮಧ್ಯಮ — ವೈದ್ಯಕೀಯ ತಪಾಸಣೆ ಅಗತ್ಯವಿರಬಹುದು."
+        : isHi
+        ? "मध्यम — चिकित्सकीय मूल्यांकन की आवश्यकता हो सकती है।"
+        : "Moderate — Medical evaluation may be needed.";
     } else if (severity === "high") {
-      severityExplanation = "High — Seek urgent medical care.";
+      severityExplanation = isKn
+        ? "ಹೆಚ್ಚು — ತುರ್ತು ವೈದ್ಯಕೀಯ ಆರೈಕೆ ಪಡೆಯಿರಿ."
+        : isHi
+        ? "उच्च — तत्काल डॉक्टरी देखभाल प्राप्त करें।"
+        : "High — Seek urgent medical care.";
     } else if (severity === "critical") {
-      severityExplanation = "Critical — Call emergency services immediately.";
+      severityExplanation = isKn
+        ? "ಗಂಭೀರ — ತಕ್ಷಣವೇ ತುರ್ತು ಸೇವೆಗಳಿಗೆ ಕರೆ ಮಾಡಿ."
+        : isHi
+        ? "गंभीर — तुरंत आपातकालीन सेवाओं को 112 पर बुलाएं।"
+        : "Critical — Call emergency services immediately.";
     }
     if (severityDesc) severityDesc.textContent = severityExplanation;
 
@@ -686,7 +739,8 @@ class SmartAnalyzerController {
 
     // 9. Sync with Language Detection & Female Voice Matching
     const inputText = (this.problemText ? this.problemText.value : "") || (this.previewContextInput ? this.previewContextInput.value : "");
-    const detectedLang = window.speechEngine ? window.speechEngine.getActiveLanguage(inputText) : { code: 'en-IN', name: 'English (India)' };
+    const detectedLang = result.detectedLanguage || 
+      (window.speechEngine ? window.speechEngine.getActiveLanguage(inputText) : { code: 'en-IN', name: 'English (India)' });
     result.detectedLanguage = detectedLang;
 
     // Update Voice Badge and Subtext
