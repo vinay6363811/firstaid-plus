@@ -1,8 +1,8 @@
 /**
  * FirstAid+ Cinematic Emergency Welcome Intro Controller
- * Exactly 5.0 seconds duration.
- * Manages ECG animation, ambulance light sweeps, medical cross pulse,
- * optional subtle Web Audio heartbeat, and smooth dissolve into the main application.
+ * Advanced 5-Second Futuristic Medical HUD Experience
+ * Completely Silent (Strict zero audio / no sound effects / no audio autoplay)
+ * Manages 6-scene timeline, HUD elements, ECG monitor, and smooth non-blocking transition.
  */
 
 (function () {
@@ -15,13 +15,9 @@
     constructor() {
       this.overlay = document.getElementById('cinematic-welcome-intro');
       this.skipBtn = document.getElementById('intro-skip-btn');
-      this.soundBtn = document.getElementById('intro-sound-toggle-btn');
-      this.soundIcon = document.getElementById('intro-sound-icon');
-      this.soundLabel = document.getElementById('intro-sound-label');
-      this.audioCtx = null;
-      this.audioEnabled = false;
       this.isFinished = false;
       this.timerId = null;
+      this.dissolveTimerId = null;
 
       if (!this.overlay) return;
 
@@ -29,12 +25,12 @@
     }
 
     init() {
-      // Lock scroll while intro is playing
+      // Lock scroll while intro is actively playing
       document.body.style.overflow = 'hidden';
 
-      // Reduced motion fallback: dissolve quickly
+      // Reduced motion fallback: bypass immediately and smoothly
       if (prefersReducedMotion) {
-        setTimeout(() => this.finishIntro(), 400);
+        setTimeout(() => this.finishIntro(), 200);
         return;
       }
 
@@ -46,111 +42,27 @@
         });
       }
 
-      // Bind Sound Toggle
-      if (this.soundBtn) {
-        this.soundBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.toggleSound();
-        });
-      }
-
-      // Clicking anywhere on intro can activate audio if user wishes, without interrupting the visual timeline
-      this.overlay.addEventListener('click', (e) => {
-        if (e.target !== this.skipBtn && !this.audioEnabled) {
-          this.enableAudio();
+      // Allow pressing ESC to skip cleanly
+      this.handleKeyDown = (e) => {
+        if (e.key === 'Escape' || e.key === 'Esc') {
+          this.finishIntro();
         }
-      }, { once: true });
+      };
+      window.addEventListener('keydown', this.handleKeyDown, { once: true });
 
       // Start the 5.0-second exact timeline
       this.startTimeline();
     }
 
-    enableAudio() {
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        if (!this.audioCtx) {
-          this.audioCtx = new AudioContext();
-        }
-        if (this.audioCtx.state === 'suspended') {
-          this.audioCtx.resume();
-        }
-        this.audioEnabled = true;
-        if (this.soundIcon) this.soundIcon.textContent = '🔊';
-        if (this.soundLabel) this.soundLabel.textContent = 'Heartbeat On';
-      } catch (err) {
-        // Audio error ignored safely
-      }
-    }
-
-    toggleSound() {
-      if (this.audioEnabled) {
-        this.audioEnabled = false;
-        if (this.soundIcon) this.soundIcon.textContent = '🔈';
-        if (this.soundLabel) this.soundLabel.textContent = 'Audio Off';
-      } else {
-        this.enableAudio();
-        // Play immediate sample thump so user knows it works
-        this.playHeartbeatThump();
-      }
-    }
-
-    playHeartbeatThump() {
-      if (!this.audioEnabled || !this.audioCtx) return;
-      try {
-        const now = this.audioCtx.currentTime;
-
-        // "Lub" - First low resonant thump
-        const osc1 = this.audioCtx.createOscillator();
-        const gain1 = this.audioCtx.createGain();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(62, now);
-        osc1.frequency.exponentialRampToValueAtTime(38, now + 0.12);
-        gain1.gain.setValueAtTime(0.35, now);
-        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc1.connect(gain1);
-        gain1.connect(this.audioCtx.destination);
-        osc1.start(now);
-        osc1.stop(now + 0.15);
-
-        // "Dub" - Second slightly softer thump after 140ms
-        const osc2 = this.audioCtx.createOscillator();
-        const gain2 = this.audioCtx.createGain();
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(54, now + 0.14);
-        osc2.frequency.exponentialRampToValueAtTime(34, now + 0.28);
-        gain2.gain.setValueAtTime(0.25, now + 0.14);
-        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.30);
-        osc2.connect(gain2);
-        gain2.connect(this.audioCtx.destination);
-        osc2.start(now + 0.14);
-        osc2.stop(now + 0.30);
-      } catch (e) {}
-    }
-
     startTimeline() {
-      // 1.0s: Heartbeat spike trigger (ECG spike reaches peak)
-      setTimeout(() => {
-        if (!this.isFinished && this.audioEnabled) {
-          this.playHeartbeatThump();
-        }
-      }, 1100);
-
-      // 2.3s: Second subtle heartbeat as logo resolves
-      setTimeout(() => {
-        if (!this.isFinished && this.audioEnabled) {
-          this.playHeartbeatThump();
-        }
-      }, 2300);
-
-      // 4.2s: Initiate smooth dissolution into main website
-      setTimeout(() => {
+      // Scene 6 Trigger: 4.2s (4200ms) - Initiate smooth dissolution into main website
+      this.dissolveTimerId = setTimeout(() => {
         if (!this.isFinished && this.overlay) {
           this.overlay.classList.add('dissolving');
         }
       }, 4200);
 
-      // Exactly 5.0 seconds (5000ms): Fully remove splash screen and reveal main app
+      // Exactly 5.0 seconds (5000ms): Fully finalize and remove splash screen
       this.timerId = setTimeout(() => {
         this.finishIntro();
       }, 5000);
@@ -164,16 +76,24 @@
         clearTimeout(this.timerId);
         this.timerId = null;
       }
+      if (this.dissolveTimerId) {
+        clearTimeout(this.dissolveTimerId);
+        this.dissolveTimerId = null;
+      }
+
+      window.removeEventListener('keydown', this.handleKeyDown);
 
       if (this.overlay) {
         this.overlay.classList.add('finished');
-        // Give 300ms for CSS fade out to finish cleanly
+        // Give 350ms for CSS fade/scale out to finish cleanly
         setTimeout(() => {
-          this.overlay.style.display = 'none';
-          this.overlay.remove(); // Remove from DOM completely to eliminate any possibility of blocking UI
+          if (this.overlay) {
+            this.overlay.style.display = 'none';
+            this.overlay.remove(); // Safely detach from DOM completely
+          }
           document.body.style.overflow = ''; // Unlock scrolling completely
           
-          // Trigger custom event so main app knows it is fully visible
+          // Trigger custom event so main app knows it is fully visible and interactive
           window.dispatchEvent(new CustomEvent('firstaid-intro-complete'));
         }, 350);
       } else {

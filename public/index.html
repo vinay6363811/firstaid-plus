@@ -11,14 +11,27 @@
 </head>
 <body>
 
-  <!-- Cinematic Emergency Welcome Intro (5-second Experience) -->
+  <!-- Cinematic Emergency Welcome Intro (5-second Experience - Silent HUD Response System) -->
   <aside id="cinematic-welcome-intro" class="cinematic-intro" aria-label="FirstAid+ Emergency Welcome Intro">
-    <!-- Atmospheric Emergency Lighting & Sweeps -->
+    <!-- Scene 1: Initial Central Pulse & Atmospheric Sweeps -->
+    <div class="intro-central-pulse-dot" aria-hidden="true"></div>
     <div class="intro-bg-glow"></div>
-    <div class="intro-siren-beam beam-left"></div>
-    <div class="intro-siren-beam beam-right"></div>
-    <div class="intro-spotlight"></div>
-    <div class="intro-vignette-pulse"></div>
+    <div class="intro-monitor-grid" aria-hidden="true"></div>
+    <div class="intro-liquid-edges" aria-hidden="true"></div>
+    <div class="intro-siren-beam beam-left" aria-hidden="true"></div>
+    <div class="intro-siren-beam beam-right" aria-hidden="true"></div>
+    <div class="intro-spotlight" aria-hidden="true"></div>
+    <div class="intro-vignette-pulse" aria-hidden="true"></div>
+
+    <!-- HUD Technical Frame & Corner Crosshairs -->
+    <div class="intro-hud-layer" aria-hidden="true">
+      <div class="intro-hud-crosshair crosshair-tl">┌ <span>SYS.ACT // 0.8s</span></div>
+      <div class="intro-hud-crosshair crosshair-tr"><span>ECG.SYNC // 110-BPM</span> ┐</div>
+      <div class="intro-hud-crosshair crosshair-bl">└ <span>MODE: TRIAGE</span></div>
+      <div class="intro-hud-crosshair crosshair-br"><span>STANDBY // SAVE LIVES</span> ┘</div>
+      <div class="intro-hud-ring-outer"></div>
+      <div class="intro-hud-ring-inner"></div>
+    </div>
 
     <!-- Floating Faint Medical Particles -->
     <div class="intro-particles-layer" aria-hidden="true">
@@ -32,15 +45,16 @@
 
     <!-- Center Stage Container -->
     <div class="intro-stage">
-      <!-- 1. Glowing Medical Cross (Emerges 1.0s - 2.0s) -->
+      <!-- 1. Glowing Medical Cross (Scene 3: 1.8s - 2.6s) -->
       <div class="intro-cross-container">
         <div class="intro-cross-glow"></div>
+        <div class="intro-cross-ring"></div>
         <svg class="intro-medical-cross-svg" viewBox="0 0 100 100" fill="none">
           <path d="M38 10 H62 V38 H90 V62 H62 V90 H38 V62 H10 V38 H38 Z" class="cross-path" />
         </svg>
       </div>
 
-      <!-- 2. Logo Reveal (2.0s - 3.0s) -->
+      <!-- 2. Logo Reveal (Scene 4: 2.6s - 3.7s) -->
       <div class="intro-logo-group">
         <h1 class="intro-logo-text">
           <span class="logo-word-first">FirstAid</span><span class="logo-plus-sign">+</span>
@@ -48,13 +62,14 @@
         <div class="intro-logo-sweep-line"></div>
       </div>
 
-      <!-- 3. Welcome Tagline Group (3.0s - 4.0s) -->
+      <!-- 3. Welcome Tagline Group (Scene 5: 3.7s - 4.5s) -->
       <div class="intro-welcome-group">
         <div class="intro-welcome-badge">WELCOME TO FIRSTAID+</div>
+        <div class="intro-welcome-subtitle">Your emergency companion.</div>
         <p class="intro-welcome-slogan">Be prepared. Stay calm. Save lives.</p>
       </div>
 
-      <!-- Realistic ECG Line Container (0.0s - 4.5s) -->
+      <!-- Realistic ECG Line Container (Scene 2: 0.8s - 1.8s) -->
       <div class="intro-ecg-container" aria-hidden="true">
         <svg class="intro-ecg-svg" viewBox="0 0 1000 120" preserveAspectRatio="none">
           <defs>
@@ -77,17 +92,16 @@
           <path class="ecg-line-active" filter="url(#ecgGlow)" stroke="url(#ecgGrad)" d="M 0 60 L 250 60 L 270 56 L 285 64 L 295 60 L 320 60 L 335 48 L 350 72 L 360 60 L 400 60 L 420 78 L 440 8 L 460 110 L 480 60 L 510 60 L 535 45 L 560 65 L 580 60 L 1000 60" />
         </svg>
       </div>
+
+      <!-- Scene 6 Transition Wave Ring -->
+      <div class="intro-exit-wave-ring" aria-hidden="true"></div>
     </div>
 
     <!-- Cinematic Scanline Overlay -->
     <div class="intro-scanline-overlay" aria-hidden="true"></div>
 
-    <!-- Quick Accessibility & Audio Controls -->
+    <!-- Quick Accessibility Controls (Silent - Skip Only) -->
     <div class="intro-controls-bar">
-      <button id="intro-sound-toggle-btn" class="intro-ctrl-btn" type="button" aria-label="Toggle Heartbeat Audio">
-        <span id="intro-sound-icon">🔈</span>
-        <span id="intro-sound-label">Audio Off</span>
-      </button>
       <button id="intro-skip-btn" class="intro-ctrl-btn" type="button" aria-label="Skip Intro Animation">
         <span>Skip Intro</span>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>

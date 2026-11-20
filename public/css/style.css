@@ -1712,7 +1712,7 @@ body {
 /* ==========================================================================
    CINEMATIC EMERGENCY WELCOME INTRO (5.0s Experience)
    Dark black & crimson aesthetic, realistic ECG heartbeat, ambulance sweeps,
-   medical cross pulse, light sheen logo reveal, and smooth dissolve.
+   medical cross pulse, light sheen logo reveal, HUD circles, and smooth dissolve.
    ========================================================================== */
 
 .cinematic-intro {
@@ -1721,8 +1721,8 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: 999999;
-  background-color: #030204;
-  background-image: radial-gradient(circle at 50% 50%, #200409 0%, #0c0205 50%, #020103 100%);
+  background-color: #020104;
+  background-image: radial-gradient(circle at 50% 50%, #1c0307 0%, #0a0104 55%, #020104 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1730,13 +1730,14 @@ body {
   user-select: none;
   pointer-events: auto;
   opacity: 1;
+  animation: introCameraZoom 5s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
   transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1), filter 0.75s ease-out, transform 0.75s ease-out;
 }
 
 .cinematic-intro.dissolving {
   opacity: 0;
-  filter: blur(8px);
-  transform: scale(1.03);
+  filter: blur(10px);
+  transform: scale(1.04);
   pointer-events: none;
 }
 
@@ -1746,11 +1747,53 @@ body {
   visibility: hidden;
 }
 
-/* Atmospheric Background Glow & Edge Vignette */
+/* Scene 1: Initial Central Energy Pulse Dot (0.0s - 0.8s) */
+.intro-central-pulse-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background-color: #ff334b;
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0;
+  animation: centralPulseActivation 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Subtle Hospital Monitor Grid Background (0.5s - 5.0s) */
+.intro-monitor-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(239, 68, 68, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(239, 68, 68, 0.045) 1px, transparent 1px);
+  background-size: 38px 38px;
+  background-position: center center;
+  pointer-events: none;
+  opacity: 0;
+  animation: monitorGridFade 5s ease forwards;
+}
+
+/* Abstract Blood-Red Liquid Flow Glow along Edges (Non-graphic, elegant) */
+.intro-liquid-edges {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: 
+    inset 0 0 130px 25px rgba(185, 28, 28, 0.32),
+    inset 0 0 45px rgba(220, 38, 38, 0.18);
+  animation: liquidEdgeGlow 4s ease-in-out infinite alternate;
+}
+
+/* Atmospheric Background Crimson Glow & Pulse */
 .intro-bg-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 45%, rgba(220, 38, 38, 0.16) 0%, transparent 65%);
+  background: radial-gradient(circle at 50% 45%, rgba(220, 38, 38, 0.22) 0%, transparent 68%);
   animation: bgPulseWaves 3s ease-in-out infinite alternate;
   pointer-events: none;
 }
@@ -1758,7 +1801,7 @@ body {
 .intro-vignette-pulse {
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 120px 20px rgba(185, 28, 28, 0.3), inset 0 0 40px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 0 150px 30px rgba(185, 28, 28, 0.35), inset 0 0 60px rgba(0, 0, 0, 0.95);
   pointer-events: none;
   animation: vignetteBreathe 2.5s ease-in-out infinite alternate;
 }
@@ -1788,13 +1831,75 @@ body {
 
 .intro-spotlight {
   position: absolute;
-  width: 550px;
-  height: 550px;
+  width: 580px;
+  height: 580px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(239, 68, 68, 0.22) 0%, rgba(185, 28, 28, 0.08) 45%, transparent 70%);
-  filter: blur(50px);
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(185, 28, 28, 0.08) 48%, transparent 72%);
+  filter: blur(55px);
   pointer-events: none;
   animation: rotateSpotlight 5.5s linear infinite;
+}
+
+/* HUD Technical Frame & Corner Crosshairs */
+.intro-hud-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.intro-hud-crosshair {
+  position: absolute;
+  font-family: ui-monospace, SFMono-Regular, "Courier New", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  color: rgba(248, 113, 113, 0.55);
+  text-transform: uppercase;
+  pointer-events: none;
+  opacity: 0;
+  animation: hudElementsFade 5s ease forwards;
+}
+
+.intro-hud-crosshair span {
+  font-weight: 600;
+  color: rgba(254, 202, 202, 0.7);
+}
+
+.crosshair-tl { top: 28px; left: 28px; }
+.crosshair-tr { top: 28px; right: 28px; text-align: right; }
+.crosshair-bl { bottom: 28px; left: 28px; }
+.crosshair-br { bottom: 28px; right: 28px; text-align: right; }
+
+/* Concentric Rotating Technical HUD Rings */
+.intro-hud-ring-outer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 480px;
+  height: 480px;
+  margin-top: -240px;
+  margin-left: -240px;
+  border-radius: 50%;
+  border: 1px dashed rgba(239, 68, 68, 0.16);
+  pointer-events: none;
+  opacity: 0;
+  animation: hudRingOuterAnim 5s linear forwards;
+}
+
+.intro-hud-ring-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  margin-top: -160px;
+  margin-left: -160px;
+  border-radius: 50%;
+  border: 1px dotted rgba(255, 107, 129, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  animation: hudRingInnerAnim 5s linear forwards;
 }
 
 /* Subtle Floating Medical Particles */
@@ -1803,6 +1908,7 @@ body {
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  z-index: 6;
 }
 
 .intro-particles-layer .particle {
@@ -1834,12 +1940,12 @@ body {
   width: 90%;
 }
 
-/* 1. Glowing Medical Cross (Emerges 1.0s - 2.0s) */
+/* Scene 3: Glowing Medical Cross (1.8s - 2.6s) */
 .intro-cross-container {
   position: relative;
-  width: 68px;
-  height: 68px;
-  margin-bottom: 18px;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1847,12 +1953,21 @@ body {
 
 .intro-cross-glow {
   position: absolute;
-  inset: -15px;
+  inset: -16px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(239, 68, 68, 0.6) 0%, rgba(220, 38, 38, 0.15) 55%, transparent 75%);
-  filter: blur(12px);
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.7) 0%, rgba(220, 38, 38, 0.18) 55%, transparent 75%);
+  filter: blur(14px);
   opacity: 0;
   animation: crossGlowPulse 5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.intro-cross-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  opacity: 0;
+  animation: crossRingPulse 5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .intro-medical-cross-svg {
@@ -1868,10 +1983,10 @@ body {
   stroke: #ff4d6d;
   stroke-width: 3.5;
   stroke-linejoin: round;
-  filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.85));
+  filter: drop-shadow(0 0 14px rgba(239, 68, 68, 0.9));
 }
 
-/* 2. Logo Reveal (2.0s - 3.0s) */
+/* Scene 4: Logo Reveal (2.6s - 3.7s) */
 .intro-logo-group {
   position: relative;
   margin-bottom: 12px;
@@ -1881,7 +1996,7 @@ body {
 }
 
 .intro-logo-text {
-  font-size: 3.2rem;
+  font-size: 3.3rem;
   font-weight: 900;
   letter-spacing: -0.5px;
   line-height: 1.1;
@@ -1890,7 +2005,7 @@ body {
   justify-content: center;
   gap: 2px;
   margin: 0;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 4px 22px rgba(0, 0, 0, 0.95);
 }
 
 .intro-logo-text .logo-word-first {
@@ -1899,9 +2014,9 @@ body {
 
 .intro-logo-text .logo-plus-sign {
   color: #ef4444;
-  font-size: 3.4rem;
+  font-size: 3.5rem;
   font-weight: 900;
-  text-shadow: 0 0 18px rgba(239, 68, 68, 0.9), 0 0 35px rgba(220, 38, 38, 0.6);
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.95), 0 0 38px rgba(220, 38, 38, 0.7);
   animation: plusGlowFlash 2s ease-in-out infinite alternate;
 }
 
@@ -1910,16 +2025,16 @@ body {
   position: absolute;
   top: 0;
   left: -60%;
-  width: 40%;
+  width: 45%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
   transform: skewX(-25deg);
   pointer-events: none;
   opacity: 0;
   animation: sheenSweep 5s ease forwards;
 }
 
-/* 3. Welcome Tagline Group (3.0s - 4.0s) */
+/* Scene 5: Welcome Tagline Group (3.7s - 4.5s) */
 .intro-welcome-group {
   opacity: 0;
   transform: translateY(12px);
@@ -1928,29 +2043,38 @@ body {
 
 .intro-welcome-badge {
   display: inline-block;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 800;
-  letter-spacing: 2.2px;
+  letter-spacing: 2.4px;
   text-transform: uppercase;
   color: #fca5a5;
-  background: rgba(185, 28, 28, 0.25);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  padding: 4px 14px;
+  background: rgba(185, 28, 28, 0.28);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 4px 16px;
   border-radius: 9999px;
   margin-bottom: 8px;
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.25);
+}
+
+.intro-welcome-subtitle {
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .intro-welcome-slogan {
-  font-size: 1.2rem;
+  font-size: 1.22rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: #ffffff;
   margin: 0;
-  letter-spacing: 0.3px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.4px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
 }
 
-/* Realistic Heartbeat Monitor ECG Line (0.0s - 4.5s) */
+/* Scene 2: Realistic Heartbeat Monitor ECG Line (0.8s - 1.8s, persists to 4.5s) */
 .intro-ecg-container {
   width: 100%;
   max-width: 520px;
@@ -1972,7 +2096,7 @@ body {
 
 .intro-ecg-svg .ecg-track-dim {
   fill: none;
-  stroke: rgba(185, 28, 28, 0.2);
+  stroke: rgba(185, 28, 28, 0.22);
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -1988,6 +2112,22 @@ body {
   animation: drawECGLine 5s cubic-bezier(0.2, 0.6, 0.35, 1) forwards;
 }
 
+/* Scene 6: Exit Expanding Wave Ring (4.5s - 5.0s) */
+.intro-exit-wave-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 2px solid rgba(239, 68, 68, 0.8);
+  pointer-events: none;
+  opacity: 0;
+  animation: exitWaveRingAnim 5s ease forwards;
+}
+
 /* Subtle Cinematic Scanline Texture */
 .intro-scanline-overlay {
   position: absolute;
@@ -1995,10 +2135,11 @@ body {
   background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
   background-size: 100% 4px;
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.32;
+  z-index: 7;
 }
 
-/* Intro Quick Controls Bar (Skip & Sound) */
+/* Intro Quick Controls Bar (Skip Button Only - Strictly Silent) */
 .intro-controls-bar {
   position: absolute;
   bottom: 24px;
@@ -2006,7 +2147,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  z-index: 20;
+  z-index: 25;
 }
 
 .intro-ctrl-btn {
@@ -2015,7 +2156,7 @@ body {
   color: #cbd5e1;
   font-size: 0.82rem;
   font-weight: 600;
-  padding: 6px 13px;
+  padding: 6px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   display: inline-flex;
@@ -2034,24 +2175,92 @@ body {
 }
 
 /* ==========================================================================
-   TIMELINE KEYFRAME ANIMATIONS (5.0s Total Duration)
-   0.0s - 1.0s: Ambient dark crimson & ECG start
-   1.0s - 2.0s: Heartbeat spike + Cross emerge & thump
-   2.0s - 3.0s: Logo zoom-in + sheen sweep
-   3.0s - 4.0s: Welcome text + soft ambient glow
-   4.0s - 5.0s: Soften & clean dissolve into website
+   ADVANCED 6-SCENE TIMELINE KEYFRAME ANIMATIONS (5.0s Total Duration)
+   Scene 1 (0.0s - 0.8s): System Activation & Central Energy Pulse
+   Scene 2 (0.8s - 1.8s): Heartbeat Detection & ECG Spike
+   Scene 3 (1.8s - 2.6s): Medical Symbol Formation & Pulsing
+   Scene 4 (2.6s - 3.7s): FirstAid+ Cinematic Reveal & Light Sweep
+   Scene 5 (3.7s - 4.5s): Welcome & Hero Transition
+   Scene 6 (4.5s - 5.0s): Expanding Red Energy Ring & Smooth Dissolve
    ========================================================================== */
 
+/* Scene 1: Camera Zoom */
+@keyframes introCameraZoom {
+  0% { transform: scale(1.035); }
+  100% { transform: scale(1); }
+}
+
+/* Scene 1: Central Dot Expansion */
+@keyframes centralPulseActivation {
+  0% {
+    opacity: 0;
+    transform: scale(0.1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.9);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.2);
+    box-shadow: 0 0 35px 12px rgba(239, 68, 68, 0.9);
+  }
+  60% {
+    opacity: 0.8;
+    transform: scale(5);
+    box-shadow: 0 0 90px 35px rgba(239, 68, 68, 0.35);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(12);
+  }
+}
+
+/* Monitor Grid Fade */
+@keyframes monitorGridFade {
+  0%, 10% { opacity: 0; }
+  25%, 85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Liquid Edge Glow */
+@keyframes liquidEdgeGlow {
+  0% {
+    box-shadow: inset 0 0 110px 20px rgba(185, 28, 28, 0.28), inset 0 0 35px rgba(220, 38, 38, 0.15);
+  }
+  100% {
+    box-shadow: inset 0 0 155px 35px rgba(220, 38, 38, 0.38), inset 0 0 60px rgba(239, 68, 68, 0.25);
+  }
+}
+
+/* HUD Text and Technical Rings */
+@keyframes hudElementsFade {
+  0%, 12% { opacity: 0; transform: translateY(-4px); }
+  24%, 85% { opacity: 0.85; transform: translateY(0); }
+  100% { opacity: 0; }
+}
+
+@keyframes hudRingOuterAnim {
+  0%, 12% { opacity: 0; transform: rotate(0deg) scale(0.85); }
+  25% { opacity: 0.8; transform: rotate(45deg) scale(1); }
+  85% { opacity: 0.7; transform: rotate(180deg) scale(1); }
+  100% { opacity: 0; transform: rotate(220deg) scale(1.08); }
+}
+
+@keyframes hudRingInnerAnim {
+  0%, 14% { opacity: 0; transform: rotate(0deg) scale(0.9); }
+  25% { opacity: 0.7; transform: rotate(-35deg) scale(1); }
+  85% { opacity: 0.6; transform: rotate(-160deg) scale(1); }
+  100% { opacity: 0; transform: rotate(-200deg) scale(1.05); }
+}
+
 @keyframes bgPulseWaves {
-  0% { transform: scale(0.9); opacity: 0.1; }
-  50% { transform: scale(1.1); opacity: 0.25; }
+  0% { transform: scale(0.92); opacity: 0.12; }
+  50% { transform: scale(1.08); opacity: 0.26; }
   100% { transform: scale(1.0); opacity: 0.18; }
 }
 
 @keyframes vignetteBreathe {
-  0% { box-shadow: inset 0 0 100px 10px rgba(185, 28, 28, 0.25); }
-  50% { box-shadow: inset 0 0 140px 25px rgba(220, 38, 38, 0.38); }
-  100% { box-shadow: inset 0 0 110px 15px rgba(185, 28, 28, 0.28); }
+  0% { box-shadow: inset 0 0 110px 15px rgba(185, 28, 28, 0.25); }
+  50% { box-shadow: inset 0 0 150px 30px rgba(220, 38, 38, 0.4); }
+  100% { box-shadow: inset 0 0 120px 20px rgba(185, 28, 28, 0.28); }
 }
 
 @keyframes sweepBeamLeft {
@@ -2077,75 +2286,83 @@ body {
   100% { transform: translateY(-25px) rotate(15deg); }
 }
 
-/* ECG Line Drawing and Lifecycle */
+/* Scene 2: ECG Line Drawing and Lifecycle */
 @keyframes ecgContainerLifecycle {
-  0% { opacity: 0; }
-  15% { opacity: 1; }
+  0%, 14% { opacity: 0; }
+  22% { opacity: 1; }
   75% { opacity: 1; transform: scale(1); }
-  88% { opacity: 0.4; transform: scale(0.98); }
+  88% { opacity: 0.35; transform: scale(0.98); }
   100% { opacity: 0; transform: scale(0.95); }
 }
 
 @keyframes drawECGLine {
-  0% { stroke-dashoffset: 1000; }
-  /* At 1.1s (22%), line sweeps past the high QRS heartbeat spike */
-  22% { stroke-dashoffset: 450; filter: drop-shadow(0 0 14px #ff385c); }
-  35% { stroke-dashoffset: 0; filter: drop-shadow(0 0 8px #ef4444); }
+  0%, 14% { stroke-dashoffset: 1000; }
+  /* At 1.1s (22%), line sweeps through realistic QRS complex peak */
+  26% { stroke-dashoffset: 450; filter: drop-shadow(0 0 16px #ff385c); }
+  36% { stroke-dashoffset: 0; filter: drop-shadow(0 0 8px #ef4444); }
   75% { stroke-dashoffset: 0; opacity: 1; }
   100% { stroke-dashoffset: 0; opacity: 0; }
 }
 
-/* Medical Cross Reveal & Thump */
+/* Scene 3: Medical Cross Reveal & Thump */
 @keyframes crossRevealAndThump {
-  0%, 16% {
+  0%, 34% {
     opacity: 0;
-    transform: scale(0.5);
+    transform: scale(0.4);
   }
-  24% {
+  42% {
     opacity: 1;
     transform: scale(1.22); /* Heartbeat spike thump */
   }
-  30% {
-    transform: scale(0.95);
+  48% {
+    transform: scale(0.96);
   }
-  38% {
-    transform: scale(1.05);
+  54% {
+    transform: scale(1.04);
   }
-  45%, 85% {
+  60%, 85% {
     opacity: 1;
     transform: scale(1);
   }
   100% {
     opacity: 0.85;
-    transform: scale(0.92);
+    transform: scale(0.94);
   }
 }
 
 @keyframes crossGlowPulse {
-  0%, 18% { opacity: 0; transform: scale(0.5); }
-  25% { opacity: 0.9; transform: scale(1.35); }
-  36% { opacity: 0.4; transform: scale(1); }
-  45%, 80% { opacity: 0.6; transform: scale(1.1); }
+  0%, 34% { opacity: 0; transform: scale(0.4); }
+  43% { opacity: 0.95; transform: scale(1.4); }
+  52% { opacity: 0.4; transform: scale(1); }
+  60%, 80% { opacity: 0.65; transform: scale(1.1); }
   100% { opacity: 0; transform: scale(0.8); }
 }
 
-/* Logo Zoom & Sheen Reveal */
+@keyframes crossRingPulse {
+  0%, 36% { opacity: 0; transform: scale(0.6); }
+  44% { opacity: 0.8; transform: scale(1.2); }
+  58% { opacity: 0.3; transform: scale(1.05); }
+  80% { opacity: 0.5; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+/* Scene 4: Logo Zoom & Sheen Reveal */
 @keyframes logoZoomReveal {
-  0%, 34% {
+  0%, 50% {
     opacity: 0;
     transform: translateY(18px) scale(0.92);
   }
-  46% {
+  60% {
     opacity: 1;
     transform: translateY(0) scale(1.04);
   }
-  56%, 85% {
+  68%, 85% {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
   100% {
     opacity: 0.9;
-    transform: translateY(-2px) scale(0.97);
+    transform: translateY(-2px) scale(0.98);
   }
 }
 
@@ -2155,14 +2372,14 @@ body {
 }
 
 @keyframes sheenSweep {
-  0%, 42% {
+  0%, 56% {
     left: -70%;
     opacity: 0;
   }
-  46% {
-    opacity: 0.8;
+  60% {
+    opacity: 0.85;
   }
-  58% {
+  72% {
     left: 140%;
     opacity: 0;
   }
@@ -2172,19 +2389,34 @@ body {
   }
 }
 
-/* Welcome Tagline Fade In */
+/* Scene 5: Welcome Tagline Fade In */
 @keyframes welcomeFadeIn {
-  0%, 54% {
+  0%, 72% {
     opacity: 0;
     transform: translateY(14px);
   }
-  66%, 86% {
+  82%, 88% {
     opacity: 1;
     transform: translateY(0);
   }
   100% {
     opacity: 0.85;
     transform: translateY(-2px);
+  }
+}
+
+/* Scene 6: Exit Wave Ring */
+@keyframes exitWaveRingAnim {
+  0%, 88% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  92% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(55);
   }
 }
 
@@ -2200,13 +2432,33 @@ body {
     font-size: 1.05rem;
   }
   .intro-cross-container {
-    width: 56px;
-    height: 56px;
+    width: 58px;
+    height: 58px;
     margin-bottom: 12px;
   }
   .intro-ecg-container {
     height: 48px;
     margin-top: 16px;
+  }
+  .intro-hud-crosshair {
+    font-size: 0.64rem;
+    letter-spacing: 1px;
+  }
+  .crosshair-tl { top: 16px; left: 16px; }
+  .crosshair-tr { top: 16px; right: 16px; }
+  .crosshair-bl { bottom: 16px; left: 16px; }
+  .crosshair-br { bottom: 16px; right: 16px; }
+  .intro-hud-ring-outer {
+    width: 340px;
+    height: 340px;
+    margin-top: -170px;
+    margin-left: -170px;
+  }
+  .intro-hud-ring-inner {
+    width: 240px;
+    height: 240px;
+    margin-top: -120px;
+    margin-left: -120px;
   }
   .intro-controls-bar {
     bottom: 16px;
@@ -2223,10 +2475,14 @@ body {
   .cinematic-intro {
     transition: opacity 0.2s ease !important;
   }
+  .intro-central-pulse-dot,
   .intro-siren-beam,
   .intro-spotlight,
   .intro-particles-layer,
-  .intro-logo-sweep-line {
+  .intro-logo-sweep-line,
+  .intro-exit-wave-ring,
+  .intro-hud-ring-outer,
+  .intro-hud-ring-inner {
     animation: none !important;
     display: none !important;
   }
@@ -2234,12 +2490,14 @@ body {
   .intro-logo-group,
   .intro-welcome-group,
   .intro-ecg-container,
-  .intro-ecg-svg .ecg-line-active {
+  .intro-ecg-svg .ecg-line-active,
+  .intro-hud-crosshair {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
     stroke-dashoffset: 0 !important;
   }
 }
+
 
 
