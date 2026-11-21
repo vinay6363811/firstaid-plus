@@ -2757,29 +2757,48 @@ body {
   transition: opacity 0.35s ease, filter 0.35s ease;
 }
 
-/* REAL HUMAN DEFAULT VIEW: Natural Skin & Real Human Body Contours */
-.svg-anatomy[data-active-system="all"] .system-skin {
-  opacity: 1 !important;
-  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.45));
+/* Exact 3D Anatomical Model from User Reference */
+.exact-model-photo {
+  pointer-events: none;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.2));
+  transition: opacity 0.35s ease, filter 0.35s ease;
 }
-.svg-anatomy[data-active-system="all"] .system-layer:not(.system-skin):not(.system-silhouette) {
-  opacity: 0.04 !important;
+
+.system-exact-model {
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+/* EXACT 3D ANATOMY DEFAULT VIEW: 100% photo-realistic exact rendering */
+.svg-anatomy[data-active-system="all"] .system-exact-model {
+  opacity: 1 !important;
+  display: block;
+}
+.svg-anatomy[data-active-system="all"] .system-skin {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+.svg-anatomy[data-active-system="all"] .system-layer:not(.system-exact-model):not(.system-silhouette) {
+  opacity: 0 !important;
   filter: grayscale(100%);
   pointer-events: none;
 }
 .svg-anatomy[data-active-system="all"] .system-silhouette {
-  opacity: 0.15;
+  opacity: 0.08;
 }
 
-/* System Isolation Modes - Skin becomes Translucent Medical Shell */
+/* System Isolation Modes - Exact model becomes Translucent Medical Shell */
+.svg-anatomy:not([data-active-system="all"]) .system-exact-model {
+  opacity: 0.22 !important;
+  filter: grayscale(50%) brightness(0.85) drop-shadow(0 0 12px rgba(56, 189, 248, 0.45));
+}
+
 .svg-anatomy[data-active-system="cardiovascular"] .system-skin,
 .svg-anatomy[data-active-system="respiratory"] .system-skin,
 .svg-anatomy[data-active-system="skeletal"] .system-skin,
 .svg-anatomy[data-active-system="nervous"] .system-skin,
 .svg-anatomy[data-active-system="muscular"] .system-skin,
 .svg-anatomy[data-active-system="lymphatic"] .system-skin {
-  opacity: 0.22 !important;
-  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.35));
+  opacity: 0 !important;
 }
 
 .svg-anatomy[data-active-system="cardiovascular"] .system-layer:not(.system-cardiovascular):not(.system-silhouette):not(.system-skin) {

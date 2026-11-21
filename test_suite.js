@@ -333,11 +333,13 @@ async function runTests() {
     assert(htmlText.includes('system-lymphatic'), 'SVG contains lymphatic system nodes and vessels');
     assert(htmlText.includes('system-skin'), 'SVG contains real human natural skin layer for default view');
     assert(htmlText.includes('realSkinBaseGrad'), 'SVG defs contain realistic human skin tone gradients');
+    assert(htmlText.includes('system-exact-model'), 'SVG contains exact 3D anatomical model layer matching user reference image');
+    assert(htmlText.includes('anatomy-front-clean.png'), 'SVG embeds high-resolution front anatomical image');
     assert(bodyVisCode.includes('bindSystemSelector'), 'Body visualization binds system selector toolbar');
     assert(bodyVisCode.includes('setSystem(systemId'), 'Body visualization supports dynamic setSystem switching');
     assert(bodyVisCode.includes('SYSTEM_ASSOCIATIONS'), 'Body visualization has symptom-to-system mapping for auto-isolation');
 
-    console.log('\n🎉 ALL 88 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n🎉 ALL 90 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);
