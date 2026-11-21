@@ -88,6 +88,7 @@ async function analyzeText(text, targetLangCode) {
     return {
       isDemoMode: false,
       engine: "FirstAid+ Local Clinical Knowledge Base",
+      id: localized.id || local.id,
       possibleEmergency: localized.possibleEmergency || localized.title,
       severity: localized.severity,
       confidenceTier: localized.confidenceTier || "high",

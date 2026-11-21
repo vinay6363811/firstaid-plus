@@ -389,6 +389,15 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // 3. Tablet Usage, Food Timing & Safe Duration Guidelines
+  if (pathname === '/api/medicine/tablet-guidelines' && method === 'GET') {
+    try {
+      return sendJson(res, 200, medicineService.TABLET_USAGE_GUIDELINES);
+    } catch (err) {
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
   // 3. Real Location-Based Nearby Pharmacy Finder
   if (pathname === '/api/pharmacies/nearby' && method === 'GET') {
     try {

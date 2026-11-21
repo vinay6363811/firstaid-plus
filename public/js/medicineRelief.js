@@ -46,6 +46,16 @@
       this.pharmacySearchBtn = document.getElementById('btn-pharmacy-manual-search');
       this.pharmacyRefreshGpsBtn = document.getElementById('btn-refresh-pharmacy-gps');
 
+      // Tablet Guide elements & state
+      this.tabletModal = document.getElementById('tablet-guide-modal');
+      this.btnOpenTabletGuide = document.getElementById('btn-open-tablet-guide');
+      this.btnCloseTabletGuide = document.getElementById('btn-close-tablet-guide');
+      this.btnCloseTabletGuideFooter = document.getElementById('btn-close-tablet-guide-footer');
+      this.btnSpeakTabletGuide = document.getElementById('btn-speak-tablet-guide');
+      this.tabletSearchInput = document.getElementById('tablet-quick-search-input');
+      this.tabletGuidelines = null;
+      this.isSpeakingTabletGuide = false;
+
       this.init();
     }
 
@@ -131,6 +141,87 @@
       if (this.pharmacyRefreshGpsBtn) {
         this.pharmacyRefreshGpsBtn.addEventListener('click', () => {
           this.detectUserLocationAndFindPharmacies(true);
+        });
+      }
+
+      // Tablet Usage Guide Modal bindings
+      if (this.btnOpenTabletGuide) {
+        this.btnOpenTabletGuide.addEventListener('click', () => {
+          this.openTabletGuide('how');
+        });
+      }
+
+      if (this.btnCloseTabletGuide) {
+        this.btnCloseTabletGuide.addEventListener('click', () => {
+          this.closeTabletGuide();
+        });
+      }
+
+      if (this.btnCloseTabletGuideFooter) {
+        this.btnCloseTabletGuideFooter.addEventListener('click', () => {
+          this.closeTabletGuide();
+        });
+      }
+
+      if (this.tabletModal) {
+        this.tabletModal.addEventListener('click', (e) => {
+          if (e.target === this.tabletModal) {
+            this.closeTabletGuide();
+          }
+        });
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.tabletModal && this.tabletModal.style.display === 'flex') {
+          this.closeTabletGuide();
+        }
+      });
+
+      // Tablet Modal Tabs
+      const tabBtns = document.querySelectorAll('.tablet-tab-btn');
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const ttab = btn.getAttribute('data-ttab');
+          if (ttab) this.switchTabletTab(ttab);
+        });
+      });
+
+      // Tablet Filter Pills
+      const filterPills = document.querySelectorAll('.quick-filter-pill');
+      filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          filterPills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const filter = pill.getAttribute('data-filter');
+          if (filter === 'all') {
+            this.filterTabletGuide('');
+          } else if (filter === 'painkillers') {
+            this.switchTabletTab('lookup');
+            this.filterTabletGuide('pain');
+          } else if (filter === 'acidity') {
+            this.switchTabletTab('lookup');
+            this.filterTabletGuide('pan');
+          } else if (filter === 'allergy') {
+            this.switchTabletTab('lookup');
+            this.filterTabletGuide('cetirizine');
+          } else if (filter === 'antibiotics') {
+            this.switchTabletTab('duration');
+            this.filterTabletGuide('antibiotic');
+          }
+        });
+      });
+
+      // Tablet Search Input
+      if (this.tabletSearchInput) {
+        this.tabletSearchInput.addEventListener('input', (e) => {
+          this.filterTabletGuide(e.target.value);
+        });
+      }
+
+      // Voice read tablet guidelines
+      if (this.btnSpeakTabletGuide) {
+        this.btnSpeakTabletGuide.addEventListener('click', () => {
+          this.speakTabletGuide();
         });
       }
     }
@@ -432,6 +523,33 @@
                 <p>${m.whatItIsUsedFor}</p>
               </div>
 
+              <!-- Tablet Administration, Timing & Duration Guidelines -->
+              <div class="med-tablet-guidelines-box">
+                <div class="med-guide-pill-item med-guide-how">
+                  <div class="pill-icon">💧</div>
+                  <div class="pill-content">
+                    <span class="pill-label">How to Take:</span>
+                    <span class="pill-text">${m.howToUse || 'Swallow whole with a full 200–250 ml glass of plain water while upright. Do not crush.'}</span>
+                  </div>
+                </div>
+
+                <div class="med-guide-pill-item med-guide-timing">
+                  <div class="pill-icon">🕒</div>
+                  <div class="pill-content">
+                    <span class="pill-label">When to Take:</span>
+                    <span class="pill-text">${m.whenToUse || 'Take after meals or as indicated on packaging.'}</span>
+                  </div>
+                </div>
+
+                <div class="med-guide-pill-item med-guide-duration">
+                  <div class="pill-icon">📅</div>
+                  <div class="pill-content">
+                    <span class="pill-label">Max Safe Days:</span>
+                    <span class="pill-text">${m.maxDaysSafe || 'Max 2–3 days without doctor consultation.'}</span>
+                  </div>
+                </div>
+              </div>
+
               <!-- Profile-Specific Dynamic Warnings -->
               ${m.profileWarnings && m.profileWarnings.length > 0 ? `
                 <div class="med-profile-warning-box">
@@ -459,9 +577,14 @@
                   <span class="price-val">${m.priceEstimate.formatted}</span>
                   <span class="price-unit">(${m.priceEstimate.packSize})</span>
                 </div>
-                <button type="button" class="btn-check-pharmacy" onclick="window.medicineRelief.switchTab('pharmacies')">
-                  Find in Nearby Pharmacy
-                </button>
+                <div class="med-card-footer-btns">
+                  <button type="button" class="btn-card-tablet-guide" onclick="window.medicineRelief.openTabletGuide('lookup', '${(m.brandExamples && m.brandExamples[0]) || ''}')">
+                    📖 Tablet Guide
+                  </button>
+                  <button type="button" class="btn-check-pharmacy" onclick="window.medicineRelief.switchTab('pharmacies')">
+                    Find in Pharmacy
+                  </button>
+                </div>
               </div>
             </div>
           `).join('')}
@@ -527,6 +650,8 @@
                 <th>Generic Drug</th>
                 <th>Example Indian Brands</th>
                 <th>Formulation</th>
+                <th>When to Take</th>
+                <th>Safe Duration</th>
                 <th>Pack Size</th>
                 <th>Estimated Price</th>
                 <th>Best Suited For</th>
@@ -539,6 +664,8 @@
                   <td><strong>${row.genericName}</strong></td>
                   <td>${row.brandExamples}</td>
                   <td>${row.formulation}</td>
+                  <td><span class="compare-timing-tag">${row.whenToUse || 'After food / As directed'}</span></td>
+                  <td><span class="compare-duration-tag">${row.maxDaysSafe || '2–3 days max'}</span></td>
                   <td>${row.packSize}</td>
                   <td><span class="compare-price">${row.priceEstimate}</span></td>
                   <td>${row.bestSuitedFor}</td>
@@ -964,6 +1091,151 @@
       const text = `Symptom guidance for ${this.currentData.conditionTitle}. Primary medicine: ${this.currentData.otcMedicines[0]?.genericName || 'Supportive care'}. Remember, brand names like ${this.currentData.otcMedicines[0]?.brandExamples?.slice(0, 2).join(' or ') || ''} are examples. Never exceed recommended doses.`;
       if (window.speakText) {
         window.speakText(text);
+      }
+    }
+
+    async loadTabletGuidelines() {
+      if (this.tabletGuidelines) return this.tabletGuidelines;
+      try {
+        const res = await fetch('/api/medicine/tablet-guidelines');
+        if (res.ok) {
+          this.tabletGuidelines = await res.json();
+          this.populateTabletLookup(this.tabletGuidelines);
+        }
+      } catch (e) {
+        console.warn('Could not load tablet guidelines endpoint:', e);
+      }
+      return this.tabletGuidelines;
+    }
+
+    openTabletGuide(focusTab = 'how', searchQuery = '') {
+      const modal = document.getElementById('tablet-guide-modal');
+      if (!modal) return;
+      modal.style.display = 'flex';
+      document.body.classList.add('modal-open');
+
+      this.loadTabletGuidelines().then(() => {
+        if (focusTab) {
+          this.switchTabletTab(focusTab);
+        }
+        if (searchQuery) {
+          const input = document.getElementById('tablet-quick-search-input');
+          if (input) {
+            input.value = searchQuery;
+            this.filterTabletGuide(searchQuery);
+          }
+        }
+      });
+
+      if (focusTab) {
+        this.switchTabletTab(focusTab);
+      }
+      if (searchQuery) {
+        const input = document.getElementById('tablet-quick-search-input');
+        if (input) {
+          input.value = searchQuery;
+          this.filterTabletGuide(searchQuery);
+        }
+      }
+    }
+
+    closeTabletGuide() {
+      const modal = document.getElementById('tablet-guide-modal');
+      if (!modal) return;
+      modal.style.display = 'none';
+      document.body.classList.remove('modal-open');
+      this.stopSpeakingTabletGuide();
+    }
+
+    switchTabletTab(tabId) {
+      const tabBtns = document.querySelectorAll('.tablet-tab-btn');
+      const panes = document.querySelectorAll('.tablet-pane');
+
+      tabBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-ttab') === tabId);
+      });
+
+      panes.forEach(pane => {
+        pane.classList.toggle('active', pane.id === `tpane-${tabId}`);
+      });
+    }
+
+    populateTabletLookup(data) {
+      const tbody = document.getElementById('tablet-quick-lookup-tbody');
+      if (!tbody) return;
+      const list = (data && data.quickLookup) ? data.quickLookup : [];
+      if (list.length === 0) return;
+
+      tbody.innerHTML = list.map(item => `
+        <tr class="lookup-row" data-name="${item.name.toLowerCase()}" data-cat="${item.category.toLowerCase()}">
+          <td><strong>${item.name}</strong></td>
+          <td><span class="lookup-cat-badge">${item.category}</span></td>
+          <td>${item.howToTake}</td>
+          <td><span class="lookup-timing-tag">${item.mealTiming}</span></td>
+          <td><span class="lookup-duration-pill">${item.safeDuration}</span></td>
+          <td><small style="color:#b91c1c; font-weight:600;">${item.warning}</small></td>
+        </tr>
+      `).join('');
+    }
+
+    filterTabletGuide(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#tablet-quick-lookup-tbody .lookup-row');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = (!q || text.includes(q)) ? '' : 'none';
+      });
+
+      // Also filter duration cards
+      const durationCards = document.querySelectorAll('.duration-item-card');
+      durationCards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = (!q || text.includes(q)) ? '' : 'none';
+      });
+    }
+
+    speakTabletGuide() {
+      const btn = document.getElementById('btn-speak-tablet-guide');
+      if (this.isSpeakingTabletGuide) {
+        this.stopSpeakingTabletGuide();
+        return;
+      }
+
+      const textToSpeak = (this.tabletGuidelines && this.tabletGuidelines.speechSummary)
+        ? this.tabletGuidelines.speechSummary
+        : 'Here are the essential tablet guidelines. Always swallow tablets sitting upright with a full glass of plain room temperature water. Never take pills lying down or with hot tea, milk, or alcohol. Take acidity medicines on an empty stomach before breakfast, and take painkillers after food. Never take painkillers or fever medicines for more than two to three days without a doctor.';
+
+      if (window.speakText) {
+        window.speakText(textToSpeak, 'en-IN');
+      } else if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(textToSpeak);
+        utter.rate = 0.95;
+        window.speechSynthesis.speak(utter);
+      }
+
+      this.isSpeakingTabletGuide = true;
+      if (btn) {
+        btn.classList.add('speaking');
+        const icon = btn.querySelector('.audio-icon');
+        const label = btn.querySelector('.audio-text');
+        if (icon) icon.textContent = '⏹️';
+        if (label) label.textContent = 'Stop Audio';
+      }
+    }
+
+    stopSpeakingTabletGuide() {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      this.isSpeakingTabletGuide = false;
+      const btn = document.getElementById('btn-speak-tablet-guide');
+      if (btn) {
+        btn.classList.remove('speaking');
+        const icon = btn.querySelector('.audio-icon');
+        const label = btn.querySelector('.audio-text');
+        if (icon) icon.textContent = '🔊';
+        if (label) label.textContent = 'Listen Audio Guide';
       }
     }
   }

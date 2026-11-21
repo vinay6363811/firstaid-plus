@@ -46,6 +46,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe active liver disease, chronic heavy alcohol consumption, or known paracetamol hypersensitivity.',
         drugInteractions: 'Warfarin (with prolonged daily high doses), Isoniazid.',
         scheduleStatus: 'OTC in India (Standard non-prescription pain reliever)',
+        howToUse: 'Swallow whole with a full glass of room-temperature plain water (200–250 ml) while sitting or standing upright. Do not crush, chew, or swallow while lying down.',
+        whenToUse: 'SOS / Every 4–6 hours as needed (Can be taken with or without food. Maintain at least 4–6 hours spacing between doses).',
+        maxDaysSafe: 'Max 2 to 3 Days without doctor evaluation. Never exceed 4,000 mg (4-6 tablets) in 24 hours.',
         consultDoctorFirst: 'If headache persists beyond 48 hours or is accompanied by nausea and light sensitivity.',
         priceEstimate: {
           min: 22,
@@ -69,6 +72,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Active stomach ulcer, history of GI bleeding, severe kidney or heart disease, third trimester of pregnancy, or aspirin-induced asthma.',
         drugInteractions: 'Aspirin, blood thinners (anticoagulants), ACE inhibitors, diuretics.',
         scheduleStatus: 'OTC in India for standard packaging (Take with caution)',
+        howToUse: 'Swallow whole with a full glass of water or milk while sitting upright. Do not crush or chew. Never take dry or lying down.',
+        whenToUse: 'Strictly AFTER FOOD or with milk/meals to protect stomach lining. NEVER take on an empty stomach.',
+        maxDaysSafe: 'Max 1 to 2 Days for acute inflammatory pain. Discontinue once acute pain subsides to prevent gastric ulceration.',
         consultDoctorFirst: 'Patients over 65, those with high blood pressure, or preexisting acid reflux.',
         priceEstimate: {
           min: 35,
@@ -145,6 +151,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe liver impairment. For infants under 3 months, consult a pediatrician before administering any antipyretic.',
         drugInteractions: 'Alcohol, Barbiturates.',
         scheduleStatus: 'OTC in India',
+        howToUse: 'Swallow whole with a full glass of water (for adults). For children, use a calibrated measuring syringe/dropper for pediatric suspension. Do not crush tablets.',
+        whenToUse: 'SOS / Every 4–6 hours as needed for body temperature above 100°F (37.8°C). Can be taken with or without food.',
+        maxDaysSafe: 'Max 2 to 3 Days. If fever persists beyond 72 hours, STOP self-medication and get evaluated for Dengue, Malaria, or Typhoid.',
         consultDoctorFirst: 'If fever does not drop after 48 hours or if accompanied by chills and joint pain.',
         priceEstimate: {
           min: 20,
@@ -219,6 +228,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe renal failure (CrCl < 10 ml/min), children under 2 years without pediatrician guidance.',
         drugInteractions: 'CNS depressants, sedatives, alcohol.',
         scheduleStatus: 'OTC in India for standard 10mg pack',
+        howToUse: 'Swallow whole with a full glass of water. Do not crush or chew. Take sitting or standing upright.',
+        whenToUse: 'Once daily at Bedtime / Night (evening) with or after food, to minimize daytime drowsiness.',
+        maxDaysSafe: '1 to 3 Days for acute cold/allergic flare-up. Consult a doctor if allergic rhinitis persists beyond 5 days.',
         consultDoctorFirst: 'If nasal discharge becomes thick, foul-smelling, or unilateral.',
         priceEstimate: {
           min: 28,
@@ -242,6 +254,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Chronic asthma, severe COPD, respiratory depression, patients on MAO inhibitors or SSRIs.',
         drugInteractions: 'Antidepressants (MAOIs, SSRIs - risk of serotonin syndrome).',
         scheduleStatus: 'OTC / Schedule G/H in India (Ensure adult supervision)',
+        howToUse: 'Shake bottle thoroughly. Measure exact volume (5ml-10ml) using a calibrated medicine measuring cup. Sip slowly.',
+        whenToUse: 'Every 6–8 hours as needed, preferably after meals and right before bedtime.',
+        maxDaysSafe: 'Max 3 to 5 Days. If cough produces green/yellow phlegm or lasts >7 days, consult a physician.',
         consultDoctorFirst: 'If cough is accompanied by wheezing or shortness of breath.',
         priceEstimate: {
           min: 95,
@@ -265,6 +280,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Safe for everyone. Zero contraindications.',
         drugInteractions: 'None.',
         scheduleStatus: 'OTC / Non-drug physiological solution',
+        howToUse: 'Gently blow nose. Insert nozzle tip into one nostril, keeping head upright. Press 2-3 sprays while breathing in gently. Repeat in other nostril.',
+        whenToUse: '2 to 4 times daily as needed, especially before sleep or before feeding in infants.',
+        maxDaysSafe: 'Safe for extended daily use as needed (100% physiological non-medicated saline).',
         consultDoctorFirst: 'Not required.',
         priceEstimate: {
           min: 45,
@@ -339,6 +357,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe renal failure (risk of aluminium/magnesium accumulation).',
         drugInteractions: 'Tetracyclines, Ciprofloxacin, Iron supplements, Digoxin (reduces absorption).',
         scheduleStatus: 'OTC in India (Standard non-prescription antacid)',
+        howToUse: 'Shake suspension bottle well before drinking (or chew tablets thoroughly before swallowing). Sip 10–15 ml. Do not drink water immediately afterwards to allow the protective coating to adhere to the esophageal and gastric lining.',
+        whenToUse: '1 to 2 hours AFTER meals and right at Bedtime, or SOS when burning acid symptoms appear.',
+        maxDaysSafe: 'Max 1 to 2 Days SOS. If antacids are required continuously for >14 days, see a doctor to rule out ulcer or H. pylori.',
         consultDoctorFirst: 'If antacids are required daily for more than 2 weeks.',
         priceEstimate: {
           min: 110,
@@ -362,6 +383,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Known hypersensitivity to PPIs, osteoporosis/bone fractures with long-term unmonitored use.',
         drugInteractions: 'Ketoconazole, Methotrexate, Clopidogrel.',
         scheduleStatus: 'Schedule H in India (Consult doctor/pharmacist for appropriate strength & duration)',
+        howToUse: 'Swallow whole with a full glass of room-temperature plain water while upright. CRITICAL: NEVER crush, break, or chew the enteric-coated gastro-resistant tablet (stomach acid immediately degrades non-coated pantoprazole).',
+        whenToUse: 'Strictly on an EMPTY STOMACH (Khali Pet) 30 to 60 minutes BEFORE morning breakfast.',
+        maxDaysSafe: '7 to 14 Days defined course as advised by doctor. Avoid prolonged unmonitored daily use beyond 4-8 weeks.',
         consultDoctorFirst: 'Mandatory if symptoms include weight loss, swallowing difficulty, or anemia.',
         priceEstimate: {
           min: 75,
@@ -430,6 +454,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Known hypersensitivity to iodine, thyroid dysfunction patients (long-term use).',
         drugInteractions: 'Hydrogen peroxide (antagonistic effect), silver sulfadiazine.',
         scheduleStatus: 'OTC in India (Universal first-aid antiseptic)',
+        howToUse: 'Clean cut under clean running water first. Apply a thin layer of ointment or dab solution using sterile cotton gauze. Cover with sterile dressing.',
+        whenToUse: 'Apply 1 to 2 times daily during dressing changes.',
+        maxDaysSafe: '3 to 5 Days until skin forms clean dry protective scab.',
         consultDoctorFirst: 'If wound has deep foreign matter or is gaping.',
         priceEstimate: {
           min: 45,
@@ -453,6 +480,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Hypersensitivity to framycetin/neomycin. Do not apply into eyes.',
         drugInteractions: 'None significant for topical application.',
         scheduleStatus: 'Schedule H / OTC in common chemist practice',
+        howToUse: 'Wash hands. Gently dab a small pea-sized amount onto the superficial abrasion using sterile cotton. Cover with a breathable bandage.',
+        whenToUse: 'Once or twice daily after cleaning the wound.',
+        maxDaysSafe: 'Max 5 to 7 Days. Prolonged topical antibiotic use causes skin sensitization and bacterial resistance.',
         consultDoctorFirst: 'If cut does not begin healing within 3-4 days.',
         priceEstimate: {
           min: 55,
@@ -535,6 +565,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Known sulfonamide (sulfa) allergy, pregnant women near term, newborns under 2 months.',
         drugInteractions: 'Topical proteolytic enzymes (papain, collagenase).',
         scheduleStatus: 'OTC / Pharmacist dispensed in India',
+        howToUse: 'Cool burn under running cool tap water for 15-20 minutes first. Gently apply a 1-2 mm thick layer using sterile gauze. Cover with non-adherent dressing.',
+        whenToUse: 'Apply 1 to 2 times daily. Cleanse away old cream gently with sterile saline before reapplication.',
+        maxDaysSafe: '5 to 7 Days for minor superficial burns.',
         consultDoctorFirst: 'If burn covers face, hand, or joints.',
         priceEstimate: {
           min: 60,
@@ -558,6 +591,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe liver disease.',
         drugInteractions: 'Alcohol.',
         scheduleStatus: 'OTC in India',
+        howToUse: 'Swallow whole with a full glass of water while sitting upright. Do not crush.',
+        whenToUse: 'SOS / Every 4–6 hours as needed for burning pain. Can be taken with or without food.',
+        maxDaysSafe: 'Max 2 to 3 Days. If pain remains severe after 72 hours, hospital wound assessment is necessary.',
         consultDoctorFirst: 'If pain is unmanageable with standard analgesics.',
         priceEstimate: {
           min: 22,
@@ -632,6 +668,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe intractable vomiting requiring IV fluids, paralytic ileus, severe kidney failure (anuria).',
         drugInteractions: 'None.',
         scheduleStatus: 'OTC in India (WHO Essential Medicine)',
+        howToUse: 'Dissolve entire 21.8g packet in exactly 1.0 litre (1000 ml) of clean boiled/filtered drinking water. Stir until completely clear. Never dilute in milk, juices, or soft drinks.',
+        whenToUse: 'Drink continuously in frequent small sips throughout the day. Take 100–200 ml immediately after each loose watery motion.',
+        maxDaysSafe: '1 to 2 Days during active diarrhea. Prepare fresh daily and discard any mixed solution remaining after 24 hours.',
         consultDoctorFirst: 'If patient cannot keep sips down or shows sunken eyes.',
         priceEstimate: {
           min: 18,
@@ -655,6 +694,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe immunocompromised states, central venous catheter patients (rare fungemia risk with boulardii).',
         drugInteractions: 'Take at least 2 hours apart from any oral antibiotics.',
         scheduleStatus: 'OTC in India',
+        howToUse: 'Shake mini-vial and drink suspension directly, or mix with a small amount of sweetened water/milk. For capsules, swallow whole with water.',
+        whenToUse: '1 to 2 times daily. Maintain a gap of at least 2 hours before or after any oral antibiotic dose.',
+        maxDaysSafe: '5 to 7 Days course to restore beneficial intestinal flora.',
         consultDoctorFirst: 'If diarrhea fails to improve after 48 hours.',
         priceEstimate: {
           min: 48,
@@ -678,6 +720,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe copper deficiency.',
         drugInteractions: 'Tetracyclines, Quinolones (space doses by 2 hours).',
         scheduleStatus: 'OTC in India',
+        howToUse: 'Disperse tablet in 5 ml (one teaspoon) of clean water or breastmilk for children, or swallow whole with water for adults.',
+        whenToUse: 'Once daily strictly AFTER FOOD / with meals to prevent gastric upset or nausea.',
+        maxDaysSafe: '14 Days full course (WHO guideline: continue for the full 14 days even after loose motions have completely stopped).',
         consultDoctorFirst: 'For exact pediatric dosing.',
         priceEstimate: {
           min: 35,
@@ -746,6 +791,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Do not apply on broken skin, cuts, open wounds, or near eyes/mucosa.',
         drugInteractions: 'Minimal systemic interaction.',
         scheduleStatus: 'OTC in India (Standard topical pain reliever)',
+        howToUse: 'Gently spread a thin film over the painful joint or sprain without deep rubbing. DO NOT massage vigorously on fresh acute sprains (vigorous massage ruptures fragile healing capillaries). Wash hands thoroughly.',
+        whenToUse: 'Apply 3 to 4 times daily to clean, unbroken skin.',
+        maxDaysSafe: '5 to 7 Days. If joint remains swollen or cannot bear weight after 48-72 hours, obtain an orthopedic X-ray.',
         consultDoctorFirst: 'If no improvement after 72 hours.',
         priceEstimate: {
           min: 85,
@@ -769,6 +817,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Liver disease.',
         drugInteractions: 'Alcohol.',
         scheduleStatus: 'OTC in India',
+        howToUse: 'Swallow whole with a full glass of plain water while upright. Do not crush or chew.',
+        whenToUse: 'SOS / Every 6 hours as needed for persistent resting throbbing. Can be taken with or without food.',
+        maxDaysSafe: 'Max 2 to 3 Days. Avoid taking additional oral NSAIDs simultaneously without a doctor\'s guidance.',
         consultDoctorFirst: 'If pain requires combination narcotics.',
         priceEstimate: {
           min: 22,
@@ -846,6 +897,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Severe kidney failure.',
         drugInteractions: 'Sedatives, alcohol.',
         scheduleStatus: 'OTC in India',
+        howToUse: 'Swallow whole with a full glass of water. Do not crush. Sit upright while swallowing.',
+        whenToUse: 'Once daily at Bedtime / Night with or without food. Mildly sedating.',
+        maxDaysSafe: '1 to 3 Days for acute hives or allergy flares. If chronic hives persist >2 weeks, consult a dermatologist.',
         consultDoctorFirst: 'If hives recur daily for over 2 weeks.',
         priceEstimate: {
           min: 28,
@@ -869,6 +923,9 @@ const MEDICINE_KNOWLEDGE_BASE = {
         whoShouldAvoid: 'Open, weeping, infected skin wounds.',
         drugInteractions: 'None.',
         scheduleStatus: 'OTC in India (Universal soothing lotion)',
+        howToUse: 'Shake bottle thoroughly. Pour onto sterile cotton ball and dab gently over itchy skin. Let it air dry to a light pink protective powder.',
+        whenToUse: 'Apply 2 to 3 times daily as needed for itch relief.',
+        maxDaysSafe: '5 to 7 Days. Do not apply on raw, open, oozing, or weeping eczema lesions.',
         consultDoctorFirst: 'If rash develops pus or blisters.',
         priceEstimate: {
           min: 75,
@@ -1084,6 +1141,9 @@ function getMedicineRecommendations(queryText, options = {}) {
     genericName: m.genericName.split('/')[0].trim(),
     brandExamples: m.brandExamples.slice(0, 3).join(', '),
     formulation: m.formulation,
+    howToUse: m.howToUse,
+    whenToUse: m.whenToUse,
+    maxDaysSafe: m.maxDaysSafe,
     packSize: m.priceEstimate.packSize,
     priceEstimate: m.priceEstimate.formatted,
     keyWarning: m.importantWarnings.split('.')[0] + '.',
@@ -1111,12 +1171,225 @@ function getMedicineRecommendations(queryText, options = {}) {
     firstAidItems: condition.firstAidItems,
     homeRemedies: condition.homeRemedies,
     comparisonMatrix,
+    tabletGuidelines: TABLET_USAGE_GUIDELINES,
     whenToSeeDoctor: condition.whenToSeeDoctor,
     brandDisclaimer: 'Brand names shown (e.g. Dolo, Calpol, Electral, Digene) are verified common Indian market examples for consumer identification only, not commercial endorsements.',
     priceDisclaimer: 'Prices are estimated ranges based on standard NPPA ceiling guidelines and average retail pharmacy pricing in India (November 2026). Actual chemist pricing may vary slightly.',
     refreshedAt: new Date().toISOString()
   };
 }
+
+// ============================================================================
+// 4. COMPREHENSIVE TABLET USAGE, TIMING & DURATION CLINICAL GUIDELINES
+// ============================================================================
+
+const TABLET_USAGE_GUIDELINES = {
+  title: 'Comprehensive Tablet & Medication Guide: How, When & Duration',
+  subtitle: 'Evidence-based guidelines on oral tablet administration, food timings, course duration limits, and critical safety rules.',
+  pillars: [
+    {
+      id: 'how_to_use',
+      name: 'How to Take Tablets (Correct Technique)',
+      icon: '💧',
+      summary: 'Proper posture, fluid choices, and formulation rules to avoid esophageal injury and ensure complete drug absorption.',
+      points: [
+        {
+          title: 'Sit Upright or Stand (Never Lie Down)',
+          detail: 'Always swallow tablets while sitting upright or standing. Remain upright for at least 15 to 30 minutes afterwards. Swallowing pills while lying flat in bed can trap the tablet in the esophagus, causing chemical mucosal erosion, esophageal ulcers (pill-induced esophagitis), and severe chest pain.'
+        },
+        {
+          title: 'Full 200–250 ml Glass of Plain Water',
+          detail: 'Always swallow tablets with a full glass (200–250 ml) of room-temperature plain water. A small sip is insufficient; water lubricates the digestive tract and accelerates dissolution in the stomach.'
+        },
+        {
+          title: 'Liquids to AVOID (Interactions & Degradation)',
+          detail: 'Never take tablets with hot tea or coffee (heat, tannins, and caffeine destroy active ingredients and irritate gastric mucosa), milk/dairy (calcium binds and neutralizes antibiotics like Ciprofloxacin or Doxycycline and iron), citrus or grapefruit juice (grapefruit blocks liver CYP3A4 enzymes causing toxic blood concentrations), or alcohol (fatal liver strain with paracetamol, severe stomach ulcers with NSAIDs).'
+        },
+        {
+          title: 'Formulation Rules: Swallow Whole vs Chew vs Dissolve',
+          detail: 'Enteric-Coated (EC) & Sustained-Release (SR / CR / ER / XL): NEVER crush, break, split, or chew! Enteric coatings protect your stomach or prevent gastric acid from destroying the drug. Sustained-release tablets deliver a 24-hour dose slowly; crushing dumps the entire dose at once (dose dumping toxicity). Chewable tablets (e.g. Digene, Vitamin C) MUST be chewed thoroughly before swallowing. Dispersible tablets (DT) must be completely stirred and dissolved in water first.'
+        }
+      ]
+    },
+    {
+      id: 'when_to_use',
+      name: 'When to Take Tablets (Meal Timing & Biological Clocks)',
+      icon: '🕒',
+      summary: 'Clinical timing rules: Empty Stomach, After Food, Bedtime, and SOS on-demand schedules.',
+      timings: [
+        {
+          timing: 'Empty Stomach / Before Food (Khali Pet)',
+          window: '30 to 60 minutes before breakfast / meals, or 2 hours after meals',
+          reason: 'Food interferes with absorption, or the drug needs an acidic, resting stomach to activate before meal-stimulated gastric acid production.',
+          examples: [
+            'Pantoprazole / Omeprazole / Rabeprazole (take 30–60 min before breakfast)',
+            'Levothyroxine / Thyroid hormones (take first thing in morning with water, 1 hr before tea/food)',
+            'Certain antibiotics (Ampicillin, Cloxacillin)'
+          ]
+        },
+        {
+          timing: 'After Food / With Meals (Khane Ke Baad)',
+          window: 'Immediately after meals or with a snack / milk',
+          reason: 'Protects the delicate stomach mucosal barrier from direct chemical erosion and ulceration, reduces nausea, or utilizes dietary fats for absorption.',
+          examples: [
+            'NSAIDs / Painkillers (Combiflam, Ibuprofen, Diclofenac, Aspirin — NEVER on empty stomach)',
+            'Iron and Zinc supplements (prevents severe stomach cramps)',
+            'Fat-soluble Vitamins (Vitamin A, D3, E, K)'
+          ]
+        },
+        {
+          timing: 'At Bedtime / Night (Raat Ko Sote Samay)',
+          window: '30 to 45 minutes before sleeping',
+          reason: 'Medications that cause drowsiness, or align with nocturnal biological rhythms (overnight cholesterol synthesis, nocturnal asthma, morning bowel movements).',
+          examples: [
+            'Antihistamines / Anti-Allergy (Cetirizine, Levocetirizine)',
+            'Statins / Cholesterol regulators (Atorvastatin, Rosuvastatin)',
+            'Laxatives (Bisacodyl, Isabgol husk)'
+          ]
+        },
+        {
+          timing: 'SOS / As Needed (Jab Jarurat Ho)',
+          window: 'Only when symptoms appear, adhering strictly to minimum hourly spacing',
+          reason: 'Provides on-demand symptomatic relief for transient discomfort without causing drug accumulation.',
+          examples: [
+            'Paracetamol (Dolo 650) — spaced at least 4 to 6 hours apart; max 4000mg/day',
+            'Antacid liquids / chewables (Digene) for acute acidity spikes'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'how_many_days',
+      name: 'How Many Days to Take (Safe Duration Limits)',
+      icon: '📅',
+      summary: 'Strict duration boundaries to prevent organ toxicity, rebound symptoms, and antimicrobial resistance.',
+      categories: [
+        {
+          drugClass: 'OTC Painkillers & Fever Reducers (Paracetamol / Dolo 650)',
+          safeDuration: 'Maximum 2 to 3 Days',
+          guideline: 'If fever or pain persists beyond 3 days, DO NOT continue self-medicating. In tropical regions like India, persistent fever beyond 72 hours requires clinical investigation (CBC, Dengue NS1, Typhoid, Malaria). Chronic daily use causes liver toxicity.'
+        },
+        {
+          drugClass: 'NSAID Anti-inflammatory Painkillers (Combiflam / Ibuprofen)',
+          safeDuration: 'Maximum 1 to 2 Days',
+          guideline: 'Use for the shortest possible duration for acute swelling or muscular pain. Taking NSAIDs for more than a few days significantly increases the risk of stomach ulcers, gastric hemorrhage, high blood pressure, and acute kidney injury.'
+        },
+        {
+          drugClass: 'Antihistamines / Anti-Allergy (Cetirizine / Cetzine)',
+          safeDuration: '1 to 3 Days for acute allergies',
+          guideline: 'Safe for short acute flare-ups of sneezing, runny nose, or mild itching. For chronic hives or seasonal allergic rhinitis, obtain an allergist prescription and dosing schedule.'
+        },
+        {
+          drugClass: 'OTC Antacids & Neutralizers (Digene / Gelusil / Eno)',
+          safeDuration: '1 to 2 Days SOS',
+          guideline: 'Antacids only neutralize existing stomach acid; they do not cure the underlying cause. Frequent use for more than 2 consecutive days may mask dangerous conditions like peptic ulcer disease, GERD, or gallstones.'
+        },
+        {
+          drugClass: 'Acid-Suppressing PPIs (Pantoprazole / Pan 40 / Rabeprazole)',
+          safeDuration: '7 to 14 Days Course',
+          guideline: 'Prescribed as a defined short course under medical advice. Do not stop after 1 pill, but do not take continuously for months without a doctor, as chronic PPI use reduces Vitamin B12, magnesium, and calcium absorption.'
+        },
+        {
+          drugClass: 'Doctor-Prescribed Antibiotics (Amoxicillin, Azithromycin, Cefixime)',
+          safeDuration: 'MUST Complete Full Prescribed Course (Usually 3, 5, or 7 Days)',
+          guideline: 'CRITICAL: Even if you feel 100% healthy after 24–48 hours, NEVER stop antibiotics early. Stopping early leaves surviving resistant bacteria, causing recurrent relapse and Antimicrobial Resistance (AMR). Never share or save leftover antibiotics.'
+        },
+        {
+          drugClass: 'Oral Rehydration Salts (WHO-Formula ORS / Electral)',
+          safeDuration: '1 to 2 Days during active diarrhea / vomiting',
+          guideline: 'Drink steadily after every loose stool until diarrhea stops and urine color turns pale straw yellow. Prepare fresh every 24 hours in 1 liter clean water; discard after 24 hours.'
+        }
+      ]
+    },
+    {
+      id: 'critical_safety_rules',
+      name: '4 Critical Medication Safety Rules',
+      icon: '🛡️',
+      summary: 'Essential life-saving rules every patient and caregiver must follow.',
+      rules: [
+        {
+          num: 1,
+          rule: 'Missed Dose: Never Double Up',
+          description: 'If you miss a scheduled dose, take it as soon as you remember. However, if it is almost time for your next scheduled pill, skip the missed dose and resume your regular schedule. NEVER take two tablets at once to compensate — this causes sudden drug toxicity.'
+        },
+        {
+          num: 2,
+          rule: 'The "Hidden Paracetamol" Polypharmacy Trap',
+          description: 'Always read ingredient labels of cold syrups, cough mixtures, and decongestants. Many commercial cough/cold remedies already contain 500mg Paracetamol. Taking a Dolo 650 alongside them causes unintentional toxic Paracetamol overdose, which can cause acute liver failure.'
+        },
+        {
+          num: 3,
+          rule: 'Absolute Alcohol Ban with Medications',
+          description: 'Never consume alcoholic beverages while taking tablets. Alcohol + Paracetamol multiplies liver toxicity; Alcohol + NSAIDs drastically escalates gastric mucosal bleeding; Alcohol + Antihistamines causes severe central nervous system depression and respiratory distress.'
+        },
+        {
+          num: 4,
+          rule: 'Inspect Expiry & Moisture Packaging',
+          description: 'Never consume tablets from blister packs that are torn, puffed, discolored, or past their printed expiry date. Store tablets below 25°C in a dry place; avoid storing in hot, humid bathroom cabinets.'
+        }
+      ]
+    }
+  ],
+  quickLookup: [
+    {
+      name: 'Dolo 650 / Paracetamol',
+      category: 'Fever & Pain Relief',
+      howToTake: 'Swallow whole with full glass of water. Never crush.',
+      mealTiming: 'SOS / Every 4–6 hrs as needed (With or without food)',
+      safeDuration: 'Max 2 to 3 Days without doctor consultation',
+      warning: 'Never exceed 4,000 mg/day. Beware hidden paracetamol in cough syrups.'
+    },
+    {
+      name: 'Combiflam (Ibuprofen + Paracetamol)',
+      category: 'Inflammatory Pain Relief',
+      howToTake: 'Swallow whole with full glass of water or milk.',
+      mealTiming: 'Strictly AFTER FOOD / with meals (Never on empty stomach)',
+      safeDuration: 'Max 1 to 2 Days for acute episodes',
+      warning: 'Avoid in stomach ulcers, kidney disease, or dengue.'
+    },
+    {
+      name: 'Pan 40 / Pantoprazole',
+      category: 'Acid Reflux & GERD',
+      howToTake: 'Swallow whole. DO NOT crush or chew enteric coating.',
+      mealTiming: 'EMPTY STOMACH 30 to 60 minutes BEFORE breakfast',
+      safeDuration: '7 to 14 Days standard course as prescribed',
+      warning: 'Take with full glass of water. Do not stop after just 1 pill.'
+    },
+    {
+      name: 'Cetirizine / Cetzine',
+      category: 'Allergy, Cold & Itching',
+      howToTake: 'Swallow 1 tablet whole with water.',
+      mealTiming: 'Once daily at BEDTIME / Night (with or after food)',
+      safeDuration: '1 to 3 Days for acute allergic flare-ups',
+      warning: 'Causes mild drowsiness. Avoid alcohol and driving.'
+    },
+    {
+      name: 'Digene / Antacid Gel',
+      category: 'Heartburn & Indigestion',
+      howToTake: 'Shake well or chew tablets thoroughly before swallowing.',
+      mealTiming: '1 to 2 hours AFTER meals and at Bedtime (SOS)',
+      safeDuration: 'Max 1 to 2 Days SOS',
+      warning: 'Do not take within 2 hours of other medicines.'
+    },
+    {
+      name: 'Electral ORS (WHO Formula)',
+      category: 'Diarrhea & Dehydration',
+      howToTake: 'Dissolve entire packet in EXACTLY 1.0 Litre clean water.',
+      mealTiming: 'Drink small sips after every loose stool throughout the day',
+      safeDuration: '1 to 2 Days during active diarrhea',
+      warning: 'Never mix with milk, juice, or soda. Discard after 24 hours.'
+    },
+    {
+      name: 'Azithromycin / Amoxicillin',
+      category: 'Doctor-Prescribed Antibiotic',
+      howToTake: 'Swallow whole with a full glass of water at the exact same hour daily.',
+      mealTiming: 'As directed (Azithromycin 1 hr before or 2 hrs after meals; Amoxicillin with meals)',
+      safeDuration: 'COMPLETE THE FULL COURSE (3, 5, or 7 Days) without stopping',
+      warning: 'Never stop early even if feeling 100% cured. Prevents bacterial drug resistance.'
+    }
+  ],
+  speechSummary: 'Here are the essential tablet guidelines. First, always swallow tablets sitting upright with a full glass of plain room temperature water. Never take pills lying down or with hot tea, milk, or alcohol. Never crush enteric coated or sustained release tablets. Second, timing matters: take acidity medicines like Pantoprazole on an empty stomach before breakfast, but always take painkillers like Combiflam after food to protect your stomach. Third, do not take over-the-counter painkillers or fever medicines for more than two to three days without consulting a doctor. For antibiotics, always complete the full prescribed course. Finally, never take two tablets at once if you missed a dose, and beware of hidden paracetamol in cold syrups.'
+};
 
 /**
  * Return all categories for UI chips
@@ -1132,6 +1405,7 @@ function getAllCategories() {
 
 module.exports = {
   MEDICINE_KNOWLEDGE_BASE,
+  TABLET_USAGE_GUIDELINES,
   identifyCondition,
   checkEmergencyOverride,
   getMedicineRecommendations,

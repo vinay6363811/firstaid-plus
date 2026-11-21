@@ -555,6 +555,88 @@ async function runTests() {
     assert(cssStyleMod11.includes('.med-brand-pill'), 'CSS styles Indian brand pills');
     assert(cssStyleMod11.includes('.pharmacy-item-card'), 'CSS styles pharmacy item cards');
 
+    console.log('\n--- 11. Testing Tablet Usage, Food Timing & Safe Duration Guidelines ---');
+    // G.1. Endpoint GET /api/medicine/tablet-guidelines
+    const resTabletGuide = await fetch('http://127.0.0.1:3000/api/medicine/tablet-guidelines');
+    assert(resTabletGuide.status === 200, 'GET /api/medicine/tablet-guidelines returns HTTP 200');
+    const tabletGuideData = await resTabletGuide.json();
+    assert(tabletGuideData.pillars && tabletGuideData.pillars.length === 4, 'Includes 4 clinical pillars (How, When, Duration, Safety)');
+    
+    // Pillar 1: How to take
+    const pillarHow = tabletGuideData.pillars.find(p => p.id === 'how_to_use');
+    assert(pillarHow !== undefined, 'Pillar 1 defines How to Take Tablets');
+    assert(pillarHow.points.some(pt => pt.title.includes('Upright') && pt.detail.includes('esophagus')), 'Specifies sitting upright to prevent esophageal ulceration');
+    assert(pillarHow.points.some(pt => (pt.title + pt.detail).includes('200') && (pt.title + pt.detail).includes('water')), 'Specifies full 200-250ml glass of plain water');
+    assert(pillarHow.points.some(pt => pt.detail.includes('Enteric-Coated') && pt.detail.includes('Sustained-Release')), 'Specifies never crushing EC or SR/ER tablets');
+
+    // Pillar 2: When to take (Meal timing)
+    const pillarWhen = tabletGuideData.pillars.find(p => p.id === 'when_to_use');
+    assert(pillarWhen !== undefined, 'Pillar 2 defines When to Take (Meal Timing)');
+    assert(pillarWhen.timings.some(t => t.timing.includes('Empty Stomach') && t.examples.some(e => e.includes('Pantoprazole'))), 'Specifies Empty Stomach for PPIs like Pantoprazole');
+    assert(pillarWhen.timings.some(t => t.timing.includes('After Food') && t.examples.some(e => e.includes('Combiflam') || e.includes('Ibuprofen'))), 'Specifies strictly After Food for NSAIDs like Combiflam');
+    assert(pillarWhen.timings.some(t => t.timing.includes('Bedtime') && t.examples.some(e => e.includes('Cetirizine'))), 'Specifies Bedtime for sedating antihistamines like Cetirizine');
+
+    // Pillar 3: How many days (Duration limits)
+    const pillarDuration = tabletGuideData.pillars.find(p => p.id === 'how_many_days');
+    assert(pillarDuration !== undefined, 'Pillar 3 defines How Many Days (Duration limits)');
+    assert(pillarDuration.categories.some(c => c.drugClass.includes('Paracetamol') && c.safeDuration.includes('2 to 3 Days')), 'Defines Max 2-3 Days limit for Paracetamol');
+    assert(pillarDuration.categories.some(c => c.drugClass.includes('NSAID') && c.safeDuration.includes('1 to 2 Days')), 'Defines Max 1-2 Days limit for Combiflam / NSAIDs');
+    assert(pillarDuration.categories.some(c => c.drugClass.includes('Antibiotics') && c.safeDuration.includes('Full Prescribed Course')), 'Mandates completing full course for antibiotics');
+
+    // Pillar 4: Critical safety rules
+    const pillarSafety = tabletGuideData.pillars.find(p => p.id === 'critical_safety_rules');
+    assert(pillarSafety !== undefined, 'Pillar 4 defines 4 Critical Safety Rules');
+    assert(pillarSafety.rules.some(r => r.rule.includes('Never Double Up')), 'Rule 1: Missed dose never double up');
+    assert(pillarSafety.rules.some(r => r.rule.includes('Hidden Paracetamol')), 'Rule 2: Hidden paracetamol polypharmacy trap');
+    assert(pillarSafety.rules.some(r => r.rule.includes('Alcohol Ban')), 'Rule 3: Absolute alcohol ban');
+
+    // Speech summary
+    assert(typeof tabletGuideData.speechSummary === 'string' && tabletGuideData.speechSummary.length > 50, 'Includes text-to-speech audio summary string');
+
+    // G.2. Dynamic Medicine Recommendations with Tablet Badges
+    const resMedHeadache = await fetch('http://127.0.0.1:3000/api/medicine/recommendations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: 'headache' })
+    });
+    const headacheMedData = await resMedHeadache.json();
+    assert(headacheMedData.otcMedicines[0].howToUse && headacheMedData.otcMedicines[0].howToUse.includes('water'), 'Medicine card data includes howToUse water instruction');
+    assert(headacheMedData.otcMedicines[0].whenToUse && headacheMedData.otcMedicines[0].whenToUse.includes('hours'), 'Medicine card data includes whenToUse timing instruction');
+    assert(headacheMedData.otcMedicines[0].maxDaysSafe && headacheMedData.otcMedicines[0].maxDaysSafe.includes('Days'), 'Medicine card data includes maxDaysSafe duration instruction');
+    assert(headacheMedData.comparisonMatrix[0].whenToUse !== undefined, 'Comparison matrix includes whenToUse column');
+    assert(headacheMedData.comparisonMatrix[0].maxDaysSafe !== undefined, 'Comparison matrix includes maxDaysSafe column');
+
+    // G.3. Guides Library integration: tablet_usage_guidelines in /api/guides
+    const resGuidesTab = await fetch('http://127.0.0.1:3000/api/guides');
+    const guidesDataTab = await resGuidesTab.json();
+    const tabletGuideItem = guidesDataTab.guides.find(g => g.id === 'tablet_usage_guidelines');
+    assert(tabletGuideItem !== undefined, 'Emergency Guides library contains tablet_usage_guidelines protocol');
+    assert(tabletGuideItem.title.includes('Tablet Usage'), 'Guide title mentions Tablet Usage');
+
+    // G.4. Symptom Analyzer: Recognizes tablet questions
+    const resTabletQuery = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'how many days should I take tablet' })
+    });
+    const tabletQueryData = await resTabletQuery.json();
+    assert(tabletQueryData.id === 'tablet_usage_guidelines' || (tabletQueryData.possibleEmergency && tabletQueryData.possibleEmergency.toLowerCase().includes('tablet')), 'Smart symptom analyzer matches tablet duration query to tablet_usage_guidelines');
+
+    // G.5. Frontend UI Verification for Tablet Guidelines
+    assert(indexHtmlMod11.includes('id="btn-open-tablet-guide"'), 'HTML contains Tablet Guide button (#btn-open-tablet-guide)');
+    assert(indexHtmlMod11.includes('id="tablet-guide-modal"'), 'HTML contains Tablet Guide Modal (#tablet-guide-modal)');
+    assert(indexHtmlMod11.includes('id="btn-speak-tablet-guide"'), 'HTML contains Tablet Audio speech button');
+    assert(indexHtmlMod11.includes('data-ttab="how"'), 'HTML modal contains tab for How to Take');
+    assert(indexHtmlMod11.includes('data-ttab="when"'), 'HTML modal contains tab for When to Take');
+    assert(indexHtmlMod11.includes('data-ttab="duration"'), 'HTML modal contains tab for How Many Days');
+    assert(indexHtmlMod11.includes('data-ttab="safety"'), 'HTML modal contains tab for Critical Safety Rules');
+    assert(medReliefJs.includes('med-tablet-guidelines-box'), 'JS renders med-tablet-guidelines-box on medicine cards');
+    assert(medReliefJs.includes('openTabletGuide'), 'JS defines openTabletGuide method');
+    assert(medReliefJs.includes('speakTabletGuide'), 'JS defines speakTabletGuide voice method');
+    assert(cssStyleMod11.includes('.btn-tablet-guide'), 'CSS styles .btn-tablet-guide');
+    assert(cssStyleMod11.includes('.med-tablet-guidelines-box'), 'CSS styles .med-tablet-guidelines-box');
+    assert(cssStyleMod11.includes('.tablet-guide-modal-backdrop'), 'CSS styles .tablet-guide-modal-backdrop');
+
     console.log(`\n🎉 ALL ${passCount} UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n`);
   } catch (err) {
     console.error('Test error:', err);

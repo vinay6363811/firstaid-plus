@@ -2529,10 +2529,15 @@
             <h2 class="med-title">💊 AI Medicine & Relief Recommendations</h2>
             <p class="med-subtitle">Verified Indian OTC Brands • NPPA Price Estimator • Home Care • Nearby Pharmacy Radar</p>
           </div>
-          <button id="btn-toggle-medicine-profile" class="btn-profile-toggle" type="button" aria-expanded="false">
-            <span>⚙️ Patient Profile & Safety Screening</span>
-            <span class="profile-arrow">▾</span>
-          </button>
+          <div class="cockpit-actions-group">
+            <button id="btn-open-tablet-guide" class="btn-tablet-guide" type="button" title="How & When to take tablets, course duration, and safety rules">
+              <span>📖 Tablet Usage & Duration Guide</span>
+            </button>
+            <button id="btn-toggle-medicine-profile" class="btn-profile-toggle" type="button" aria-expanded="false">
+              <span>⚙️ Patient Profile & Safety Screening</span>
+              <span class="profile-arrow">▾</span>
+            </button>
+          </div>
         </div>
 
         <!-- Search Input Bar -->
@@ -2740,6 +2745,304 @@
 
       <div class="step-guide-footer" style="padding: 14px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
         <button class="btn btn-secondary" type="button" onclick="window.closeDoctorConsultModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- TABLET USAGE, TIMING & DURATION GUIDE MODAL                          -->
+  <!-- ===================================================================== -->
+  <div id="tablet-guide-modal" class="tablet-guide-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="tablet-modal-title" style="display: none;">
+    <div class="tablet-modal-box">
+      <!-- Modal Header -->
+      <div class="tablet-modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge-pill">💊 Clinical Pharmacology & Safety Protocol</span>
+          <h3 id="tablet-modal-title">Tablet Usage, Food Timing & Duration Guide</h3>
+          <p class="modal-subtitle">Evidence-based guidelines on how to swallow tablets, food interactions, safe duration limits, and critical safety rules</p>
+        </div>
+        <div class="modal-header-actions">
+          <button id="btn-speak-tablet-guide" class="btn-modal-action btn-speak" type="button" title="Listen to Voice Guide">
+            <span class="audio-icon">🔊</span>
+            <span class="audio-text">Listen Audio Guide</span>
+          </button>
+          <button id="btn-close-tablet-guide" class="modal-close-btn" type="button" aria-label="Close Guide">✕</button>
+        </div>
+      </div>
+
+      <!-- Quick Medicine Search / Filter Bar -->
+      <div class="tablet-modal-search-row">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="tablet-quick-search-input" placeholder="Search tablet (e.g. Dolo 650, Combiflam, Pan 40, Cetirizine, Digene, Antibiotics)...">
+        </div>
+        <div class="quick-filter-pills">
+          <button type="button" class="quick-filter-pill active" data-filter="all">All Info</button>
+          <button type="button" class="quick-filter-pill" data-filter="painkillers">Pain & Fever</button>
+          <button type="button" class="quick-filter-pill" data-filter="acidity">Acidity (PPIs)</button>
+          <button type="button" class="quick-filter-pill" data-filter="allergy">Allergy & Cold</button>
+          <button type="button" class="quick-filter-pill" data-filter="antibiotics">Antibiotics</button>
+        </div>
+      </div>
+
+      <!-- Interactive Navigation Tabs -->
+      <div class="tablet-modal-tabs">
+        <button class="tablet-tab-btn active" data-ttab="how">
+          <span class="tab-icon">💧</span>
+          <span class="tab-text">1. How to Take</span>
+        </button>
+        <button class="tablet-tab-btn" data-ttab="when">
+          <span class="tab-icon">🕒</span>
+          <span class="tab-text">2. When to Take (Meal Timing)</span>
+        </button>
+        <button class="tablet-tab-btn" data-ttab="duration">
+          <span class="tab-icon">📅</span>
+          <span class="tab-text">3. How Many Days (Duration)</span>
+        </button>
+        <button class="tablet-tab-btn" data-ttab="safety">
+          <span class="tab-icon">🛡️</span>
+          <span class="tab-text">4. Critical Safety Rules</span>
+        </button>
+        <button class="tablet-tab-btn" data-ttab="lookup">
+          <span class="tab-icon">📋</span>
+          <span class="tab-text">Quick Indian Medicine Lookup</span>
+        </button>
+      </div>
+
+      <!-- Modal Body Tab Panes -->
+      <div class="tablet-modal-body">
+
+        <!-- TAB 1: HOW TO TAKE TABLETS -->
+        <div class="tablet-pane active" id="tpane-how">
+          <div class="tablet-overview-card highlight-blue">
+            <h4>💧 Proper Administration Technique</h4>
+            <p>Taking tablets incorrectly can cause them to lodge in the food pipe (esophagus), leading to painful ulcers (pill-induced esophagitis), or prevent the active ingredient from being properly absorbed.</p>
+          </div>
+
+          <div class="tablet-grid-two">
+            <div class="guide-feature-card">
+              <div class="card-icon-badge">🪑</div>
+              <div class="card-text-block">
+                <h5>1. Sit Upright or Stand (Never Lie Down)</h5>
+                <p>Always swallow tablets while sitting up straight or standing. <strong>Remain upright for at least 15 to 30 minutes afterwards.</strong> Swallowing pills while lying flat in bed can trap the tablet in the esophagus, causing chemical erosion and acute chest pain.</p>
+              </div>
+            </div>
+
+            <div class="guide-feature-card">
+              <div class="card-icon-badge">🥛</div>
+              <div class="card-text-block">
+                <h5>2. Full 200–250 ml Glass of Plain Water</h5>
+                <p>Always drink a full glass of room-temperature plain water with every tablet. A small sip is not enough — adequate water lubricates the esophagus and accelerates dissolution in the stomach.</p>
+              </div>
+            </div>
+
+            <div class="guide-feature-card warning-card">
+              <div class="card-icon-badge">🚫</div>
+              <div class="card-text-block">
+                <h5>3. Liquids to Strictly AVOID</h5>
+                <p><strong>Hot Tea / Coffee:</strong> Heat and caffeine destroy chemical stability and irritate stomach.<br>
+                <strong>Milk / Dairy:</strong> Calcium binds and chelates antibiotics (Ciprofloxacin, Doxycycline) and iron.<br>
+                <strong>Citrus / Grapefruit Juice:</strong> Inhibits liver CYP3A4 enzymes, causing toxic drug buildup.<br>
+                <strong>Alcohol:</strong> Absolute zero alcohol! Multiplies liver toxicity and gastric bleeding.</p>
+              </div>
+            </div>
+
+            <div class="guide-feature-card alert-card">
+              <div class="card-icon-badge">⚠️</div>
+              <div class="card-text-block">
+                <h5>4. Formulation Rules: Swallow Whole vs Chew</h5>
+                <p><strong>Enteric-Coated (EC) & Sustained-Release (SR/ER/XL):</strong> NEVER crush, break, split, or chew! Crushing causes "dose dumping", delivering a 24-hour dose all at once.<br>
+                <strong>Chewable Tablets (Digene):</strong> MUST be chewed thoroughly before swallowing.<br>
+                <strong>Dispersible Tablets (DT):</strong> Must be stirred into clean water until fully dissolved before drinking.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: WHEN TO TAKE (MEAL TIMINGS) -->
+        <div class="tablet-pane" id="tpane-when">
+          <div class="tablet-overview-card highlight-amber">
+            <h4>🕒 Food & Meal Timing Relationships</h4>
+            <p>Food significantly affects gastric pH, transit time, and drug absorption. Adhering to the right meal timing prevents stomach ulcers and ensures medication efficacy.</p>
+          </div>
+
+          <div class="timing-matrix-table-wrap">
+            <table class="tablet-guide-table">
+              <thead>
+                <tr>
+                  <th>Schedule</th>
+                  <th>Exact Time Window</th>
+                  <th>Clinical Reason</th>
+                  <th>Indian Example Medicines</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="timing-tag tag-empty">Empty Stomach (Khali Pet)</span></td>
+                  <td><strong>30–60 minutes BEFORE breakfast</strong> or 2 hours after food</td>
+                  <td>Food binds or delays drug absorption, or the medicine needs resting stomach acid to activate before digestion begins.</td>
+                  <td><strong>Pantoprazole / Pan 40</strong>, Omeprazole, Rabeprazole, Levothyroxine (Thyroid - 1 hr before tea/food)</td>
+                </tr>
+                <tr>
+                  <td><span class="timing-tag tag-after">After Food (Khane Ke Baad)</span></td>
+                  <td><strong>Immediately after or with meals</strong> / glass of milk</td>
+                  <td>Protects gastric mucosal barrier from chemical erosion, nausea, and ulceration; helps absorb fat-soluble drugs.</td>
+                  <td><strong>Combiflam (Ibuprofen)</strong>, Diclofenac, Aspirin, Iron & Zinc supplements, Multivitamins (A, D3, E)</td>
+                </tr>
+                <tr>
+                  <td><span class="timing-tag tag-bedtime">At Bedtime (Raat Ko)</span></td>
+                  <td><strong>30–45 minutes before sleep</strong></td>
+                  <td>Medications that induce drowsiness, or synchronize with nocturnal biological rhythms (nighttime cholesterol synthesis).</td>
+                  <td><strong>Cetirizine / Cetzine</strong>, Levocetirizine, Atorvastatin (Cholesterol), Laxatives (Dulcolax, Isabgol)</td>
+                </tr>
+                <tr>
+                  <td><span class="timing-tag tag-sos">SOS / As Needed (Jab Jarurat Ho)</span></td>
+                  <td>Only when symptoms arise (maintain minimum 4–6 hrs spacing)</td>
+                  <td>On-demand symptom control without continuous accumulation in the body.</td>
+                  <td><strong>Paracetamol / Dolo 650</strong> (spaced 4-6h, max 4000mg/day), Antacid Gel / Digene for sudden acid spike</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: HOW MANY DAYS (DURATION GUIDE) -->
+        <div class="tablet-pane" id="tpane-duration">
+          <div class="tablet-overview-card highlight-green">
+            <h4>📅 Safe Duration Limits by Medication Class</h4>
+            <p>Over-the-counter self-medication is intended ONLY for short-term symptomatic relief. Taking medicines beyond recommended durations can cause organ damage or mask serious illnesses.</p>
+          </div>
+
+          <div class="duration-cards-list">
+            <div class="duration-item-card">
+              <div class="duration-badge-col">
+                <span class="duration-pill pill-red">Max 2–3 Days</span>
+                <span class="duration-class">Pain & Fever</span>
+              </div>
+              <div class="duration-content-col">
+                <h5>Paracetamol / Dolo 650 (Acetaminophen)</h5>
+                <p>If fever or headache persists beyond 3 days (72 hours), <strong>STOP self-medicating and see a doctor</strong>. In India, persistent fever beyond 3 days requires clinical screening for Dengue, Malaria, or Typhoid. Daily use for weeks causes irreversible liver toxicity.</p>
+              </div>
+            </div>
+
+            <div class="duration-item-card">
+              <div class="duration-badge-col">
+                <span class="duration-pill pill-red">Max 1–2 Days</span>
+                <span class="duration-class">NSAID Anti-inflammatory</span>
+              </div>
+              <div class="duration-content-col">
+                <h5>Combiflam / Ibuprofen / Diclofenac</h5>
+                <p>Use for the shortest duration possible for acute pain or swelling. Taking NSAIDs for more than 2-3 days dramatically increases risk of gastric mucosal bleeding, peptic ulcers, high blood pressure, and acute kidney impairment.</p>
+              </div>
+            </div>
+
+            <div class="duration-item-card">
+              <div class="duration-badge-col">
+                <span class="duration-pill pill-amber">1–3 Days</span>
+                <span class="duration-class">Anti-Allergy</span>
+              </div>
+              <div class="duration-content-col">
+                <h5>Cetirizine / Cetzine (H1 Antihistamine)</h5>
+                <p>Safe for short acute cold or allergy flares (sneezing, runny nose, itchy hives). If allergic symptoms persist longer than 5 days, consult a physician or allergist rather than self-medicating continuously.</p>
+              </div>
+            </div>
+
+            <div class="duration-item-card">
+              <div class="duration-badge-col">
+                <span class="duration-pill pill-amber">1–2 Days SOS</span>
+                <span class="duration-class">Antacids & Gels</span>
+              </div>
+              <div class="duration-content-col">
+                <h5>Digene / Gelusil / Eno (Antacids)</h5>
+                <p>Antacids only neutralize existing stomach acid; they do not cure the underlying condition. Daily reliance on antacids for more than 2 weeks can mask bleeding ulcers, GERD, or gallstone disease.</p>
+              </div>
+            </div>
+
+            <div class="duration-item-card">
+              <div class="duration-badge-col">
+                <span class="duration-pill pill-blue">7–14 Days Course</span>
+                <span class="duration-class">Proton Pump Inhibitors</span>
+              </div>
+              <div class="duration-content-col">
+                <h5>Pantoprazole (Pan 40) / Omeprazole</h5>
+                <p>Prescribed as a defined short course under medical advice. Do not stop after just 1 day, but do NOT continue indefinitely for months without doctor supervision (long-term use impairs B12 and calcium absorption).</p>
+              </div>
+            </div>
+
+            <div class="duration-item-card highlight-border-red">
+              <div class="duration-badge-col">
+                <span class="duration-pill pill-purple">FULL COURSE (3/5/7 Days)</span>
+                <span class="duration-class">Antibiotics</span>
+              </div>
+              <div class="duration-content-col">
+                <h5>Doctor-Prescribed Antibiotics (Azithromycin, Amoxicillin, Cefixime)</h5>
+                <p><strong>MANDATORY CLINICAL RULE:</strong> Even if your fever disappears and you feel 100% cured on Day 2, <strong>NEVER stop antibiotics early</strong>. Stopping early allows surviving mutated bacteria to multiply, leading to fatal Antimicrobial Resistance (AMR) and superinfections.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: 4 CRITICAL SAFETY RULES -->
+        <div class="tablet-pane" id="tpane-safety">
+          <div class="tablet-overview-card highlight-purple">
+            <h4>🛡️ 4 Life-Saving Medication Rules</h4>
+            <p>Follow these essential clinical safety protocols to prevent accidental overdoses, dangerous drug interactions, and emergency complications.</p>
+          </div>
+
+          <div class="safety-rules-grid">
+            <div class="safety-rule-box">
+              <div class="rule-num-circle">1</div>
+              <h5>Missed Dose: NEVER Double Up!</h5>
+              <p>If you forget a pill, take it as soon as you remember. However, if it is almost time for your next scheduled dose, skip the missed pill and stay on schedule. <strong>Never take two tablets at once to compensate</strong> — this triggers sudden dangerous toxicity.</p>
+            </div>
+
+            <div class="safety-rule-box">
+              <div class="rule-num-circle">2</div>
+              <h5>Beware the "Hidden Paracetamol" Trap</h5>
+              <p>Many commercial cold syrups, flu sachets, and headache combination pills (e.g. Sinarest, Cheston Cold, D-Cold) already contain 500mg Paracetamol. Taking a Dolo 650 alongside them causes accidental double overdose and acute liver toxicity.</p>
+            </div>
+
+            <div class="safety-rule-box">
+              <div class="rule-num-circle">3</div>
+              <h5>Absolute Alcohol Prohibition</h5>
+              <p>Never drink alcohol when taking medications. Alcohol + Paracetamol multiplies liver injury; Alcohol + Combiflam/NSAIDs drastically increases stomach hemorrhage risk; Alcohol + Cetirizine causes severe central nervous system depression.</p>
+            </div>
+
+            <div class="safety-rule-box">
+              <div class="rule-num-circle">4</div>
+              <h5>Packaging Expiry & Storage Inspection</h5>
+              <p>Never take tablets from blister packs that are puffed, discolored, moist, or past their expiration date. Store below 25°C in a dry cupboard away from direct sunlight; avoid damp bathroom medicine cabinets.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: QUICK INDIAN MEDICINE LOOKUP -->
+        <div class="tablet-pane" id="tpane-lookup">
+          <div class="lookup-table-wrap">
+            <table class="tablet-guide-table lookup-table">
+              <thead>
+                <tr>
+                  <th>Medicine / Indian Brand</th>
+                  <th>Category</th>
+                  <th>How to Take</th>
+                  <th>When to Take</th>
+                  <th>Safe Duration</th>
+                  <th>Key Warning</th>
+                </tr>
+              </thead>
+              <tbody id="tablet-quick-lookup-tbody">
+                <!-- Dynamically populated / fallbacks -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="tablet-modal-footer">
+        <span class="modal-footer-disclaimer">⚕️ Clinical reference grounded in CDSCO, WHO Essential Medicines, and NPPA benchmarks. Always consult a certified physician for prescription medicines.</span>
+        <button id="btn-close-tablet-guide-footer" class="btn btn-secondary" type="button">Close Guide</button>
       </div>
     </div>
   </div>

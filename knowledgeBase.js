@@ -1190,6 +1190,43 @@ const EMERGENCY_GUIDES = {
     ],
     whenToGetHelp: "Call 112 immediately if dizziness occurs with weakness, speech changes, chest pain, or fainting. See an ENT specialist or doctor if spinning sensations (vertigo) recur frequently.",
     emergencyCallRequired: false
+  },
+
+  tablet_usage_guidelines: {
+    id: "tablet_usage_guidelines",
+    title: "Safe Tablet Usage, Meal Timing & Course Duration",
+    category: "Medication & Clinical Safety",
+    severity: "Low",
+    confidenceTier: "high",
+    possibleEmergency: "Medication administration, meal timing, and safe tablet duration guidelines",
+    keywords: [
+      "tablet", "tablets", "pill", "pills", "medicine duration", "how to take tablet", "when to take tablet",
+      "how many days", "how many days tablet", "empty stomach", "after food", "crush tablet", "chew tablet",
+      "missed dose", "antibiotic course", "paracetamol days", "dolo duration", "combiflam duration", "tablet guide"
+    ],
+    whatHappened: "Guidance on how to safely take oral tablets (swallowing posture, water volume, formulation rules), when to take them in relation to meals, how many days to take them, and critical safety rules.",
+    warningSigns: [
+      "Tablet lodged in throat or intense burning chest pain after swallowing a dry pill (pill-induced esophagitis)",
+      "Severe stomach pain, dark black stool, or vomiting blood after taking painkillers on an empty stomach",
+      "Fever persisting more than 3 consecutive days despite taking fever medication (risk of tropical infections)",
+      "Severe itching, facial/lip swelling, or breathing difficulty after taking any tablet (anaphylaxis - Call 112)"
+    ],
+    immediateFirstAid: [
+      "SWALLOWING POSTURE & WATER: Always swallow tablets sitting upright or standing with a full 200–250 ml glass of plain room-temperature water. Remain upright for at least 15–30 minutes to prevent pill-induced esophageal ulceration.",
+      "FOOD TIMING RULES: Take acidity PPIs (Pantoprazole, Omeprazole) on an EMPTY STOMACH 30–60 minutes before breakfast. Take NSAIDs (Combiflam, Ibuprofen) strictly AFTER FOOD or with milk to protect stomach lining. Take Cetirizine at BEDTIME.",
+      "DURATION LIMITS: Never take OTC painkillers/fever reducers (Paracetamol, Dolo 650) for more than 2 to 3 days without doctor evaluation. Limit Combiflam to 1 to 2 days for acute pain. Use antacids for max 1 to 2 days SOS.",
+      "ANTIBIOTIC MANDATE: If prescribed antibiotics by a doctor, MUST complete the FULL 3, 5, or 7-day course even if you feel 100% healthy. Never stop early (prevents Antimicrobial Resistance).",
+      "NEVER CRUSH COATED PILLS: Never crush, chew, or split Enteric-Coated (EC) or Sustained-Release (SR/ER/XL) tablets. Chewable tablets (Digene) must be thoroughly chewed before swallowing."
+    ],
+    whatNotToDo: [
+      "DO NOT swallow tablets dry or with just a tiny sip of water.",
+      "DO NOT lie down flat immediately after taking a tablet (prevents esophageal erosion).",
+      "DO NOT take tablets with hot tea, coffee, milk (chelates antibiotics), fruit juices, or alcohol.",
+      "DO NOT double the dose if you miss a scheduled tablet — resume regular schedule.",
+      "DO NOT combine multiple cold/flu syrups with Paracetamol (prevents liver-toxic overdose)."
+    ],
+    whenToGetHelp: "Consult a doctor immediately if fever lasts >3 days, symptoms worsen, or if you develop an allergic skin rash, facial swelling, or severe abdominal pain.",
+    emergencyCallRequired: false
   }
 };
 
@@ -1450,6 +1487,9 @@ function analyzeTextSymptoms(text) {
     }
     if (key === "dizziness_vertigo" && (normalized.includes("dizzy") || normalized.includes("spinning") || normalized.includes("balance"))) {
       score += 4;
+    }
+    if (key === "tablet_usage_guidelines" && (normalized.includes("tablet") || normalized.includes("pill") || normalized.includes("how many days") || normalized.includes("how to take"))) {
+      score += 5;
     }
 
     if (score > highestScore) {
