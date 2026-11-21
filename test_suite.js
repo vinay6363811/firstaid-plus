@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Comprehensive Automated Test Suite for FirstAid+
  */
 
@@ -315,6 +315,35 @@ async function runTests() {
     assert(analyzerCode.includes('this.problemTextarea ? this.problemTextarea.value'), 'Analyzer uses problemTextarea to extract entered text');
     assert(appCode.includes('problemInput.addEventListener("input"'), 'App has live typing listener to adapt voice and language dynamically');
     assert(appCode.includes('window.updateVoiceDiagnosticLabel'), 'App updates active voice diagnostic label when language changes');
+    assert(htmlText.includes('id="voice-lang-select"'), 'HTML has quick Voice Language Selector dropdown in Voice card');
+
+    // Test dynamic /api/translate-result endpoint
+    const sampleResult = {
+      id: 'burns',
+      title: 'Burns & Scalds',
+      possibleEmergency: 'Possible Thermal Burn',
+      whatHappened: 'Hot liquid caused tissue trauma',
+      immediateFirstAid: ['Cool burn under cold water'],
+      whatNotToDo: ['Do not use ice']
+    };
+    const resTranslate = await fetch('http://127.0.0.1:3000/api/translate-result', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ result: sampleResult, lang: 'kn-IN' })
+    });
+    const dataTranslate = await resTranslate.json();
+    assert(resTranslate.status === 200, 'POST /api/translate-result responds with HTTP 200');
+    assert(dataTranslate.possibleEmergency.includes('ಸುಟ್ಟ'), 'Dynamic result translation produces localized Kannada emergency title');
+    assert(dataTranslate.immediateFirstAid.some(s => s.includes('ನೀರಿ') || s.includes('ತಂಪಾದ')), 'Dynamic result translation produces localized Kannada first aid steps');
+
+    // Test transliterated language detection
+    const resTransliteratedKn = await fetch('http://127.0.0.1:3000/api/analyze-text', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: 'nanna kalu novu agide bisi neeru' })
+    });
+    const dataTransliteratedKn = await resTransliteratedKn.json();
+    assert(dataTransliteratedKn.detectedLanguage && dataTransliteratedKn.detectedLanguage.code === 'kn-IN', 'Detects transliterated Romanized symptom input as Kannada');
 
     console.log('\n--- 11. Testing Muscular Anatomy & 6-System Interactive Layer Switching ---');
     const bodyVisCode = fs.readFileSync(path.join(__dirname, 'public', 'js', 'bodyVisualization.js'), 'utf-8');
@@ -339,7 +368,7 @@ async function runTests() {
     assert(bodyVisCode.includes('setSystem(systemId'), 'Body visualization supports dynamic setSystem switching');
     assert(bodyVisCode.includes('SYSTEM_ASSOCIATIONS'), 'Body visualization has symptom-to-system mapping for auto-isolation');
 
-    console.log('\n🎉 ALL 90 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n🎉 ALL 95 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);

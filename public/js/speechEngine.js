@@ -94,6 +94,12 @@
     }
 
     getActiveLanguage(text) {
+      if (text && typeof text === 'string' && text.trim().length > 0) {
+        const detected = this.detectLanguage(text);
+        if (detected && detected.code !== 'en-IN') {
+          return detected;
+        }
+      }
       if (this.settings.selectedLanguage && this.settings.selectedLanguage !== 'auto') {
         return SUPPORTED_LANGUAGES[this.settings.selectedLanguage] || SUPPORTED_LANGUAGES['en-IN'];
       }
@@ -138,25 +144,25 @@
 
       // 2. Transliteration / Romanized Indian Language Words
       const lower = clean.toLowerCase();
-      if (/\b(tale\s*novu|hotte\s*novu|jwara|kalu\s*novu|kai\s*novu|kannada|nanna|ellige|hege|beku|agide)\b/i.test(lower)) {
+      if (/\b(tale\s*novu|thale\s*novu|hotte\s*novu|jwara|jvara|neeru|kai\s*novu|kaalu\s*novu|kalu\s*novu|ede\s*novu|rakta|raktha|haavu|kadita|usirata|kannada|nanna|bisi\s*neeru|sutta|suttide|gaya|makkalu|hege|beku|agide)\b/i.test(lower)) {
         return SUPPORTED_LANGUAGES['kn-IN'];
       }
-      if (/\b(sar\s*dard|sir\s*dard|pet\s*dard|bukhar|khansi|chot|khoon|chakkar|seene\s*me|saas|jalan|soojan)\b/i.test(lower)) {
+      if (/\b(sir\s*dard|sar\s*dard|pet\s*dard|bukhar|khoon|chot|jalan|saans|saanp|chakkar|gala|garm\s*pani|jal\s*gaya|soojan|hath|pair|aag|madad|chhati\s*dard|khansi|ulti)\b/i.test(lower)) {
         return SUPPORTED_LANGUAGES['hi-IN'];
       }
-      if (/\b(thala\s*noppi|tala\s*noppi|kadupu\s*noppi|jwaram|gunde\s*noppi|daggulu|telugu|naaku)\b/i.test(lower)) {
+      if (/\b(thala\s*noppi|tala\s*noppi|kadupu\s*noppi|jwaram|gunde\s*noppi|daggulu|kalu\s*noppi|cheyyi\s*noppi|raktham|kalindi|vedi\s*neellu|telugulo|telugu|naaku|vachindi)\b/i.test(lower)) {
         return SUPPORTED_LANGUAGES['te-IN'];
       }
-      if (/\b(thalai\s*vali|vayiru\s*vali|kaichal|irumal|nenju\s*vali|tamil|enakku)\b/i.test(lower)) {
+      if (/\b(thalai\s*vali|vayiru\s*vali|kaichal|irumal|nenju\s*vali|kai\s*vali|kaal\s*vali|ratham|theekkayam|sudu\s*thanni|tamil|tamilil|enakku|vandhathu)\b/i.test(lower)) {
         return SUPPORTED_LANGUAGES['ta-IN'];
       }
-      if (/\b(thala\s*vedana|vayar\s*vedana|pani|chuma|malayalam|enikku)\b/i.test(lower)) {
+      if (/\b(thala\s*vedana|vayar\s*vedana|pani|chuma|nenju\s*vedana|kaal\s*vedana|kai\s*vedana|chora|pollal|choodu\s*vellam|malayalam|malayalathil|enikku)\b/i.test(lower)) {
         return SUPPORTED_LANGUAGES['ml-IN'];
       }
-      if (/\b(matha\s*betha|pet\s*betha|jor|kashi|bangla|amar)\b/i.test(lower)) {
+      if (/\b(matha\s*betha|pet\s*betha|jor|kashi|buker\s*betha|roktpat|rokto|pure\s*geche|gorom\s*jol|bangla|banglay|amar|hoyeche)\b/i.test(lower)) {
         return SUPPORTED_LANGUAGES['bn-IN'];
       }
-      if (/\b(doke\s*dukhi|pot\s*dukhi|taap|khokla|marathi|majhe)\b/i.test(lower)) {
+      if (/\b(doke\s*dukhi|pot\s*dukhi|taap|khokla|chhati\s*dukhi|rakta|dukhana|bhajle|garam\s*pani|marathi|marathit|majhe|jhale)\b/i.test(lower)) {
         return SUPPORTED_LANGUAGES['mr-IN'];
       }
 

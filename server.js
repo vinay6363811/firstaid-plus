@@ -10,6 +10,7 @@ const url = require('url');
 
 const { EMERGENCY_GUIDES, DEFAULT_GUIDE, analyzeTextSymptoms } = require('./knowledgeBase');
 const { analyzePhotoLocal } = require('./visualAnalyzer');
+const { translateResult } = require('./multilingualService');
 const geminiService = require('./geminiService');
 
 const PORT = process.env.PORT || 3000;
@@ -190,6 +191,22 @@ const server = http.createServer(async (req, res) => {
         engine: 'FirstAid+ Local Fallback Engine',
         errorNote: err.message
       });
+    }
+  }
+
+  // Dynamic Result Translation / Voice Re-Language Endpoint
+  if (pathname === '/api/translate-result' && method === 'POST') {
+    try {
+      const { result, lang } = await readJsonBody(req);
+      if (!result) {
+        return sendJson(res, 400, { error: 'Missing result object' });
+      }
+      const targetLang = lang || 'en-IN';
+      const translated = translateResult(result, targetLang);
+      return sendJson(res, 200, translated);
+    } catch (err) {
+      console.error('Error translating result:', err);
+      return sendJson(res, 500, { error: err.message });
     }
   }
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * FirstAid+ Main Application Coordinator
  * Handles top-level routing, guides library, settings, and global helpers
  */
@@ -764,15 +764,13 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (val.length >= 2) {
             const detected = se.detectLanguage(val);
             if (detected && detected.code) {
-              // Automatically switch voice and UI when user types in any supported language
-              if (se.settings.selectedLanguage === 'auto' || !se.settings.selectedLanguage) {
-                updateLanguageUI(detected.code);
-              }
+              // Automatically switch voice and UI to the language entered by the user
+              updateLanguageUI(detected.code);
             }
-          } else if (val.length === 0 && (se.settings.selectedLanguage === 'auto' || !se.settings.selectedLanguage)) {
-            updateLanguageUI('auto');
+          } else if (val.length === 0) {
+            updateLanguageUI(se.settings.selectedLanguage || 'auto');
           }
-        }, 180);
+        }, 150);
       });
     }
 

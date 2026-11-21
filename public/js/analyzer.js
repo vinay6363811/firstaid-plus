@@ -1,4 +1,4 @@
-/**
+﻿/**
  * FirstAid+ Smart First Aid Analyzer Controller
  * Coordinates text problem description, photo drag-and-drop/camera capture,
  * laser scanning animation, result presentation, and voice guidance.
@@ -63,6 +63,7 @@ class SmartAnalyzerController {
     this.voiceStopBtn = document.getElementById("voice-stop-btn");
     this.voiceWave = document.getElementById("voice-wave-anim");
     this.voiceLangBadge = document.getElementById("voice-lang-badge");
+    this.voiceLangSelect = document.getElementById("voice-lang-select");
     this.voiceStatusSubtext = document.getElementById("voice-status-subtext");
 
     // Camera Modal Elements
@@ -379,7 +380,13 @@ class SmartAnalyzerController {
     if (this.analyzeTextBtn) this.analyzeTextBtn.disabled = true;
 
     try {
-      const activeLang = window.speechEngine ? window.speechEngine.getActiveLanguage(text) : null;
+      // Prioritize language entered by the user
+      let activeLang = window.speechEngine ? window.speechEngine.detectLanguage(text) : null;
+      if (!activeLang || activeLang.code === 'en-IN') {
+        if (window.speechEngine && window.speechEngine.settings && window.speechEngine.settings.selectedLanguage && window.speechEngine.settings.selectedLanguage !== 'auto') {
+          activeLang = window.speechEngine.supportedLanguages[window.speechEngine.settings.selectedLanguage] || activeLang;
+        }
+      }
       const response = await fetch("/api/analyze-text", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -745,6 +752,52 @@ class SmartAnalyzerController {
       (window.speechEngine ? window.speechEngine.getActiveLanguage(inputText) : { code: 'en-IN', name: 'English (India)' });
     result.detectedLanguage = detectedLang;
 
+    // Sync Voice Language Selector Dropdown
+    if (this.voiceLangSelect) {
+      this.voiceLangSelect.value = detectedLang.code || 'auto';
+      if (!this.voiceLangSelect._hasBoundListener) {
+        this.voiceLangSelect._hasBoundListener = true;
+        this.voiceLangSelect.addEventListener("change", async (e) => {
+          const chosenCode = e.target.value;
+          const targetObj = chosenCode === 'auto'
+            ? (result.detectedLanguage || { code: 'en-IN', name: 'English (India)' })
+            : (window.speechEngine?.supportedLanguages[chosenCode] || { code: chosenCode, name: chosenCode });
+
+          if (this.currentAnalysisResult) {
+            try {
+              const resp = await fetch("/api/translate-result", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  result: this.currentAnalysisResult,
+                  lang: targetObj.code
+                })
+              });
+              if (resp.ok) {
+                const translated = await resp.json();
+                translated.detectedLanguage = targetObj;
+                this.currentAnalysisResult = translated;
+                this.renderResults(translated);
+                return;
+              }
+            } catch (err) {
+              console.warn("Dynamic translation error:", err);
+            }
+            this.currentAnalysisResult.detectedLanguage = targetObj;
+          }
+
+          if (this.voiceLangBadge) {
+            const bestVoice = window.speechEngine ? window.speechEngine.getBestVoice(targetObj.code, window.speechEngine.settings.gender) : null;
+            const genderTag = (bestVoice && bestVoice.isFemale) ? "👩 Female Voice" : "🎙️ Voice";
+            this.voiceLangBadge.textContent = `${genderTag} (${targetObj.name})`;
+          }
+          if (this.voiceStatusSubtext) {
+            this.voiceStatusSubtext.textContent = `Reassuring female medical assistant instructions in ${targetObj.name}`;
+          }
+        });
+      }
+    }
+
     // Update Voice Badge and Subtext
     if (this.voiceLangBadge) {
       const bestVoice = window.speechEngine ? window.speechEngine.getBestVoice(detectedLang.code, window.speechEngine.settings.gender) : null;
@@ -799,8 +852,14 @@ class SmartAnalyzerController {
     if (!this.currentAnalysisResult) return;
 
     const inputText = (this.problemTextarea ? this.problemTextarea.value : "") || (this.previewContextInput ? this.previewContextInput.value : "");
-    const detectedLang = this.currentAnalysisResult.detectedLanguage || 
-      (window.speechEngine ? window.speechEngine.getActiveLanguage(inputText) : { code: 'en-IN', name: 'English (India)' });
+    let detectedLang = this.currentAnalysisResult ? this.currentAnalysisResult.detectedLanguage : null;
+    if (this.voiceLangSelect && this.voiceLangSelect.value && this.voiceLangSelect.value !== 'auto') {
+      const chosen = this.voiceLangSelect.value;
+      detectedLang = window.speechEngine?.supportedLanguages[chosen] || { code: chosen, name: chosen };
+    }
+    if (!detectedLang) {
+      detectedLang = window.speechEngine ? window.speechEngine.getActiveLanguage(inputText) : { code: 'en-IN', name: 'English (India)' };
+    }
 
     const narrative = window.speechEngine.buildNarrative(this.currentAnalysisResult, detectedLang);
 

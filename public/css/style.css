@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    FirstAid+ Classic Student & Campus Medical Edition Theme
    Clean, practical, authentic, and human — no synthetic dark neon gimmicks.
    Modeled after clean medical field handbooks and student health portals.
@@ -1098,6 +1098,32 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+
+/* Voice Language Quick Selector Dropdown */
+.voice-lang-select-dropdown {
+  padding: 5px 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid #93c5fd;
+  background: #eff6ff;
+  color: #1e40af;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(30, 64, 175, 0.08);
+}
+
+.voice-lang-select-dropdown:hover {
+  background: #dbeafe;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.voice-lang-select-dropdown:focus {
+  border-color: #1e40af;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 
 /* Bottom Action Bar for Results */

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -689,6 +689,20 @@
                   <div style="font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <span>Voice Guidance</span>
                     <span id="voice-lang-badge" class="num-pill" style="font-size: 0.72rem; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-weight: 700;">👩 Female Voice (English)</span>
+                    <div class="voice-lang-selector-wrap" style="display: inline-flex; align-items: center; gap: 4px;">
+                      <label for="voice-lang-select" style="font-size: 0.75rem; font-weight: 600; color: #475569; margin: 0;">Voice Language:</label>
+                      <select id="voice-lang-select" class="voice-lang-select-dropdown" title="Choose voice and guidance language">
+                        <option value="auto">🔄 Auto (Match Entered Language)</option>
+                        <option value="kn-IN">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+                        <option value="hi-IN">🇮🇳 हिन्दी (Hindi)</option>
+                        <option value="te-IN">🇮🇳 తెలుగు (Telugu)</option>
+                        <option value="ta-IN">🇮🇳 தமிழ் (Tamil)</option>
+                        <option value="ml-IN">🇮🇳 മലയാളം (Malayalam)</option>
+                        <option value="bn-IN">🇮🇳 বাংলা (Bengali)</option>
+                        <option value="mr-IN">🇮🇳 मराठी (Marathi)</option>
+                        <option value="en-IN">🇮🇳 English (India)</option>
+                      </select>
+                    </div>
                     <button id="voice-change-lang-btn" class="voice-change-lang-btn" type="button" title="Change voice language">
                       <span>🌐 Change Language</span>
                     </button>
