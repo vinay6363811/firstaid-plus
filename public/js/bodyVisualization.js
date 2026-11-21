@@ -279,6 +279,7 @@
       this.pedestalCompass = document.querySelector('.pedestal-compass-ticks');
       this.zoomInBtn = document.getElementById('body-zoom-in-btn');
       this.zoomOutBtn = document.getElementById('body-zoom-out-btn');
+      this.hudStageStopBtn = document.getElementById('hud-stage-stop-rotate-btn');
       this.frontSvg = document.getElementById('svg-anatomy-front');
       this.backSvg = document.getElementById('svg-anatomy-back');
       this.anglePresetChips = document.querySelectorAll('.preset-angle-chip');
@@ -296,6 +297,7 @@
       this.bindDragInteraction();
       this.bindZoneInteractions();
       this.bindSymptomInputListener();
+      this.updateRotationButtonUI();
       this.startIdleAnimation();
 
       // Listen for when intro animation completes
@@ -329,15 +331,18 @@
         });
       }
 
-      // Toggle 360° Continuous Auto-Orbit
+      // Stop / Start 3D Rotation (Toolbar Button)
       if (this.hudRotateToggle) {
         this.hudRotateToggle.addEventListener('click', () => {
-          this.isAutoRotating = !this.isAutoRotating;
-          this.hudRotateToggle.classList.toggle('active', this.isAutoRotating);
-          const span = this.hudRotateToggle.querySelector('span');
-          if (span) {
-            span.textContent = this.isAutoRotating ? '360° Orbit: ON' : '360° Orbit: OFF';
-          }
+          this.toggleRotation();
+        });
+      }
+
+      // Stop / Start 3D Rotation (Floating Stage HUD Button)
+      if (this.hudStageStopBtn) {
+        this.hudStageStopBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.toggleRotation();
         });
       }
 
@@ -363,9 +368,56 @@
           const angle = parseInt(chip.getAttribute('data-angle'), 10);
           if (!isNaN(angle)) {
             this.rotateToAngle(angle);
+            // Stop continuous spinning so the user can study chosen angle
+            this.stopRotation();
           }
         });
       });
+    }
+
+    toggleRotation() {
+      if (this.isAutoRotating) {
+        this.stopRotation();
+      } else {
+        this.startRotation();
+      }
+    }
+
+    stopRotation() {
+      this.isAutoRotating = false;
+      this.targetRotationAngle = this.rotationAngle;
+      this.updateRotationButtonUI();
+    }
+
+    startRotation() {
+      this.isAutoRotating = true;
+      this.updateRotationButtonUI();
+    }
+
+    updateRotationButtonUI() {
+      if (this.hudRotateToggle) {
+        this.hudRotateToggle.classList.toggle('active', this.isAutoRotating);
+        this.hudRotateToggle.classList.toggle('btn-stop-active', this.isAutoRotating);
+        this.hudRotateToggle.title = this.isAutoRotating ? 'Stop continuous 3D rotation' : 'Start continuous 3D rotation';
+        const span = this.hudRotateToggle.querySelector('span');
+        if (span) {
+          span.textContent = this.isAutoRotating ? '⏹ Stop 3D Rotation' : '▶ Rotate 3D';
+        }
+        const iconSvg = this.hudRotateToggle.querySelector('svg');
+        if (iconSvg) {
+          if (this.isAutoRotating) {
+            iconSvg.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>';
+          } else {
+            iconSvg.innerHTML = '<polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/>';
+          }
+        }
+      }
+
+      if (this.hudStageStopBtn) {
+        this.hudStageStopBtn.classList.toggle('is-stopped', !this.isAutoRotating);
+        this.hudStageStopBtn.textContent = this.isAutoRotating ? '⏹ Stop Rotation' : '▶ Rotate 3D';
+        this.hudStageStopBtn.title = this.isAutoRotating ? 'Stop continuous 3D rotation' : 'Resume continuous 3D rotation';
+      }
     }
 
     bindSystemSelector() {
@@ -880,6 +932,8 @@
       const match = SYMPTOM_MAP.find(m => m.id === targetId);
       if (!match) return;
 
+      // Stop continuous spinning so the user can inspect the selected organ
+      this.stopRotation();
       this.applyHighlights([match]);
 
       // Populate input if user wants guidance on clicked area

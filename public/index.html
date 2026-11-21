@@ -1849,14 +1849,15 @@
               <!-- Interactive Floating Tooltip -->
               <div id="body-hover-tooltip" class="body-hover-tooltip" aria-hidden="true"></div>
 
-              <!-- 3D HUD Badges (Angle, Tilt, Zoom, Gesture Hints) -->
-              <div class="body-3d-hud-overlay" aria-hidden="true">
+              <!-- 3D HUD Badges (Angle, Tilt, Zoom, Gesture Hints & Quick Stop) -->
+              <div class="body-3d-hud-overlay">
                 <div class="body-3d-hud-top-left">
                   <span class="hud-3d-badge hud-orbit-angle" id="hud-orbit-angle">3D ANGLE: 0° (Anterior)</span>
                   <span class="hud-3d-badge hud-tilt-angle" id="hud-tilt-angle">TILT: 0°</span>
                 </div>
                 <div class="body-3d-hud-top-right">
                   <span class="hud-3d-badge hud-zoom-level" id="hud-zoom-level">ZOOM: 100%</span>
+                  <button id="hud-stage-stop-rotate-btn" class="hud-3d-btn hud-stop-rotate-btn" type="button" title="Stop continuous 3D rotation">⏹ Stop Rotation</button>
                 </div>
                 <div class="body-3d-hud-bottom">
                   <span class="hud-3d-hint">🖱️ Drag to rotate 360° & tilt • Scroll wheel to zoom</span>
@@ -1877,9 +1878,9 @@
                 <span id="body-view-btn-label">View: Front</span>
               </button>
 
-              <button id="body-rotate-toggle-btn" class="body-ctrl-btn active" type="button" title="Toggle continuous 360° orbital rotation">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
-                <span>360° Orbit: ON</span>
+              <button id="body-rotate-toggle-btn" class="body-ctrl-btn btn-stop-active active" type="button" title="Stop or start continuous 3D rotation">
+                <svg id="body-rotate-btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                <span id="body-rotate-btn-label">⏹ Stop 3D Rotation</span>
               </button>
 
               <div class="body-ctrl-zoom-group">

@@ -244,6 +244,10 @@ async function runTests() {
     assert(bodyJsText.includes('targetRotationAngle'), 'bodyVisualization.js supports continuous 360° orbital rotation');
     assert(bodyJsText.includes('targetPitchAngle'), 'bodyVisualization.js supports perspective pitch tilt');
     assert(bodyJsText.includes('targetZoomLevel'), 'bodyVisualization.js supports 3D zoom scaling');
+    assert(htmlText.includes('body-rotate-toggle-btn'), 'HTML includes 3D rotation toggle/stop button');
+    assert(htmlText.includes('hud-stage-stop-rotate-btn'), 'HTML includes floating 3D stage stop rotation button');
+    assert(bodyJsText.includes('stopRotation'), 'bodyVisualization.js includes stopRotation method to freeze 3D rotation');
+    assert(bodyJsText.includes('toggleRotation'), 'bodyVisualization.js includes toggleRotation method');
 
     console.log('\n--- 7. Testing Female Voice Selection & Speech Engine ---');
     const speechEngineRes = await fetch('http://127.0.0.1:3000/js/speechEngine.js');
