@@ -2777,11 +2777,21 @@ body {
   display: block !important;
 }
 
+/* REMOVE THE TALLER VECTOR BODY IN THIS POSITION:
+   Hide all vector layers (skeleton, nerves, brain, vector muscles, vessels) so ONLY the 3D model photo is visible */
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-layer:not(.system-exact-model),
 .svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-silhouette,
-.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-skin {
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-skin,
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-muscular,
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-skeletal,
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-cardiovascular,
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-respiratory,
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-nervous,
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-lymphatic {
   display: none !important;
   opacity: 0 !important;
-  pointer-events: none;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .anatomy-zone .zone-surface {
