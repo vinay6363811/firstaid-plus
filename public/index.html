@@ -165,6 +165,13 @@
             </button>
           </li>
           <li>
+            <button class="nav-btn medicine-relief-nav" data-view="medicine" title="Module 11: AI Medicine & Relief Recommendations, India Brands, Prices & Pharmacy Finder">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path></svg>
+              <span>Medicine & Relief</span>
+              <span class="med-ai-badge">AI OTC</span>
+            </button>
+          </li>
+          <li>
             <button class="nav-btn" data-view="dashboard">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
               <span>Dashboard</span>
@@ -815,6 +822,12 @@
                 <button id="results-find-hospital-btn" class="btn btn-radar-emergency" type="button" onclick="window.openHospitalRadar('emergency');" title="Open Module 10: Real-Time Nearby Hospitals & Emergency Services Radar">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                   <span>🏥 Find Nearest Hospital</span>
+                </button>
+
+                <!-- Medicine & Pharmacy Relief Button -->
+                <button id="results-medicine-relief-btn" class="btn btn-medicine-relief" type="button" onclick="window.openMedicineRelief(window.smartAnalyzer?.currentAnalysisResult?.id || null, window.smartAnalyzer?.currentAnalysisResult?.possibleEmergency || null);" title="Open AI Medicine & Relief Recommendations, India Brands, Prices & Pharmacy Finder">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path></svg>
+                  <span>💊 Medicine & Relief Guide</span>
                 </button>
 
                 <!-- Card F: Emergency Action - CALL 112 (Requirement 3.F) -->
@@ -2490,6 +2503,109 @@
       </div>
     </section>
 
+    <!-- =================================================================== -->
+    <!-- MODULE 11: AI MEDICINE & RELIEF RECOMMENDATIONS + PHARMACY FINDER   -->
+    <!-- =================================================================== -->
+    <section id="view-medicine" class="view-section">
+      <!-- Permanent Emergency 112/108 Safety Banner -->
+      <div class="med-emergency-top-banner" role="alert">
+        <div class="banner-content">
+          <span class="pulsing-siren-dot"></span>
+          <div class="banner-text">
+            <strong>🚨 SEVERE SYMPTOMS? DO NOT DELAY EMERGENCY CARE WITH MEDICINES</strong>
+            <span>Chest tightness, sudden facial weakness, severe bleeding, or difficulty breathing require an immediate ambulance (112 / 108).</span>
+          </div>
+        </div>
+        <div class="banner-buttons">
+          <a href="tel:112" class="btn-emergency-call"><span>CALL 112</span></a>
+          <button type="button" class="btn-emergency-radar-jump" onclick="window.openHospitalRadar('emergency')"><span>🏥 Hospital Radar</span></button>
+        </div>
+      </div>
+
+      <!-- Module Introduction & Interactive Symptom Search Cockpit -->
+      <div class="med-search-cockpit">
+        <div class="cockpit-title-row">
+          <div>
+            <h2 class="med-title">💊 AI Medicine & Relief Recommendations</h2>
+            <p class="med-subtitle">Verified Indian OTC Brands • NPPA Price Estimator • Home Care • Nearby Pharmacy Radar</p>
+          </div>
+          <button id="btn-toggle-medicine-profile" class="btn-profile-toggle" type="button" aria-expanded="false">
+            <span>⚙️ Patient Profile & Safety Screening</span>
+            <span class="profile-arrow">▾</span>
+          </button>
+        </div>
+
+        <!-- Search Input Bar -->
+        <div class="med-input-group">
+          <svg class="med-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="medicine-symptom-input" placeholder="Enter problem (e.g. Headache, Fever, Acidity, Sprain, Cuts, Burns, Diarrhea, Vomiting)...">
+          <button id="btn-medicine-search" class="btn btn-primary" type="button">Get AI Relief Guide</button>
+        </div>
+
+        <!-- Quick Complaint Chips -->
+        <div class="med-quick-chips-wrapper">
+          <span class="quick-chips-label">Common Problems:</span>
+          <div id="medicine-quick-chips" class="med-quick-chips"></div>
+        </div>
+
+        <!-- Patient Profile & Safety Screening Drawer -->
+        <div id="medicine-profile-drawer" class="medicine-profile-drawer">
+          <div class="drawer-header">
+            <h4>📋 Patient Profile & Safety Contraindications Checklist</h4>
+            <span class="drawer-note">Tailors dosages, side-effect alerts, and contraindications</span>
+          </div>
+          <div class="drawer-grid">
+            <div class="drawer-field">
+              <label for="med-profile-age">Age Category:</label>
+              <select id="med-profile-age" class="medicine-profile-input">
+                <option value="adult" selected>Adult (12 - 65 years)</option>
+                <option value="child">Child (&lt; 12 years) — Pediatric Safety</option>
+                <option value="senior">Senior (&gt; 65 years)</option>
+                <option value="pregnant">Pregnant / Nursing Mother</option>
+              </select>
+            </div>
+
+            <div class="drawer-field">
+              <label for="med-profile-duration">Symptom Duration:</label>
+              <select id="med-profile-duration" class="medicine-profile-input">
+                <option value="acute" selected>Recent (&lt; 24 hours)</option>
+                <option value="subacute">1 to 3 days</option>
+                <option value="chronic">Over 5 days (Chronic / Recurring)</option>
+              </select>
+            </div>
+
+            <div class="drawer-field">
+              <label for="med-profile-severity">Severity Level:</label>
+              <select id="med-profile-severity" class="medicine-profile-input">
+                <option value="mild">Mild (Manageable at home)</option>
+                <option value="moderate" selected>Moderate (Disrupting routine)</option>
+                <option value="severe">Severe (Intense discomfort)</option>
+              </select>
+            </div>
+
+            <div class="drawer-field full-span">
+              <label>Pre-existing Health Conditions:</label>
+              <div class="conditions-checkbox-group">
+                <label class="check-pill"><input type="checkbox" class="med-condition-check medicine-profile-input" value="Acidity / Stomach Ulcer"> <span>Stomach Ulcer / GERD</span></label>
+                <label class="check-pill"><input type="checkbox" class="med-condition-check medicine-profile-input" value="Liver Disease"> <span>Liver Impairment</span></label>
+                <label class="check-pill"><input type="checkbox" class="med-condition-check medicine-profile-input" value="Kidney Disease"> <span>Kidney Disease</span></label>
+                <label class="check-pill"><input type="checkbox" class="med-condition-check medicine-profile-input" value="High Blood Pressure"> <span>Hypertension (High BP)</span></label>
+                <label class="check-pill"><input type="checkbox" class="med-condition-check medicine-profile-input" value="Asthma"> <span>Asthma / Bronchospasm</span></label>
+              </div>
+            </div>
+
+            <div class="drawer-field full-span">
+              <label for="med-profile-allergies">Known Drug Allergies (comma-separated):</label>
+              <input type="text" id="med-profile-allergies" class="medicine-profile-input" placeholder="e.g. Paracetamol, Aspirin, Ibuprofen, Sulfa">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Results Container (Filled by medicineRelief.js) -->
+      <div id="medicine-results-container" class="med-results-container"></div>
+    </section>
+
   </main>
 
   <!-- ===================================================================== -->
@@ -2638,6 +2754,7 @@
   <script src="js/checklist.js"></script>
   <script src="js/assistant.js"></script>
   <script src="js/hospitalRadar.js"></script>
+  <script src="js/medicineRelief.js"></script>
   <script src="js/analyzer.js"></script>
   <script src="js/app.js"></script>
 

@@ -464,6 +464,93 @@ async function runTests() {
     assert(cssStyle.includes('.user-gps-radar-pin'), 'CSS styles pulsing GPS radar pin');
     assert(cssStyle.includes('.hospital-map-pin.nearest'), 'CSS styles #01 Nearest hospital map pin');
 
+    console.log('\n--- 13. Testing MODULE 11 — AI Medicine & Relief Recommendations + Pharmacy Finder ---');
+    // A. Medicine categories
+    const resMedCats = await fetch('http://127.0.0.1:3000/api/medicine/categories');
+    assert(resMedCats.status === 200, 'GET /api/medicine/categories returns HTTP 200');
+    const medCatsData = await resMedCats.json();
+    assert(medCatsData.success === true && Array.isArray(medCatsData.categories), 'Returns verified categories array');
+    assert(medCatsData.categories.length >= 8, 'Covers core everyday symptom categories (>=8 categories)');
+
+    // B. Dynamic Medicine & Relief Recommendation (Headache)
+    const resMedRec = await fetch('http://127.0.0.1:3000/api/medicine/recommendations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: 'throbbing headache after long day' })
+    });
+    assert(resMedRec.status === 200, 'POST /api/medicine/recommendations returns HTTP 200');
+    const medRecData = await resMedRec.json();
+    assert(medRecData.status === 'success', 'Recommendation status is success');
+    assert(medRecData.conditionId === 'headache', 'Correctly identifies headache condition');
+    assert(Array.isArray(medRecData.otcMedicines) && medRecData.otcMedicines.length > 0, 'Returns appropriate OTC medicines');
+    
+    // Brand names & Price verification
+    const paracetamolMed = medRecData.otcMedicines.find(m => m.genericName.toLowerCase().includes('paracetamol'));
+    assert(paracetamolMed !== undefined, 'Suggests Paracetamol as first-line headache analgesic');
+    assert(paracetamolMed.brandExamples.includes('Dolo 650') && paracetamolMed.brandExamples.includes('Calpol 650'), 'Includes verified Indian brand names (Dolo 650, Calpol 650)');
+    assert(paracetamolMed.priceEstimate && paracetamolMed.priceEstimate.min > 0, 'Includes numerical Indian price estimate');
+    assert(paracetamolMed.priceEstimate.formatted.includes('₹'), 'Price estimate is formatted in Indian Rupees (₹)');
+    assert(paracetamolMed.priceEstimate.packSize.includes('15 tablets'), 'Specifies verified pack size');
+    assert(paracetamolMed.priceEstimate.source.includes('NPPA'), 'Cites reliable NPPA ceiling price benchmark');
+    assert(Array.isArray(medRecData.firstAidItems) && medRecData.firstAidItems.length > 0, 'Recommends non-medicine first aid products');
+    assert(medRecData.homeRemedies.safeRemedies.length >= 3, 'Provides evidence-based safe home remedies');
+    assert(medRecData.homeRemedies.dangerousPracticesToAvoid.length >= 2, 'Flags dangerous unverified folk habits to avoid');
+    assert(Array.isArray(medRecData.comparisonMatrix) && medRecData.comparisonMatrix.length > 0, 'Generates medicine comparison matrix');
+
+    // C. Patient Profile Safety Adjustments (Liver Disease & Pediatric)
+    const resLiverCheck = await fetch('http://127.0.0.1:3000/api/medicine/recommendations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: 'fever', conditions: ['Liver Disease'] })
+    });
+    const liverCheckData = await resLiverCheck.json();
+    const liverWarnings = liverCheckData.otcMedicines[0].profileWarnings || [];
+    assert(liverWarnings.some(w => w.includes('Liver Disease') || w.includes('Liver')), 'Dynamically flags Paracetamol dosage reduction alert for Liver Disease');
+
+    const resPediatricCheck = await fetch('http://127.0.0.1:3000/api/medicine/recommendations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: 'fever', ageGroup: 'child' })
+    });
+    const pediatricCheckData = await resPediatricCheck.json();
+    const pediatricWarnings = pediatricCheckData.otcMedicines[0].profileWarnings || [];
+    assert(pediatricWarnings.some(w => w.includes('PEDIATRIC') || w.includes('pediatric')), 'Dynamically flags pediatric oral drop/suspension safety warning');
+
+    // D. Smart Health Safety Engine / Red Flag Emergency Detection
+    const resChestPain = await fetch('http://127.0.0.1:3000/api/medicine/recommendations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: 'sudden severe crushing chest pain and shortness of breath' })
+    });
+    const chestPainData = await resChestPain.json();
+    assert(chestPainData.status === 'emergency_override', 'Red flag symptoms trigger emergency_override status');
+    assert(chestPainData.isEmergency === true, 'isEmergency flag is strictly true');
+    assert(chestPainData.actionInstructions.some(i => i.includes('112')), 'Provides immediate 112 emergency calling instruction');
+
+    // E. Real Nearby Pharmacy Finder Endpoint
+    const resPharmNearby = await fetch('http://127.0.0.1:3000/api/pharmacies/nearby?lat=12.9716&lng=77.5946&radius=5000');
+    assert(resPharmNearby.status === 200, 'GET /api/pharmacies/nearby returns HTTP 200');
+    const pharmNearbyData = await resPharmNearby.json();
+    assert(pharmNearbyData.totalFound >= 10, `Discovers real nearby retail pharmacies (found: ${pharmNearbyData.totalFound})`);
+    assert(pharmNearbyData.pharmacies[0].directionsUrl.includes('google.com/maps/dir/'), 'Generates direct turn-by-turn navigation link for nearest pharmacy');
+    assert(pharmNearbyData.pharmacies[0].stockStatus.includes('OTC'), 'Includes standard OTC inventory availability guidance');
+
+    // F. Frontend HTML & CSS Module 11 Verification
+    const indexHtmlMod11 = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf-8');
+    const cssStyleMod11 = fs.readFileSync(path.join(__dirname, 'public', 'css', 'style.css'), 'utf-8');
+    const medReliefJs = fs.readFileSync(path.join(__dirname, 'public', 'js', 'medicineRelief.js'), 'utf-8');
+
+    assert(indexHtmlMod11.includes('data-view="medicine"'), 'HTML contains Medicine & Relief navigation button');
+    assert(indexHtmlMod11.includes('id="view-medicine"'), 'HTML contains Module 11 View Section (#view-medicine)');
+    assert(indexHtmlMod11.includes('id="medicine-profile-drawer"'), 'HTML contains patient profile & safety screening drawer');
+    assert(indexHtmlMod11.includes('id="results-medicine-relief-btn"'), 'HTML includes Medicine & Relief Guide button in Analyzer results');
+    assert(indexHtmlMod11.includes('js/medicineRelief.js'), 'HTML includes medicineRelief.js script tag');
+    assert(medReliefJs.includes('class MedicineReliefController'), 'medicineRelief.js defines MedicineReliefController class');
+    assert(medReliefJs.includes('window.openMedicineRelief'), 'medicineRelief.js exports global window.openMedicineRelief helper');
+    assert(cssStyleMod11.includes('.medicine-item-card'), 'CSS styles medicine item cards');
+    assert(cssStyleMod11.includes('.med-brand-pill'), 'CSS styles Indian brand pills');
+    assert(cssStyleMod11.includes('.pharmacy-item-card'), 'CSS styles pharmacy item cards');
+
     console.log(`\n🎉 ALL ${passCount} UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n`);
   } catch (err) {
     console.error('Test error:', err);

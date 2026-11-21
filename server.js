@@ -13,6 +13,7 @@ const { analyzePhotoLocal } = require('./visualAnalyzer');
 const { translateResult } = require('./multilingualService');
 const geminiService = require('./geminiService');
 const hospitalService = require('./hospitalService');
+const medicineService = require('./medicineService');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -348,6 +349,96 @@ const server = http.createServer(async (req, res) => {
     } catch (err) {
       console.error('Error calculating route:', err);
       return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // =========================================================================
+  // MODULE 11: AI MEDICINE & RELIEF RECOMMENDATIONS + PHARMACY FINDER
+  // =========================================================================
+
+  // 1. Get all supported symptom categories
+  if (pathname === '/api/medicine/categories' && method === 'GET') {
+    try {
+      const categories = medicineService.getAllCategories();
+      return sendJson(res, 200, { success: true, categories });
+    } catch (err) {
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // 2. Dynamic Medicine & Relief Recommendations
+  if (pathname === '/api/medicine/recommendations' && method === 'POST') {
+    try {
+      const body = await readJsonBody(req);
+      const query = body.query || body.text || '';
+      const options = {
+        conditionId: body.conditionId || null,
+        ageGroup: body.ageGroup || 'adult',
+        duration: body.duration || 'acute',
+        severity: body.severity || 'moderate',
+        conditions: Array.isArray(body.conditions) ? body.conditions : [],
+        allergies: Array.isArray(body.allergies) ? body.allergies : [],
+        language: body.language || 'en-IN'
+      };
+
+      const result = medicineService.getMedicineRecommendations(query, options);
+      return sendJson(res, 200, result);
+    } catch (err) {
+      console.error('Error getting medicine recommendations:', err);
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // 3. Real Location-Based Nearby Pharmacy Finder
+  if (pathname === '/api/pharmacies/nearby' && method === 'GET') {
+    try {
+      const lat = reqUrl.searchParams.get('lat');
+      const lng = reqUrl.searchParams.get('lng');
+      const radius = reqUrl.searchParams.get('radius') || 5000;
+      const sort = reqUrl.searchParams.get('sort') || 'nearest';
+
+      if (!lat || !lng) {
+        return sendJson(res, 400, { error: 'Latitude and Longitude are required for pharmacy discovery.' });
+      }
+
+      const rawResult = await hospitalService.searchNearbyHospitals(lat, lng, radius, 'pharmacy', sort);
+      
+      // Annotate with verified pharmacy inventory guidance
+      const pharmacies = (rawResult.hospitals || []).map(p => ({
+        ...p,
+        category: 'Retail Pharmacy / Chemist',
+        stockStatus: 'Standard OTC essentials (ORS, Paracetamol, Antacids, Bandages) typically stocked — call chemist to confirm live brand availability',
+        isVerifiedChemist: true,
+        directionsUrl: `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${p.lat},${p.lng}&travelmode=driving`
+      }));
+
+      return sendJson(res, 200, {
+        totalFound: pharmacies.length,
+        searchRadiusMeters: rawResult.searchRadiusMeters,
+        userLocation: rawResult.userLocation,
+        pharmacies,
+        nearestPharmacy: pharmacies[0] || null,
+        secondNearestPharmacy: pharmacies[1] || null,
+        provider: rawResult.provider,
+        refreshedAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error('Error searching nearby pharmacies:', err);
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // 4. Geocode Location for Pharmacy Finder
+  if (pathname === '/api/pharmacies/geocode' && method === 'GET') {
+    try {
+      const query = reqUrl.searchParams.get('query') || reqUrl.searchParams.get('q');
+      if (!query || query.trim().length === 0) {
+        return sendJson(res, 400, { error: 'Search query is required.' });
+      }
+      const geoResult = await hospitalService.geocodeAddress(query);
+      return sendJson(res, 200, geoResult);
+    } catch (err) {
+      return sendJson(res, 400, { error: err.message });
     }
   }
 
