@@ -386,6 +386,84 @@ async function runTests() {
     assert(bodyVisCode.includes('setSystem(systemId'), 'Body visualization supports dynamic setSystem switching');
     assert(bodyVisCode.includes('SYSTEM_ASSOCIATIONS'), 'Body visualization has symptom-to-system mapping for auto-isolation');
 
+    console.log('\n--- 12. Testing MODULE 10 — Nearby Hospitals & Emergency Services Radar ---');
+    // A. Leaflet local assets
+    const leafletJsPath = path.join(__dirname, 'public', 'js', 'leaflet.js');
+    const leafletCssPath = path.join(__dirname, 'public', 'css', 'leaflet.css');
+    assert(fs.existsSync(leafletJsPath) && fs.statSync(leafletJsPath).size > 50000, 'Local Leaflet 1.9.4 JS bundle exists and is uncorrupted (>50KB)');
+    assert(fs.existsSync(leafletCssPath) && fs.statSync(leafletCssPath).size > 5000, 'Local Leaflet 1.9.4 CSS bundle exists and is uncorrupted (>5KB)');
+
+    // B. Hospital API Config
+    const resHospConfig = await fetch('http://127.0.0.1:3000/api/hospitals/config');
+    assert(resHospConfig.status === 200, 'GET /api/hospitals/config returns HTTP 200');
+    const hospConfigData = await resHospConfig.json();
+    assert(hospConfigData.emergencyHelpline === '112', 'Default emergency helpline is verified as 112 (India)');
+    assert(Array.isArray(hospConfigData.availableRadii) && hospConfigData.availableRadii.includes(5000), 'Supported search radii include 5 km default');
+    assert(hospConfigData.categories.includes('emergency') && hospConfigData.categories.includes('hospital'), 'Includes emergency and hospital facility categories');
+
+    // C. Nearby Hospital Radar Search (Bengaluru)
+    const resNearby = await fetch('http://127.0.0.1:3000/api/hospitals/nearby?lat=12.9716&lng=77.5946&radius=5000');
+    assert(resNearby.status === 200, 'GET /api/hospitals/nearby returns HTTP 200');
+    const nearbyData = await resNearby.json();
+    assert(nearbyData.totalFound >= 20, `Discovered high volume of genuine medical facilities (found: ${nearbyData.totalFound})`);
+    assert(nearbyData.hospitals && nearbyData.hospitals.length > 0, 'Returned valid hospitals array');
+    
+    // Test Extreme Nearest-to-Farthest Ranking & Haversine Distance
+    let isAscending = true;
+    for (let i = 0; i < nearbyData.hospitals.length - 1; i++) {
+      if (nearbyData.hospitals[i].distanceMeters > nearbyData.hospitals[i + 1].distanceMeters) {
+        isAscending = false;
+        break;
+      }
+    }
+    assert(isAscending, 'All discovered hospitals are strictly ranked in ascending distance order (nearest-to-farthest)');
+    assert(nearbyData.hospitals[0].rank === 1, '#01 Nearest hospital has rank 1');
+    assert(nearbyData.hospitals[0].distanceDiffText === null, '#01 Nearest hospital has null previous distance difference');
+    assert(nearbyData.hospitals[1].distanceDiffText !== null, '#02 Second nearest hospital calculates distance difference intelligence');
+    assert(nearbyData.hospitals[0].lat && nearbyData.hospitals[0].lng, 'Hospital contains verified geographic coordinates');
+    assert(nearbyData.emergencyFacilitiesCount >= 1, 'Correctly identifies 24/7 verified emergency departments');
+
+    // D. Reverse Geocoding API
+    const resRevGeo = await fetch('http://127.0.0.1:3000/api/hospitals/reverse-geocode?lat=12.9716&lng=77.5946');
+    assert(resRevGeo.status === 200, 'GET /api/hospitals/reverse-geocode returns HTTP 200');
+    const revGeoData = await resRevGeo.json();
+    assert(revGeoData.formattedAddress && revGeoData.formattedAddress.length > 5, 'Reverse geocode returns human-readable formatted address');
+
+    // E. Forward Geocoding API (Manual Search Fallback)
+    const resFwdGeo = await fetch('http://127.0.0.1:3000/api/hospitals/geocode?query=Indiranagar%20Bengaluru');
+    assert(resFwdGeo.status === 200, 'GET /api/hospitals/geocode returns HTTP 200');
+    const fwdGeoData = await resFwdGeo.json();
+    assert(!isNaN(fwdGeoData.lat) && !isNaN(fwdGeoData.lng), 'Forward geocode resolves query to valid coordinates');
+
+    // F. Turn-by-turn Road Routing API
+    const resRoute = await fetch('http://127.0.0.1:3000/api/hospitals/route?startLat=12.9716&startLng=77.5946&destLat=12.9820&destLng=77.6030&mode=driving');
+    assert(resRoute.status === 200, 'GET /api/hospitals/route returns HTTP 200');
+    const routeData = await resRoute.json();
+    assert(routeData.roadDistanceMeters > 0, 'Road route returns actual road distance in meters');
+    assert(routeData.travelTimeFormatted && routeData.travelTimeFormatted.includes('mins'), 'Road route calculates estimated travel time');
+    assert(Array.isArray(routeData.coordinates) && routeData.coordinates.length > 0, 'Road route returns real polyline coordinate geometry');
+    assert(routeData.googleMapsNavigationUrl.includes('google.com/maps/dir/'), 'Generates direct Google Maps turn-by-turn navigation URL with exact coordinates');
+
+    // G. Frontend HTML & CSS Module 10 Verification
+    const indexHtml = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf-8');
+    const cssStyle = fs.readFileSync(path.join(__dirname, 'public', 'css', 'style.css'), 'utf-8');
+    const hospitalRadarJs = fs.readFileSync(path.join(__dirname, 'public', 'js', 'hospitalRadar.js'), 'utf-8');
+    
+    assert(indexHtml.includes('leaflet.css') && indexHtml.includes('leaflet.js'), 'HTML imports local Leaflet CSS and JS');
+    assert(indexHtml.includes('data-view="hospitals"'), 'HTML contains Nearby Hospitals navigation button');
+    assert(indexHtml.includes('id="view-hospitals"'), 'HTML contains Module 10 View Section (#view-hospitals)');
+    assert(indexHtml.includes('class="hospital-emergency-banner"'), 'HTML contains permanent 112 emergency banner');
+    assert(indexHtml.includes('id="hospital-interactive-map"'), 'HTML contains Leaflet interactive map container');
+    assert(indexHtml.includes('id="hospitals-cards-list"'), 'HTML contains ranked hospital cards container');
+    assert(indexHtml.includes('id="hospital-radar-scanner"'), 'HTML contains radar pulse cockpit');
+    assert(indexHtml.includes('js/hospitalRadar.js'), 'HTML includes hospitalRadar.js script tag');
+    assert(hospitalRadarJs.includes('class HospitalRadarController'), 'hospitalRadar.js defines HospitalRadarController class');
+    assert(hospitalRadarJs.includes('window.openHospitalRadar'), 'hospitalRadar.js exports global window.openHospitalRadar helper');
+    assert(cssStyle.includes('.hospital-emergency-banner'), 'CSS styles permanent emergency banner');
+    assert(cssStyle.includes('#view-hospitals.emergency-mode-active'), 'CSS styles Smart Emergency Mode high-contrast cockpit');
+    assert(cssStyle.includes('.user-gps-radar-pin'), 'CSS styles pulsing GPS radar pin');
+    assert(cssStyle.includes('.hospital-map-pin.nearest'), 'CSS styles #01 Nearest hospital map pin');
+
     console.log(`\n🎉 ALL ${passCount} UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n`);
   } catch (err) {
     console.error('Test error:', err);

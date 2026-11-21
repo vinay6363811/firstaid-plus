@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FirstAid+ | Smart Emergency Text & Photo Analyzer</title>
+  <link rel="stylesheet" href="css/leaflet.css">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/leaflet.js"></script>
   <meta name="description" content="FirstAid+ Smart Emergency Medical Detection and First Aid Assistant. Instant text and photo injury triage with step-by-step guidance.">
   <meta name="theme-color" content="#b91c1c">
   <link rel="manifest" href="manifest.json">
@@ -153,6 +155,13 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
               <span>Smart Analyzer</span>
               <span class="new-badge">NEW</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn emergency-radar-nav" data-view="hospitals" title="Module 10: Real-Time Nearby Hospitals & Emergency Services Radar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>Nearby Hospitals</span>
+              <span class="radar-live-badge">RADAR</span>
             </button>
           </li>
           <li>
@@ -800,6 +809,12 @@
                 <button id="results-start-guide-btn" class="btn btn-primary" type="button">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                   <span>Start Step-by-Step Guide</span>
+                </button>
+
+                <!-- Find Nearby Hospital Radar Button -->
+                <button id="results-find-hospital-btn" class="btn btn-radar-emergency" type="button" onclick="window.openHospitalRadar('emergency');" title="Open Module 10: Real-Time Nearby Hospitals & Emergency Services Radar">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  <span>🏥 Find Nearest Hospital</span>
                 </button>
 
                 <!-- Card F: Emergency Action - CALL 112 (Requirement 3.F) -->
@@ -2299,6 +2314,182 @@
       </div>
     </section>
 
+    <!-- =================================================================== -->
+    <!-- MODULE 10: NEARBY HOSPITALS & EMERGENCY SERVICES RADAR              -->
+    <!-- =================================================================== -->
+    <section id="view-hospitals" class="view-section">
+      <!-- Permanent Emergency Alert Banner (Requirement 10) -->
+      <div class="hospital-emergency-banner" role="alert">
+        <div class="hosp-banner-left">
+          <span class="pulsing-siren-dot"></span>
+          <div class="hosp-banner-text">
+            <strong>🚨 LIFE-THREATENING EMERGENCY? CALL 112 OR 108 IMMEDIATELY</strong>
+            <span>Do not delay emergency medical care while searching or driving. In India, dial 112 (National Emergency) or 108 (Ambulance).</span>
+          </div>
+        </div>
+        <div class="hosp-banner-actions">
+          <a href="tel:112" class="btn-emergency-call" id="btn-call-112-hospital">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span>CALL 112</span>
+          </a>
+          <a href="tel:108" class="btn-ambulance-call">
+            <span>🚑 CALL 108</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Top Comparison Dashboard (Requirements 4 & 12) -->
+      <div class="hospital-intelligence-dashboard">
+        <div class="hosp-intel-card stat-total-facilities">
+          <div class="intel-label">TOTAL FACILITIES DISCOVERED</div>
+          <div class="intel-val" id="radar-total-found">0</div>
+          <div class="intel-sub">Ranked nearest-to-farthest</div>
+        </div>
+
+        <div class="hosp-intel-card stat-nearest-hospital" id="radar-nearest-summary">
+          <div class="intel-badge nearest-badge-highlight">#01 NEAREST HOSPITAL</div>
+          <div class="intel-val hosp-name-truncate" id="radar-nearest-name">Detecting position...</div>
+          <div class="intel-distance-tag" id="radar-nearest-dist">--</div>
+        </div>
+
+        <div class="hosp-intel-card stat-second-nearest" id="radar-second-nearest-summary">
+          <div class="intel-badge second-badge-highlight">#02 SECOND NEAREST</div>
+          <div class="intel-val hosp-name-truncate" id="radar-second-name">Detecting position...</div>
+          <div class="intel-difference-tag" id="radar-second-diff">--</div>
+        </div>
+
+        <div class="hosp-intel-card stat-emergency-count">
+          <div class="intel-label">24/7 EMERGENCY UNITS</div>
+          <div class="intel-val" id="radar-emergency-count">0</div>
+          <div class="intel-sub">Verified Trauma / ER</div>
+        </div>
+      </div>
+
+      <!-- Smart GPS Emergency Location Radar Cockpit (Requirement 1) -->
+      <div class="hospital-gps-cockpit">
+        <div class="radar-scan-wrapper">
+          <div class="hospital-radar-scanner" id="hospital-radar-scanner">
+            <div class="radar-circle ring-1"></div>
+            <div class="radar-circle ring-2"></div>
+            <div class="radar-circle ring-3"></div>
+            <div class="radar-sweep-arm"></div>
+            <div class="radar-center-beacon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </div>
+          </div>
+
+          <div class="radar-gps-info">
+            <div class="radar-status-row">
+              <h3 id="radar-status-text" class="radar-status-title">READY TO SCAN SURROUNDINGS</h3>
+              <span id="radar-accuracy-badge" class="radar-accuracy-badge">GPS Standby</span>
+            </div>
+            <p id="radar-address-text" class="radar-address-line">Click "Refresh GPS" to locate nearest hospitals, or search any area/PIN code below.</p>
+            <div class="radar-actions-row">
+              <button id="btn-refresh-gps" class="btn-radar-action" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                <span>Refresh GPS</span>
+              </button>
+              <button id="btn-recenter-map" class="btn-radar-action" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>
+                <span>Recenter Map</span>
+              </button>
+              <button id="btn-call-nearest-hospital" class="btn-radar-call-nearest" type="button" style="display: none;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <span>Call Nearest Hospital</span>
+              </button>
+              <button id="hospital-emergency-mode-toggle" class="btn-emergency-mode-toggle" type="button">
+                <span class="emergency-flashing-dot"></span>
+                <span>Emergency Mode</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual Location Search Fallback -->
+        <div class="hospital-manual-search-bar">
+          <div class="manual-input-group">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="hospital-manual-location-input" placeholder="Search address, landmark, area, city or PIN code (e.g. Indiranagar, Bengaluru or 560001)...">
+            <button id="btn-manual-location-search" class="btn-search-submit" type="button">Search Location</button>
+          </div>
+          <button id="btn-open-google-maps-hospitals" class="btn-maps-fallback" type="button" title="Open Google Maps search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>Open in Google Maps</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Notice Banner (Auto Radius Expansion / Info) -->
+      <div id="hospital-radar-notice" class="hospital-radar-notice" style="display: none;"></div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="hospital-toolbar">
+        <!-- Category Filter Chips (Requirement 9) -->
+        <div class="hospital-filter-chips">
+          <button class="hospital-filter-chip active" data-filter="all" type="button">All Facilities</button>
+          <button class="hospital-filter-chip" data-filter="hospital" type="button">🏥 Hospitals</button>
+          <button class="hospital-filter-chip" data-filter="emergency" type="button">🚨 24/7 Emergency & Trauma</button>
+          <button class="hospital-filter-chip" data-filter="clinic" type="button">🩺 Clinics & Medical Centers</button>
+          <button class="hospital-filter-chip" data-filter="pharmacy" type="button">💊 Pharmacies</button>
+          <button class="hospital-filter-chip" data-filter="open" type="button">🟢 Verified Open Now</button>
+        </div>
+
+        <!-- Secondary Controls: Search keyword, Radius, Sorting -->
+        <div class="hospital-controls-group">
+          <!-- Keyword Filter -->
+          <div class="control-box-item">
+            <input type="text" id="hospital-keyword-filter" class="hosp-keyword-input" placeholder="Filter by name (e.g. Apollo, Fortis)...">
+          </div>
+
+          <!-- Radius Selector (Requirement 2) -->
+          <div class="control-box-item">
+            <label for="hospital-radius-select">Radius:</label>
+            <select id="hospital-radius-select" class="hosp-select">
+              <option value="1000">1 km</option>
+              <option value="3000">3 km</option>
+              <option value="5000" selected>5 km (Default)</option>
+              <option value="10000">10 km</option>
+              <option value="20000">20 km</option>
+              <option value="50000">50 km</option>
+            </select>
+          </div>
+
+          <!-- Sorting Switch (Requirement 3) -->
+          <div class="control-box-item">
+            <label for="hospital-sort-select">Sort:</label>
+            <select id="hospital-sort-select" class="hosp-select">
+              <option value="nearest" selected>Nearest → Farthest</option>
+              <option value="farthest">Farthest → Nearest</option>
+              <option value="rating">Highest Rated</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Layout: Interactive Map + Ranked Hospital Cards -->
+      <div class="hospital-main-layout">
+        <!-- Left: Interactive Map Column (Requirements 6 & 7) -->
+        <div class="hospital-map-column">
+          <div class="hospital-map-wrapper">
+            <div id="hospital-interactive-map" class="hospital-map-canvas"></div>
+          </div>
+          <div class="hospital-map-legend">
+            <div class="legend-item"><span class="legend-pin-sample user-pin"></span> Your Location</div>
+            <div class="legend-item"><span class="legend-pin-sample nearest-pin">#01</span> Nearest Hospital</div>
+            <div class="legend-item"><span class="legend-pin-sample standard-pin">#02</span> Other Facilities</div>
+            <div class="legend-item"><span class="legend-pin-sample er-pin">ER</span> 24/7 Emergency</div>
+          </div>
+        </div>
+
+        <!-- Right: Ranked Hospital Cards List (Requirements 3, 4, 5, 8) -->
+        <div class="hospital-cards-column">
+          <div id="hospitals-cards-list" class="hospitals-cards-list">
+            <!-- Dynamic cards rendered by hospitalRadar.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- ===================================================================== -->
@@ -2446,6 +2637,7 @@
   <script src="js/metronome.js"></script>
   <script src="js/checklist.js"></script>
   <script src="js/assistant.js"></script>
+  <script src="js/hospitalRadar.js"></script>
   <script src="js/analyzer.js"></script>
   <script src="js/app.js"></script>
 

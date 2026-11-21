@@ -12,6 +12,7 @@ const { EMERGENCY_GUIDES, DEFAULT_GUIDE, analyzeTextSymptoms } = require('./know
 const { analyzePhotoLocal } = require('./visualAnalyzer');
 const { translateResult } = require('./multilingualService');
 const geminiService = require('./geminiService');
+const hospitalService = require('./hospitalService');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -239,6 +240,113 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, response);
     } catch (err) {
       console.error('Error in chat assistant:', err);
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // =========================================================================
+  // MODULE 10: NEARBY HOSPITALS & EMERGENCY SERVICES ROUTES
+  // =========================================================================
+
+  // Hospital Config (checks if Google Maps API key is configured)
+  if (pathname === '/api/hospitals/config' && method === 'GET') {
+    return sendJson(res, 200, {
+      hasGoogleMapsApiKey: hospitalService.hasGoogleMapsApiKey(),
+      provider: hospitalService.hasGoogleMapsApiKey() 
+        ? 'Google Maps Platform Places API (New)' 
+        : 'OpenStreetMap Live Medical Network + Verified Emergency Registry',
+      availableRadii: [1000, 3000, 5000, 10000, 20000, 50000],
+      categories: ['all', 'hospital', 'emergency', 'government', 'private', 'clinic', 'pharmacy', 'opennow'],
+      emergencyHelpline: '112'
+    });
+  }
+
+  // Set Google Maps Key securely on backend
+  if (pathname === '/api/hospitals/config-key' && method === 'POST') {
+    try {
+      const { apiKey } = await readJsonBody(req);
+      hospitalService.setGoogleMapsApiKey(apiKey || '');
+      return sendJson(res, 200, {
+        success: true,
+        hasGoogleMapsApiKey: hospitalService.hasGoogleMapsApiKey(),
+        message: hospitalService.hasGoogleMapsApiKey()
+          ? 'Google Maps API key configured successfully on backend.'
+          : 'Google Maps API key cleared. Operating in OpenStreetMap Live Radar mode.'
+      });
+    } catch (err) {
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // Nearby Hospitals Search Radar
+  if (pathname === '/api/hospitals/nearby' && method === 'GET') {
+    try {
+      const lat = reqUrl.searchParams.get('lat');
+      const lng = reqUrl.searchParams.get('lng');
+      const radius = reqUrl.searchParams.get('radius') || 5000;
+      const type = reqUrl.searchParams.get('type') || 'all';
+      const sort = reqUrl.searchParams.get('sort') || 'nearest';
+
+      if (!lat || !lng) {
+        return sendJson(res, 400, { error: 'Latitude and Longitude parameters are required.' });
+      }
+
+      const results = await hospitalService.searchNearbyHospitals(lat, lng, radius, type, sort);
+      return sendJson(res, 200, results);
+    } catch (err) {
+      console.error('Error fetching nearby hospitals:', err);
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // Reverse Geocode: lat, lng -> Human-readable Area, Street, City, PIN
+  if (pathname === '/api/hospitals/reverse-geocode' && method === 'GET') {
+    try {
+      const lat = reqUrl.searchParams.get('lat');
+      const lng = reqUrl.searchParams.get('lng');
+      if (!lat || !lng) {
+        return sendJson(res, 400, { error: 'Latitude and Longitude are required.' });
+      }
+      const addressData = await hospitalService.reverseGeocode(lat, lng);
+      return sendJson(res, 200, addressData);
+    } catch (err) {
+      console.error('Error reverse geocoding:', err);
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
+  // Forward Geocode: address, city, landmark, or PIN -> lat, lng
+  if (pathname === '/api/hospitals/geocode' && method === 'GET') {
+    try {
+      const query = reqUrl.searchParams.get('query') || reqUrl.searchParams.get('q');
+      if (!query || query.trim().length === 0) {
+        return sendJson(res, 400, { error: 'Search query is required.' });
+      }
+      const geoResult = await hospitalService.geocodeAddress(query);
+      return sendJson(res, 200, geoResult);
+    } catch (err) {
+      console.error('Error geocoding address:', err);
+      return sendJson(res, 400, { error: err.message });
+    }
+  }
+
+  // Real Road Routing between Origin and Hospital
+  if (pathname === '/api/hospitals/route' && method === 'GET') {
+    try {
+      const startLat = reqUrl.searchParams.get('startLat');
+      const startLng = reqUrl.searchParams.get('startLng');
+      const destLat = reqUrl.searchParams.get('destLat');
+      const destLng = reqUrl.searchParams.get('destLng');
+      const mode = reqUrl.searchParams.get('mode') || 'driving';
+
+      if (!startLat || !startLng || !destLat || !destLng) {
+        return sendJson(res, 400, { error: 'Origin and destination coordinates are required.' });
+      }
+
+      const routeResult = await hospitalService.getRoute(startLat, startLng, destLat, destLng, mode);
+      return sendJson(res, 200, routeResult);
+    } catch (err) {
+      console.error('Error calculating route:', err);
       return sendJson(res, 500, { error: err.message });
     }
   }
