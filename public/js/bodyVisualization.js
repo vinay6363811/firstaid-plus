@@ -255,11 +255,33 @@
       this.currentSystem = 'all'; // 'all', 'cardiovascular', 'respiratory', 'skeletal', 'nervous', 'muscular', 'lymphatic'
       this.isAutoRotating = true;
       this.rotationAngle = 0;
-      this.dragStartX = 0;
+      this.targetRotationAngle = 0;
+      this.pitchAngle = 0;
+      this.targetPitchAngle = 0;
+      this.zoomLevel = 1.0;
+      this.targetZoomLevel = 1.0;
       this.isDragging = false;
+      this.dragStartX = 0;
+      this.dragStartY = 0;
+      this.lastDragX = 0;
+      this.lastDragY = 0;
+      this.velocityX = 0;
+      this.velocityY = 0;
+      this.initialPinchDist = null;
       this.activeTargets = new Set();
       this.systemicActive = false;
       this.systemicType = null;
+
+      // Cache 3D HUD & control elements
+      this.hudOrbitAngle = document.getElementById('hud-orbit-angle');
+      this.hudTiltAngle = document.getElementById('hud-tilt-angle');
+      this.hudZoomLevel = document.getElementById('hud-zoom-level');
+      this.pedestalCompass = document.querySelector('.pedestal-compass-ticks');
+      this.zoomInBtn = document.getElementById('body-zoom-in-btn');
+      this.zoomOutBtn = document.getElementById('body-zoom-out-btn');
+      this.frontSvg = document.getElementById('svg-anatomy-front');
+      this.backSvg = document.getElementById('svg-anatomy-back');
+      this.anglePresetChips = document.querySelectorAll('.preset-angle-chip');
 
       this.animFrameId = null;
 
@@ -299,28 +321,51 @@
     }
 
     bindControls() {
-      // Toggle Front / Back View
+      // Toggle Front / Back View (180° Flip)
       if (this.hudViewToggle) {
         this.hudViewToggle.addEventListener('click', () => {
-          this.switchView(this.currentView === 'front' ? 'back' : 'front');
+          const isBack = this.currentView === 'back';
+          this.rotateToAngle(isBack ? 0 : 180);
         });
       }
 
-      // Toggle Auto-Rotation
+      // Toggle 360° Continuous Auto-Orbit
       if (this.hudRotateToggle) {
         this.hudRotateToggle.addEventListener('click', () => {
           this.isAutoRotating = !this.isAutoRotating;
           this.hudRotateToggle.classList.toggle('active', this.isAutoRotating);
-          this.hudRotateToggle.querySelector('span').textContent = this.isAutoRotating ? 'Auto-Rotate: ON' : 'Auto-Rotate: OFF';
+          const span = this.hudRotateToggle.querySelector('span');
+          if (span) {
+            span.textContent = this.isAutoRotating ? '360° Orbit: ON' : '360° Orbit: OFF';
+          }
         });
       }
 
-      // Reset Button
+      // Zoom Controls
+      if (this.zoomInBtn) {
+        this.zoomInBtn.addEventListener('click', () => this.zoom(0.15));
+      }
+      if (this.zoomOutBtn) {
+        this.zoomOutBtn.addEventListener('click', () => this.zoom(-0.15));
+      }
+
+      // Reset 3D Camera & Highlights Button
       if (this.hudResetBtn) {
         this.hudResetBtn.addEventListener('click', () => {
           this.resetVisualization();
         });
       }
+
+      // 3D Angle Preset Chips
+      const presetChips = document.querySelectorAll('.preset-angle-chip');
+      presetChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const angle = parseInt(chip.getAttribute('data-angle'), 10);
+          if (!isNaN(angle)) {
+            this.rotateToAngle(angle);
+          }
+        });
+      });
     }
 
     bindSystemSelector() {
@@ -370,47 +415,100 @@
     }
 
     bindDragInteraction() {
-      if (!this.modelWrapper) return;
+      const stageWrapper = this.container ? this.container.querySelector('.body-stage-wrapper') : null;
+      const targetArea = stageWrapper || this.modelWrapper;
+      if (!targetArea) return;
 
-      const onStart = (clientX) => {
+      const onStart = (clientX, clientY) => {
         this.isDragging = true;
         this.dragStartX = clientX;
-        this.modelWrapper.style.cursor = 'grabbing';
+        this.dragStartY = clientY;
+        this.lastDragX = clientX;
+        this.lastDragY = clientY;
+        this.velocityX = 0;
+        this.velocityY = 0;
+        if (this.modelWrapper) this.modelWrapper.style.cursor = 'grabbing';
       };
 
-      const onMove = (clientX) => {
+      const onMove = (clientX, clientY) => {
         if (!this.isDragging) return;
-        const deltaX = clientX - this.dragStartX;
-        this.rotationAngle += deltaX * 0.45;
-        this.rotationAngle = Math.max(-60, Math.min(60, this.rotationAngle));
-        this.dragStartX = clientX;
-        this.update3DTransform();
+        const deltaX = clientX - this.lastDragX;
+        const deltaY = clientY - this.lastDragY;
+        this.velocityX = deltaX;
+        this.velocityY = deltaY;
+        this.lastDragX = clientX;
+        this.lastDragY = clientY;
+
+        // Smooth horizontal orbit
+        this.targetRotationAngle += deltaX * 0.55;
+
+        // Vertical perspective tilt (clamped between -18° and +22°)
+        this.targetPitchAngle = Math.max(-18, Math.min(22, this.targetPitchAngle - deltaY * 0.35));
       };
 
       const onEnd = () => {
         if (this.isDragging) {
           this.isDragging = false;
-          this.modelWrapper.style.cursor = 'grab';
+          if (this.modelWrapper) this.modelWrapper.style.cursor = 'grab';
+          // Inertial release drift
+          if (Math.abs(this.velocityX) > 2) {
+            this.targetRotationAngle += this.velocityX * 1.5;
+          }
         }
+        this.initialPinchDist = null;
       };
 
-      // Mouse events
-      this.modelWrapper.addEventListener('mousedown', (e) => onStart(e.clientX));
-      window.addEventListener('mousemove', (e) => onMove(e.clientX));
+      // Mouse drag events on stage
+      targetArea.addEventListener('mousedown', (e) => {
+        // Only trigger drag on main mouse button and not on interactive buttons
+        if (e.button !== 0 || e.target.closest('button')) return;
+        onStart(e.clientX, e.clientY);
+      });
+      window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
       window.addEventListener('mouseup', onEnd);
 
-      // Touch events
-      this.modelWrapper.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1) onStart(e.touches[0].clientX);
+      // Touch drag and pinch events
+      targetArea.addEventListener('touchstart', (e) => {
+        if (e.target.closest('button')) return;
+        if (e.touches.length === 1) {
+          onStart(e.touches[0].clientX, e.touches[0].clientY);
+        } else if (e.touches.length === 2) {
+          this.initialPinchDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+        }
       }, { passive: true });
 
       window.addEventListener('touchmove', (e) => {
-        if (this.isDragging && e.touches.length === 1) {
-          onMove(e.touches[0].clientX);
+        if (e.touches.length === 1 && this.isDragging) {
+          onMove(e.touches[0].clientX, e.touches[0].clientY);
+        } else if (e.touches.length === 2 && this.initialPinchDist) {
+          const currentDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          const pinchDelta = (currentDist - this.initialPinchDist) * 0.005;
+          this.zoom(pinchDelta);
+          this.initialPinchDist = currentDist;
         }
       }, { passive: true });
 
       window.addEventListener('touchend', onEnd);
+
+      // Mouse wheel zoom
+      targetArea.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomStep = e.deltaY < 0 ? 0.08 : -0.08;
+        this.zoom(zoomStep);
+      }, { passive: false });
+
+      // Double-click to reset zoom & tilt to neutral
+      targetArea.addEventListener('dblclick', (e) => {
+        if (e.target.closest('button')) return;
+        this.targetPitchAngle = 0;
+        this.targetZoomLevel = 1.0;
+      });
     }
 
     bindZoneInteractions() {
@@ -501,13 +599,20 @@
     }
 
     startIdleAnimation() {
-      let t = 0;
+      const lerp = (start, end, factor) => start + (end - start) * factor;
+
       const loop = () => {
+        // Continuous smooth 360° orbital rotation when active and not dragging
         if (this.isAutoRotating && !this.isDragging) {
-          t += 0.018;
-          this.rotationAngle = Math.sin(t) * 16;
-          this.update3DTransform();
+          this.targetRotationAngle += 0.42;
         }
+
+        // 60 FPS smooth interpolation
+        this.rotationAngle = lerp(this.rotationAngle, this.targetRotationAngle, 0.16);
+        this.pitchAngle = lerp(this.pitchAngle, this.targetPitchAngle, 0.16);
+        this.zoomLevel = lerp(this.zoomLevel, this.targetZoomLevel, 0.16);
+
+        this.update3DTransform();
         this.animFrameId = requestAnimationFrame(loop);
       };
       this.animFrameId = requestAnimationFrame(loop);
@@ -515,29 +620,99 @@
 
     update3DTransform() {
       if (!this.modelWrapper) return;
-      const isBack = this.currentView === 'back';
-      const baseRotation = isBack ? 180 : 0;
-      const totalY = baseRotation + this.rotationAngle;
-      this.modelWrapper.style.transform = `perspective(850px) rotateY(${totalY}deg)`;
+
+      // 1. Apply true 3D perspective transformation
+      this.modelWrapper.style.transform = `scale(${this.zoomLevel.toFixed(3)}) rotateX(${this.pitchAngle.toFixed(2)}deg) rotateY(${this.rotationAngle.toFixed(2)}deg)`;
+
+      // 2. Normalized angle in range [0, 359]
+      const normalizedAngle = ((Math.round(this.rotationAngle) % 360) + 360) % 360;
+
+      // 3. Current aspect hemisphere (Anterior vs Posterior)
+      const isBack = normalizedAngle >= 90 && normalizedAngle <= 270;
+      this.currentView = isBack ? 'back' : 'front';
+
+      // 4. Manage active pointer-events so organ zones can be hovered & clicked on the facing side
+      const frontSvg = this.frontSvg || document.getElementById('svg-anatomy-front');
+      const backSvg = this.backSvg || document.getElementById('svg-anatomy-back');
+      if (frontSvg) frontSvg.style.pointerEvents = isBack ? 'none' : 'auto';
+      if (backSvg) backSvg.style.pointerEvents = isBack ? 'auto' : 'none';
+
+      // 5. Update pedestal compass ring rotation in sync with model
+      const pedestalCompass = this.pedestalCompass || document.querySelector('.pedestal-compass-ticks');
+      if (pedestalCompass) {
+        pedestalCompass.style.transform = `rotateZ(${(-this.rotationAngle).toFixed(2)}deg)`;
+      }
+
+      // 6. Anatomical perspective classification
+      let aspectName = 'Anterior (Front)';
+      if (normalizedAngle >= 315 || normalizedAngle < 45) {
+        aspectName = 'Anterior (Front)';
+      } else if (normalizedAngle >= 45 && normalizedAngle < 135) {
+        aspectName = 'Right Lateral Profile';
+      } else if (normalizedAngle >= 135 && normalizedAngle < 225) {
+        aspectName = 'Posterior (Back)';
+      } else {
+        aspectName = 'Left Lateral Profile';
+      }
+
+      // 7. Update HUD Badges
+      const hudOrbit = this.hudOrbitAngle || document.getElementById('hud-orbit-angle');
+      if (hudOrbit) {
+        hudOrbit.textContent = `3D ANGLE: ${normalizedAngle}° (${aspectName})`;
+      }
+
+      const hudTilt = this.hudTiltAngle || document.getElementById('hud-tilt-angle');
+      if (hudTilt) {
+        hudTilt.textContent = `TILT: ${Math.round(this.pitchAngle)}°`;
+      }
+
+      const hudZoom = this.hudZoomLevel || document.getElementById('hud-zoom-level');
+      if (hudZoom) {
+        hudZoom.textContent = `ZOOM: ${Math.round(this.zoomLevel * 100)}%`;
+      }
+
+      // 8. Update View Flip Button Label
+      if (this.hudViewToggle) {
+        const span = this.hudViewToggle.querySelector('span');
+        if (span) {
+          span.textContent = isBack ? 'View: Back' : 'View: Front';
+        }
+      }
+
+      // 9. Update Preset Chips
+      const chips = this.anglePresetChips || document.querySelectorAll('.preset-angle-chip');
+      chips.forEach(chip => {
+        const chipAngle = parseInt(chip.getAttribute('data-angle'), 10);
+        let diff = Math.abs(normalizedAngle - chipAngle);
+        if (diff > 180) diff = 360 - diff;
+        chip.classList.toggle('active', diff < 45);
+      });
+    }
+
+    getNearestAngle(targetBase) {
+      const current = this.targetRotationAngle;
+      const currentNorm = ((current % 360) + 360) % 360;
+      let diff = targetBase - currentNorm;
+      if (diff > 180) diff -= 360;
+      if (diff < -180) diff += 360;
+      return current + diff;
+    }
+
+    rotateToAngle(targetBase) {
+      this.targetRotationAngle = this.getNearestAngle(targetBase);
+    }
+
+    zoom(delta) {
+      this.targetZoomLevel = Math.max(0.75, Math.min(1.65, this.targetZoomLevel + delta));
     }
 
     switchView(viewName) {
       this.currentView = viewName;
-      if (this.hudViewToggle) {
-        this.hudViewToggle.querySelector('span').textContent = viewName === 'front' ? 'View: Front' : 'View: Back';
+      if (viewName === 'front') {
+        this.rotateToAngle(0);
+      } else {
+        this.rotateToAngle(180);
       }
-      const frontSvg = document.getElementById('svg-anatomy-front');
-      const backSvg = document.getElementById('svg-anatomy-back');
-      if (frontSvg && backSvg) {
-        if (viewName === 'front') {
-          frontSvg.style.display = 'block';
-          backSvg.style.display = 'none';
-        } else {
-          frontSvg.style.display = 'none';
-          backSvg.style.display = 'block';
-        }
-      }
-      this.update3DTransform();
     }
 
     /**
@@ -683,11 +858,12 @@
 
     resetVisualization() {
       this.clearActiveHighlights();
-      this.rotationAngle = 0;
-      this.switchView('front');
+      this.targetRotationAngle = this.getNearestAngle(0);
+      this.targetPitchAngle = 0;
+      this.targetZoomLevel = 1.0;
+      this.currentView = 'front';
       this.setSystem('all');
       this.setHudStatus('IDLE MONITORING', 'All Systems Normal', false);
-      this.update3DTransform();
     }
 
     setHudStatus(statusTag, organDetails, isBlinking = false) {

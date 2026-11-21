@@ -877,7 +877,25 @@
 
             <!-- 3D Perspective Stage Wrapper -->
             <div class="body-stage-wrapper">
-              <div id="body-model-3d-wrapper" class="body-model-3d-wrapper" title="Click & drag horizontally to rotate model angle">
+              <!-- 3D Holographic Base Pedestal -->
+              <div class="body-hologram-pedestal" aria-hidden="true">
+                <div class="pedestal-disc pedestal-disc-outer"></div>
+                <div class="pedestal-disc pedestal-disc-middle">
+                  <div class="pedestal-compass-ticks">
+                    <span class="pedestal-marker marker-n" title="Anterior">ANT 0°</span>
+                    <span class="pedestal-marker marker-e" title="Lateral Right">R 90°</span>
+                    <span class="pedestal-marker marker-s" title="Posterior">POST 180°</span>
+                    <span class="pedestal-marker marker-w" title="Lateral Left">L 270°</span>
+                  </div>
+                </div>
+                <div class="pedestal-disc pedestal-disc-inner"></div>
+                <div class="pedestal-radar-sweep"></div>
+                <div class="pedestal-emitter-beam"></div>
+              </div>
+
+              <div id="body-model-3d-wrapper" class="body-model-3d-wrapper" title="Click & drag horizontally to rotate 360°, vertically to tilt, or scroll to zoom">
+                <!-- Coronal 3D Holographic Axis Depth Plane -->
+                <div class="body-coronal-depth-plane" id="body-coronal-depth-plane" aria-hidden="true"></div>
                 
                 <!-- FRONT VIEW ANATOMY SVG (Multi-System Architecture: Muscular, Cardiovascular, Skeletal, Respiratory, Nervous, Lymphatic) -->
                 <svg id="svg-anatomy-front" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet" data-active-system="all">
@@ -1597,7 +1615,7 @@
                 </svg>
 
                 <!-- BACK VIEW ANATOMY SVG (Multi-System Architecture: Muscular, Skeletal, Nervous, Cardiovascular, Lymphatic) -->
-                <svg id="svg-anatomy-back" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet" data-active-system="all" style="display: none;">
+                <svg id="svg-anatomy-back" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet" data-active-system="all">
                   <defs>
                     <linearGradient id="muscleGradBack" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stop-color="#b91c1c" stop-opacity="0.95"/>
@@ -1831,6 +1849,20 @@
               <!-- Interactive Floating Tooltip -->
               <div id="body-hover-tooltip" class="body-hover-tooltip" aria-hidden="true"></div>
 
+              <!-- 3D HUD Badges (Angle, Tilt, Zoom, Gesture Hints) -->
+              <div class="body-3d-hud-overlay" aria-hidden="true">
+                <div class="body-3d-hud-top-left">
+                  <span class="hud-3d-badge hud-orbit-angle" id="hud-orbit-angle">3D ANGLE: 0° (Anterior)</span>
+                  <span class="hud-3d-badge hud-tilt-angle" id="hud-tilt-angle">TILT: 0°</span>
+                </div>
+                <div class="body-3d-hud-top-right">
+                  <span class="hud-3d-badge hud-zoom-level" id="hud-zoom-level">ZOOM: 100%</span>
+                </div>
+                <div class="body-3d-hud-bottom">
+                  <span class="hud-3d-hint">🖱️ Drag to rotate 360° & tilt • Scroll wheel to zoom</span>
+                </div>
+              </div>
+
               <!-- Corner HUD Medical Crosshairs -->
               <div class="body-hud-corner corner-tl">┌</div>
               <div class="body-hud-corner corner-tr">┐</div>
@@ -1840,20 +1872,42 @@
 
             <!-- Interactive Toolbar Controls -->
             <div class="body-controls-toolbar">
-              <button id="body-view-toggle-btn" class="body-ctrl-btn" type="button" title="Switch between Front and Back views">
+              <button id="body-view-toggle-btn" class="body-ctrl-btn" type="button" title="Flip 180° between Anterior (Front) and Posterior (Back)">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 4v12m0 0l4-4m-4 4l-4-4"/></svg>
-                <span>View: Front</span>
+                <span id="body-view-btn-label">View: Front</span>
               </button>
 
-              <button id="body-rotate-toggle-btn" class="body-ctrl-btn active" type="button" title="Toggle gentle idle rotation">
+              <button id="body-rotate-toggle-btn" class="body-ctrl-btn active" type="button" title="Toggle continuous 360° orbital rotation">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
-                <span>Auto-Rotate: ON</span>
+                <span>360° Orbit: ON</span>
               </button>
 
-              <button id="body-reset-btn" class="body-ctrl-btn" type="button" title="Reset model highlights to neutral">
+              <div class="body-ctrl-zoom-group">
+                <button id="body-zoom-in-btn" class="body-ctrl-btn body-ctrl-btn-icon" type="button" title="Zoom in closer (+)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  <span>Zoom +</span>
+                </button>
+                <button id="body-zoom-out-btn" class="body-ctrl-btn body-ctrl-btn-icon" type="button" title="Zoom out (-)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  <span>Zoom −</span>
+                </button>
+              </div>
+
+              <button id="body-reset-btn" class="body-ctrl-btn" type="button" title="Reset 3D camera rotation, tilt and zoom to default">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                <span>Reset</span>
+                <span>Reset 3D</span>
               </button>
+            </div>
+
+            <!-- 3D Perspective Preset Chips -->
+            <div class="body-preset-chips" aria-label="Quick 3D Camera Angles">
+              <span class="preset-chips-title">Camera Angles:</span>
+              <div class="preset-chips-row">
+                <button type="button" class="preset-angle-chip active" id="chip-angle-0" data-angle="0">Anterior (0°)</button>
+                <button type="button" class="preset-angle-chip" id="chip-angle-90" data-angle="90">R Profile (90°)</button>
+                <button type="button" class="preset-angle-chip" id="chip-angle-180" data-angle="180">Posterior (180°)</button>
+                <button type="button" class="preset-angle-chip" id="chip-angle-270" data-angle="270">L Profile (270°)</button>
+              </div>
             </div>
 
             <!-- Quick Region Click Bar -->

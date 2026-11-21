@@ -7,12 +7,14 @@ const path = require('path');
 const fs = require('fs');
 
 let server = null;
+let passCount = 0;
 
 function assert(condition, message) {
   if (!condition) {
     console.error('❌ ASSERTION FAILED:', message);
     process.exit(1);
   } else {
+    passCount++;
     console.log('✅ PASS:', message);
   }
 }
@@ -230,6 +232,18 @@ async function runTests() {
     const bodyJsText = await resBodyJs.text();
     assert(bodyJsText.includes('BodyVisualizationController'), 'bodyVisualization.js contains body visualization engine');
     assert(bodyJsText.includes('SYMPTOM_MAP'), 'bodyVisualization.js contains comprehensive anatomical symptom map');
+    assert(htmlText.includes('body-hologram-pedestal'), 'HTML includes 3D holographic base pedestal');
+    assert(htmlText.includes('body-coronal-depth-plane'), 'HTML includes 3D coronal axis depth plane');
+    assert(htmlText.includes('hud-orbit-angle'), 'HTML includes 3D orbit angle HUD badge');
+    assert(htmlText.includes('hud-tilt-angle'), 'HTML includes 3D tilt HUD badge');
+    assert(htmlText.includes('hud-zoom-level'), 'HTML includes 3D zoom level HUD badge');
+    assert(htmlText.includes('body-zoom-in-btn'), 'HTML includes 3D Zoom In button');
+    assert(htmlText.includes('body-zoom-out-btn'), 'HTML includes 3D Zoom Out button');
+    assert(htmlText.includes('preset-angle-chip'), 'HTML includes 3D camera angle preset chips');
+    assert(bodyJsText.includes('rotateToAngle'), 'bodyVisualization.js includes shortest-path 3D angle rotation');
+    assert(bodyJsText.includes('targetRotationAngle'), 'bodyVisualization.js supports continuous 360° orbital rotation');
+    assert(bodyJsText.includes('targetPitchAngle'), 'bodyVisualization.js supports perspective pitch tilt');
+    assert(bodyJsText.includes('targetZoomLevel'), 'bodyVisualization.js supports 3D zoom scaling');
 
     console.log('\n--- 7. Testing Female Voice Selection & Speech Engine ---');
     const speechEngineRes = await fetch('http://127.0.0.1:3000/js/speechEngine.js');
@@ -368,7 +382,7 @@ async function runTests() {
     assert(bodyVisCode.includes('setSystem(systemId'), 'Body visualization supports dynamic setSystem switching');
     assert(bodyVisCode.includes('SYSTEM_ASSOCIATIONS'), 'Body visualization has symptom-to-system mapping for auto-isolation');
 
-    console.log('\n🎉 ALL 95 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log(`\n🎉 ALL ${passCount} UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n`);
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);

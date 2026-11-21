@@ -2956,45 +2956,241 @@ body {
 .body-stage-wrapper {
   position: relative;
   width: 100%;
-  height: 420px;
+  height: 440px;
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 1100px;
+  perspective-origin: 50% 48%;
   background: 
-    radial-gradient(circle at 50% 45%, rgba(0, 242, 254, 0.1) 0%, rgba(4, 9, 20, 0.95) 70%),
-    linear-gradient(rgba(0, 242, 254, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 242, 254, 0.04) 1px, transparent 1px);
-  background-size: 100% 100%, 20px 20px, 20px 20px;
-  border-radius: 12px;
-  border: 1.5px solid rgba(0, 242, 254, 0.25);
+    radial-gradient(ellipse at 50% 50%, rgba(0, 242, 254, 0.12) 0%, rgba(10, 25, 47, 0.85) 55%, rgba(4, 9, 20, 0.98) 85%),
+    linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px, 24px 24px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(0, 242, 254, 0.3);
   margin-bottom: 12px;
   overflow: hidden;
-  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 242, 254, 0.1);
+  box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.9), 0 0 24px rgba(0, 242, 254, 0.15);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.body-model-3d-wrapper {
+/* 3D Hologram Base Pedestal */
+.body-hologram-pedestal {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  width: 280px;
+  height: 120px;
+  transform: translateX(-50%) rotateX(72deg);
+  transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pedestal-disc {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.pedestal-disc-outer {
+  width: 270px;
+  height: 270px;
+  border: 2px dashed rgba(0, 242, 254, 0.45);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.35), inset 0 0 15px rgba(0, 242, 254, 0.2);
+  animation: pedestalSpin 30s linear infinite;
+}
+
+.pedestal-disc-middle {
+  width: 210px;
+  height: 210px;
+  border: 1.5px solid rgba(56, 189, 248, 0.7);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.pedestal-compass-ticks {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: grab;
+  border-radius: 50%;
+  transition: transform 0.05s linear;
+}
+
+.pedestal-marker {
+  position: absolute;
+  font-family: 'SF Mono', 'Courier New', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  color: #38bdf8;
+  text-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+  letter-spacing: 0.5px;
+}
+.marker-n { top: 4px; left: 50%; transform: translateX(-50%); }
+.marker-s { bottom: 4px; left: 50%; transform: translateX(-50%); }
+.marker-e { right: 4px; top: 50%; transform: translateY(-50%); }
+.marker-w { left: 4px; top: 50%; transform: translateY(-50%); }
+
+.pedestal-disc-inner {
+  width: 130px;
+  height: 130px;
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.45) 0%, rgba(6, 182, 212, 0.18) 60%, transparent 80%);
+  border: 1px solid rgba(0, 242, 254, 0.5);
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
+}
+
+.pedestal-radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 210px;
+  height: 210px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(0, 242, 254, 0.28) 360deg);
+  animation: pedestalRadar 4s linear infinite;
+}
+
+@keyframes pedestalSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes pedestalRadar {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.pedestal-emitter-beam {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 180px;
+  height: 380px;
+  transform: translateX(-50%) rotateX(-72deg);
+  transform-origin: bottom center;
+  background: linear-gradient(to top, rgba(0, 242, 254, 0.12) 0%, rgba(56, 189, 248, 0.04) 50%, transparent 100%);
+  clip-path: polygon(15% 100%, 85% 100%, 95% 0%, 5% 0%);
+  pointer-events: none;
+}
+
+/* 3D Model Card Wrapper */
+.body-model-3d-wrapper {
+  position: relative;
+  width: 260px;
+  height: 410px;
   transform-style: preserve-3d;
-  transition: transform 0.15s ease-out;
+  cursor: grab;
+  z-index: 2;
+  will-change: transform;
 }
 
 .body-model-3d-wrapper:active {
   cursor: grabbing;
 }
 
+/* Coronal 3D Axis Depth Plane */
+.body-coronal-depth-plane {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 230px;
+  height: 400px;
+  margin-top: -200px;
+  margin-left: -115px;
+  transform: translateZ(0px);
+  border-radius: 20px;
+  border-left: 2px solid rgba(0, 242, 254, 0.5);
+  border-right: 2px solid rgba(0, 242, 254, 0.5);
+  background: radial-gradient(ellipse at center, rgba(0, 242, 254, 0.08) 0%, transparent 70%);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
 /* SVG Anatomical Model */
 .svg-anatomy {
-  width: 100%;
-  height: 100%;
-  max-width: 250px;
-  max-height: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 250px;
+  height: 400px;
+  margin-top: -200px;
+  margin-left: -125px;
   overflow: visible;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.85));
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: center center;
+  will-change: transform;
+  display: block !important;
+}
+
+#svg-anatomy-front {
+  transform: rotateY(0deg) translateZ(4px);
+  z-index: 4;
+}
+
+#svg-anatomy-back {
+  transform: rotateY(180deg) translateZ(4px);
+  z-index: 3;
+}
+
+/* 3D HUD Badges Overlay */
+.body-3d-hud-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 14px;
+}
+
+.body-3d-hud-top-left,
+.body-3d-hud-top-right {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.body-3d-hud-top-right {
+  justify-content: flex-end;
+}
+
+.hud-3d-badge {
+  font-family: 'SF Mono', 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #38bdf8;
+  background: rgba(11, 23, 42, 0.8);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 4px;
+  padding: 2px 7px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.body-3d-hud-bottom {
+  text-align: center;
+}
+
+.hud-3d-hint {
+  font-size: 10px;
+  color: #64748b;
+  background: rgba(4, 9, 20, 0.75);
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  backdrop-filter: blur(4px);
 }
 
 .body-contour {
@@ -3291,9 +3487,65 @@ body {
 /* Interactive Toolbar Controls */
 .body-controls-toolbar {
   display: grid;
-  grid-template-columns: 1fr 1.2fr 0.8fr;
-  gap: 8px;
+  grid-template-columns: 1fr 1.15fr 1fr 0.85fr;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+.body-ctrl-zoom-group {
+  display: flex;
+  gap: 4px;
+}
+
+.body-ctrl-btn-icon {
+  flex: 1;
+  padding: 6px 6px;
+}
+
+/* 3D Perspective Preset Chips */
+.body-preset-chips {
   margin-bottom: 12px;
+}
+
+.preset-chips-title {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.preset-chips-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.preset-angle-chip {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-angle-chip:hover {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #f8fafc;
+}
+
+.preset-angle-chip.active {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
 }
 
 .body-ctrl-btn {
