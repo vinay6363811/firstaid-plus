@@ -626,6 +626,12 @@
         this.setSystem(mappedSystem, false);
       }
 
+      // Mark symptom active to hide background picture during diagnosis (Problem 2 fix)
+      const frontSvg = document.getElementById('svg-anatomy-front');
+      const backSvg = document.getElementById('svg-anatomy-back');
+      if (frontSvg) frontSvg.setAttribute('data-symptom-active', 'true');
+      if (backSvg) backSvg.setAttribute('data-symptom-active', 'true');
+
       // Update HUD Labels
       const combinedLabel = targetLabels.slice(0, 3).join(' • ');
       this.setHudStatus(`⚡ BLINKING: ${combinedLabel}`, primaryTarget.name, true);
@@ -645,6 +651,12 @@
       this.activeTargets.clear();
       this.systemicActive = false;
       this.systemicType = null;
+
+      // Restore background picture visibility when no symptoms are active
+      const frontSvg = document.getElementById('svg-anatomy-front');
+      const backSvg = document.getElementById('svg-anatomy-back');
+      if (frontSvg) frontSvg.setAttribute('data-symptom-active', 'false');
+      if (backSvg) backSvg.setAttribute('data-symptom-active', 'false');
 
       // Safe DOM class removal on SVG elements (Never direct assignment to read-only className)
       const allHighlighted = this.container.querySelectorAll('.highlighted-zone, .blinking-zone');

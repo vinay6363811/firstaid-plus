@@ -2768,30 +2768,40 @@ body {
   transition: opacity 0.35s ease, filter 0.35s ease;
 }
 
-/* EXACT 3D ANATOMY DEFAULT VIEW: 100% photo-realistic exact rendering */
-.svg-anatomy[data-active-system="all"] .system-exact-model {
+/* EXACT 3D ANATOMY DEFAULT VIEW: 100% photo-realistic exact rendering on idle default */
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-exact-model {
   opacity: 1 !important;
-  display: block;
+  visibility: visible !important;
+  display: block !important;
 }
-.svg-anatomy[data-active-system="all"] .system-skin {
+
+/* PROBLEM 2 FIX: Hide background picture completely when any symptom is active or system is isolated */
+.svg-anatomy[data-symptom-active="true"] .system-exact-model,
+.svg-anatomy[data-symptom-active="true"] .exact-model-photo,
+.svg-anatomy:not([data-active-system="all"]) .system-exact-model,
+.svg-anatomy:not([data-active-system="all"]) .exact-model-photo {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  display: none !important;
+}
+
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-skin {
   opacity: 0 !important;
   pointer-events: none;
 }
-.svg-anatomy[data-active-system="all"] .system-layer:not(.system-exact-model):not(.system-silhouette) {
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-layer:not(.system-exact-model) {
   opacity: 0 !important;
   filter: grayscale(100%);
   pointer-events: none;
 }
-.svg-anatomy[data-active-system="all"] .system-silhouette {
-  opacity: 0.08;
+.svg-anatomy .system-silhouette,
+.svg-anatomy .system-skin {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none;
 }
 
-/* System Isolation Modes - Exact model becomes Translucent Medical Shell */
-.svg-anatomy:not([data-active-system="all"]) .system-exact-model {
-  opacity: 0.22 !important;
-  filter: grayscale(50%) brightness(0.85) drop-shadow(0 0 12px rgba(56, 189, 248, 0.45));
-}
-
+/* System Isolation Modes - Transparent Medical Canvas for Systems */
 .svg-anatomy[data-active-system="cardiovascular"] .system-skin,
 .svg-anatomy[data-active-system="respiratory"] .system-skin,
 .svg-anatomy[data-active-system="skeletal"] .system-skin,
@@ -2799,6 +2809,7 @@ body {
 .svg-anatomy[data-active-system="muscular"] .system-skin,
 .svg-anatomy[data-active-system="lymphatic"] .system-skin {
   opacity: 0 !important;
+  display: none !important;
 }
 
 .svg-anatomy[data-active-system="cardiovascular"] .system-layer:not(.system-cardiovascular):not(.system-silhouette):not(.system-skin) {
@@ -2919,31 +2930,37 @@ body {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* PROBLEM 1 FIX: Invisible hitboxes by default - no blue outlines or shapes outside body */
 .anatomy-zone .zone-surface {
-  fill: rgba(30, 58, 138, 0.15);
-  stroke: rgba(56, 189, 248, 0.35);
-  stroke-width: 1.2;
+  fill: transparent !important;
+  stroke: transparent !important;
+  stroke-width: 0 !important;
   transition: all 0.25s ease;
 }
 
 .anatomy-zone .zone-target-beacon {
+  opacity: 0 !important;
   fill: #38bdf8;
-  opacity: 0.4;
   transition: all 0.25s ease;
 }
 
-/* Hovering on body part */
+/* Hovering on body part - elegant focal beacon & highlight */
 .anatomy-zone:hover .zone-surface {
-  fill: rgba(56, 189, 248, 0.38) !important;
-  stroke: #38bdf8 !important;
-  stroke-width: 2px !important;
-  filter: drop-shadow(0 0 10px #38bdf8);
+  fill: rgba(56, 189, 248, 0.22) !important;
+  stroke: rgba(56, 189, 248, 0.75) !important;
+  stroke-width: 1.5px !important;
+  filter: drop-shadow(0 0 8px #38bdf8);
 }
 
 .anatomy-zone:hover .zone-target-beacon {
   fill: #ffffff !important;
   opacity: 1 !important;
-  r: 6px !important;
+  r: 5px !important;
+}
+
+.anatomy-zone.highlighted-zone .zone-target-beacon,
+.anatomy-zone.blinking-zone .zone-target-beacon {
+  opacity: 1 !important;
 }
 
 /* Specific Internal Organ Styling */
