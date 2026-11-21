@@ -2768,14 +2768,37 @@ body {
   transition: opacity 0.35s ease, filter 0.35s ease;
 }
 
-/* EXACT 3D ANATOMY DEFAULT VIEW: 100% photo-realistic exact rendering on idle default */
+/* ==========================================================================
+   STATE A: DEFAULT IDLE VIEW (Real 3D Anatomical Body Photo)
+   ========================================================================== */
 .svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-exact-model {
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;
 }
 
-/* PROBLEM 2 FIX: Hide background picture completely when any symptom is active or system is isolated */
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-silhouette,
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-skin {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .anatomy-zone .zone-surface {
+  fill: transparent !important;
+  stroke: transparent !important;
+  stroke-width: 0 !important;
+}
+
+.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .anatomy-zone .zone-target-beacon {
+  opacity: 0 !important;
+}
+
+/* ==========================================================================
+   STATE B: CLINICAL DIAGNOSTIC POSTURE (Matching User Photo 2)
+   Active whenever diagnosing symptoms OR viewing internal medical systems
+   ========================================================================== */
+/* Hide background photo completely */
 .svg-anatomy[data-symptom-active="true"] .system-exact-model,
 .svg-anatomy[data-symptom-active="true"] .exact-model-photo,
 .svg-anatomy:not([data-active-system="all"]) .system-exact-model,
@@ -2785,16 +2808,35 @@ body {
   display: none !important;
 }
 
-.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-skin {
-  opacity: 0 !important;
-  pointer-events: none;
+/* Background Body Posture (Photo 2) - Clean Translucent Navy & Glowing Cyan Outline */
+.svg-anatomy[data-symptom-active="true"] .system-silhouette,
+.svg-anatomy:not([data-active-system="all"]) .system-silhouette {
+  display: block !important;
+  opacity: 1 !important;
 }
-.svg-anatomy[data-active-system="all"]:not([data-symptom-active="true"]) .system-layer:not(.system-exact-model) {
-  opacity: 0 !important;
-  filter: grayscale(100%);
-  pointer-events: none;
+
+.svg-anatomy .system-silhouette .body-contour {
+  fill: rgba(11, 23, 42, 0.88);
+  stroke: #38bdf8;
+  stroke-width: 1.8;
+  stroke-opacity: 0.75;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));
+  transition: all 0.35s ease;
 }
-.svg-anatomy .system-silhouette,
+
+/* Internal body posture wireframe segments framing the organs (Photo 2) */
+.svg-anatomy[data-symptom-active="true"] .anatomy-zone .zone-surface,
+.svg-anatomy:not([data-active-system="all"]) .anatomy-zone .zone-surface {
+  fill: rgba(30, 58, 138, 0.22) !important;
+  stroke: rgba(56, 189, 248, 0.42) !important;
+  stroke-width: 1.2px !important;
+}
+
+.svg-anatomy[data-symptom-active="true"] .anatomy-zone .zone-target-beacon,
+.svg-anatomy:not([data-active-system="all"]) .anatomy-zone .zone-target-beacon {
+  opacity: 0.4 !important;
+}
+
 .svg-anatomy .system-skin {
   display: none !important;
   opacity: 0 !important;
@@ -2930,16 +2972,11 @@ body {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* PROBLEM 1 FIX: Invisible hitboxes by default - no blue outlines or shapes outside body */
 .anatomy-zone .zone-surface {
-  fill: transparent !important;
-  stroke: transparent !important;
-  stroke-width: 0 !important;
   transition: all 0.25s ease;
 }
 
 .anatomy-zone .zone-target-beacon {
-  opacity: 0 !important;
   fill: #38bdf8;
   transition: all 0.25s ease;
 }
