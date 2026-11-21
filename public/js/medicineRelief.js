@@ -851,13 +851,31 @@
         this.pharmacyMap = L.map(mapContainer, {
           center: [centerLat, centerLng],
           zoom: 14,
-          zoomControl: true
+          zoomControl: true,
+          attributionControl: true
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors',
+        const osmUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const maptilerUrl = 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=kK2q4Z1TzaZWiJ6A6WGZ';
+
+        const tileLayer = L.tileLayer(osmUrl, {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
           maxZoom: 19
-        }).addTo(this.pharmacyMap);
+        });
+
+        let fallbackUsed = false;
+        tileLayer.on('tileerror', () => {
+          if (!fallbackUsed && this.pharmacyMap) {
+            fallbackUsed = true;
+            this.pharmacyMap.removeLayer(tileLayer);
+            L.tileLayer(maptilerUrl, {
+              attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
+              maxZoom: 19
+            }).addTo(this.pharmacyMap);
+          }
+        });
+
+        tileLayer.addTo(this.pharmacyMap);
       }
 
       this.pharmacyMap.invalidateSize();

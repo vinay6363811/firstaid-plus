@@ -169,33 +169,64 @@
 
     /**
      * Initialize Leaflet Interactive Map
+     * Uses OpenStreetMap standard tiles (100% free, no API key required, zero watermarks)
+     * with verified MapTiler fallback using user API key.
      */
     initMap() {
       const mapEl = document.getElementById('hospital-interactive-map');
       if (!mapEl || typeof L === 'undefined') return;
 
+      // Prevent duplicate map re-initialization
+      if (this.map) {
+        this.map.invalidateSize();
+        return;
+      }
+
       try {
-        // Default center: India center (or Bangalore)
-        const defaultLat = 12.9716;
-        const defaultLng = 77.5946;
+        // Default center: India center / Bengaluru
+        const defaultLat = this.userLat || 12.9716;
+        const defaultLng = this.userLng || 77.5946;
 
         this.map = L.map('hospital-interactive-map', {
           center: [defaultLat, defaultLng],
           zoom: 13,
           zoomControl: true,
-          attributionControl: false
+          attributionControl: true
         });
 
-        // Add Dark Matter / OpenStreetMap tiles
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-          maxZoom: 19,
-          subdomains: 'abcd'
-        }).addTo(this.map);
+        // 1. Primary: Standard OpenStreetMap (OSM) Tiles — Free, clean, zero watermarks
+        const osmTileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const maptilerTileUrl = 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=kK2q4Z1TzaZWiJ6A6WGZ';
 
-        // Add custom attribution in subtle style
-        L.control.attribution({ position: 'bottomright' })
-          .addAttribution('&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> | FirstAid+')
-          .addTo(this.map);
+        this.tileLayer = L.tileLayer(osmTileUrl, {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors | FirstAid+'
+        });
+
+        // 2. Intelligent Tile Fallback: Switch to MapTiler if OSM rate limits or fails
+        let fallbackTriggered = false;
+        this.tileLayer.on('tileerror', (e) => {
+          console.warn('Standard OSM tile error, engaging verified fallback:', e);
+          if (!fallbackTriggered && this.map) {
+            fallbackTriggered = true;
+            try {
+              this.map.removeLayer(this.tileLayer);
+              this.tileLayer = L.tileLayer(maptilerTileUrl, {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
+              }).addTo(this.map);
+            } catch (err) {
+              console.error('Error switching to fallback tile layer:', err);
+            }
+          }
+        });
+
+        this.tileLayer.addTo(this.map);
+
+        // Invalidate size once map is attached to DOM to ensure seamless rendering
+        setTimeout(() => {
+          if (this.map) this.map.invalidateSize();
+        }, 150);
 
         // Listen for map clicks
         this.map.on('click', () => {
@@ -203,6 +234,20 @@
         });
       } catch (err) {
         console.error('Error initializing map:', err);
+      }
+    }
+
+    /**
+     * Retry Map helper in case of network drops
+     */
+    retryMap() {
+      if (this.map) {
+        this.map.invalidateSize();
+        if (this.tileLayer) {
+          this.tileLayer.redraw();
+        }
+      } else {
+        this.initMap();
       }
     }
 

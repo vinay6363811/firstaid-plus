@@ -459,6 +459,10 @@ async function runTests() {
     assert(indexHtml.includes('js/hospitalRadar.js'), 'HTML includes hospitalRadar.js script tag');
     assert(hospitalRadarJs.includes('class HospitalRadarController'), 'hospitalRadar.js defines HospitalRadarController class');
     assert(hospitalRadarJs.includes('window.openHospitalRadar'), 'hospitalRadar.js exports global window.openHospitalRadar helper');
+    assert(!hospitalRadarJs.includes('basemaps.cartocdn.com'), 'hospitalRadar.js has completely removed the broken CartoDB tile layer causing "API KEY REQUIRED" watermark');
+    assert(hospitalRadarJs.includes('tile.openstreetmap.org'), 'hospitalRadar.js uses free, verified standard OpenStreetMap tile layer');
+    assert(hospitalRadarJs.includes('OpenStreetMap') && hospitalRadarJs.includes('contributors'), 'hospitalRadar.js includes proper OpenStreetMap attribution');
+    assert(hospitalRadarJs.includes('retryMap()'), 'hospitalRadar.js provides retryMap() error recovery helper');
     assert(cssStyle.includes('.hospital-emergency-banner'), 'CSS styles permanent emergency banner');
     assert(cssStyle.includes('#view-hospitals.emergency-mode-active'), 'CSS styles Smart Emergency Mode high-contrast cockpit');
     assert(cssStyle.includes('.user-gps-radar-pin'), 'CSS styles pulsing GPS radar pin');
