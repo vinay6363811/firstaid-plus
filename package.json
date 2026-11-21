@@ -7,11 +7,20 @@
     "start": "node server.js",
     "test": "node test_suite.js"
   },
-  "keywords": ["first-aid", "emergency", "medical", "india", "health"],
+  "keywords": [
+    "first-aid",
+    "emergency",
+    "medical",
+    "india",
+    "health"
+  ],
   "author": "FirstAid+ Team",
   "license": "ISC",
   "type": "commonjs",
   "engines": {
     "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
   }
 }

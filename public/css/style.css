@@ -2767,7 +2767,8 @@ body {
   stroke: #ff4d6d;
   stroke-width: 1.8;
   filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
-  transform-origin: 158px 158px;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .organ-heart-halo {

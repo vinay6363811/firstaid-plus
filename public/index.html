@@ -830,271 +830,375 @@
             <div class="body-stage-wrapper">
               <div id="body-model-3d-wrapper" class="body-model-3d-wrapper" title="Click & drag horizontally to rotate model angle">
                 
-                <!-- FRONT VIEW ANATOMY SVG -->
+                <!-- FRONT VIEW ANATOMY SVG (Realistic Slender Anatomical Silhouette & Exact Coordinates) -->
                 <svg id="svg-anatomy-front" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet">
                   <defs>
+                    <!-- Realistic Human Semi-Translucent Medical Skin Shading -->
+                    <linearGradient id="bodySkinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#1e2c44" stop-opacity="0.94"/>
+                      <stop offset="25%" stop-color="#18253b" stop-opacity="0.90"/>
+                      <stop offset="50%" stop-color="#121d2e" stop-opacity="0.87"/>
+                      <stop offset="75%" stop-color="#152338" stop-opacity="0.90"/>
+                      <stop offset="100%" stop-color="#0c1524" stop-opacity="0.95"/>
+                    </linearGradient>
+
+                    <!-- Whole Body Systemic Aura Radial Gradient (Fever, Fatigue, Chills) -->
                     <radialGradient id="systemicAuraGrad" cx="50%" cy="50%" r="50%">
-                      <stop offset="60%" stop-color="#fbbf24" stop-opacity="0.25"/>
-                      <stop offset="90%" stop-color="#f59e0b" stop-opacity="0.6"/>
+                      <stop offset="50%" stop-color="#fbbf24" stop-opacity="0.32"/>
+                      <stop offset="85%" stop-color="#f59e0b" stop-opacity="0.65"/>
                       <stop offset="100%" stop-color="#ef4444" stop-opacity="0"/>
                     </radialGradient>
+
+                    <!-- Precision Glow Filter -->
                     <filter id="bodyGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="4" result="blur"/>
+                      <feGaussianBlur stdDeviation="3.5" result="blur"/>
                       <feMerge>
                         <feMergeNode in="blur"/>
                         <feMergeNode in="SourceGraphic"/>
                       </feMerge>
                     </filter>
-                    <linearGradient id="bodySkinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#0f1f38" stop-opacity="0.85"/>
-                      <stop offset="50%" stop-color="#142646" stop-opacity="0.75"/>
-                      <stop offset="100%" stop-color="#0b172a" stop-opacity="0.9"/>
-                    </linearGradient>
                   </defs>
 
                   <!-- Whole Body Systemic Aura (for Fever, Fatigue, Chills, Viral) -->
                   <g id="body-systemic-aura-front" class="body-systemic-aura">
-                    <path class="aura-silhouette" d="M 150 12 C 122 12 108 30 108 55 C 108 75 120 90 134 98 L 130 114 C 95 124 74 140 68 180 L 40 240 C 34 252 44 262 56 256 L 78 220 L 92 230 C 96 265 106 280 110 320 L 108 420 L 104 480 L 88 522 C 86 528 92 534 100 534 L 140 534 L 144 480 L 146 380 L 150 340 L 154 380 L 156 480 L 160 534 L 200 534 C 208 534 214 528 212 522 L 196 480 L 192 420 L 190 320 C 194 280 204 265 208 230 L 222 220 L 244 256 C 256 262 266 252 260 240 L 232 180 C 226 140 205 124 170 114 L 166 98 C 180 90 192 75 192 55 C 192 30 178 12 150 12 Z"/>
+                    <path class="aura-silhouette" d="M 150 14 C 131 14 123 26 123 42 C 123 48 125 52 127 56 C 121 56 118 60 118 66 C 118 72 121 76 124 76 C 126 83 132 91 141 95 L 140 104 C 123 108 107 116 99 123 L 88 131 C 82 139 78 153 76 169 L 72 201 C 70 213 68 229 66 249 L 62 271 C 57 275 52 283 50 293 C 48 303 52 313 58 315 C 64 317 70 311 72 303 L 76 279 C 78 275 80 271 82 267 L 86 235 C 88 217 90 203 92 189 C 96 175 102 165 110 161 C 112 173 116 187 118 201 C 120 215 122 227 120 241 C 118 253 116 265 116 275 C 116 293 114 317 114 341 C 114 359 116 369 118 379 C 120 389 118 401 116 417 C 114 435 114 453 116 471 C 116 477 115 481 113 485 L 111 493 C 109 503 107 515 109 521 C 111 525 115 527 123 527 C 131 527 135 523 135 517 L 133 495 C 133 487 135 483 137 479 C 139 471 139 459 137 443 C 135 427 133 411 133 397 C 133 385 135 379 137 373 C 139 365 137 351 135 335 C 133 319 133 303 135 289 C 137 281 141 277 148 277 C 155 277 159 281 161 289 C 163 303 163 319 161 335 C 159 351 157 365 159 373 C 161 379 163 385 163 397 C 163 411 161 427 159 443 C 157 459 157 471 159 479 C 161 483 163 487 163 495 L 161 517 C 161 523 165 527 173 527 C 181 527 185 525 187 521 C 189 515 187 503 185 493 L 183 485 C 181 481 180 477 180 471 C 182 453 182 435 180 417 C 178 401 176 389 178 379 C 180 369 182 359 182 341 C 182 317 180 293 180 275 C 180 265 178 253 176 241 C 174 227 176 215 178 201 C 180 187 184 173 186 161 C 194 165 200 175 204 189 C 206 203 208 217 210 235 L 214 267 C 216 271 218 275 220 279 L 224 303 C 226 311 232 317 238 315 C 244 313 248 303 246 293 C 244 283 239 275 234 271 L 230 249 C 228 229 226 213 224 201 L 220 169 C 218 153 214 139 208 131 L 197 123 C 189 116 173 108 156 104 L 155 95 C 164 91 170 83 172 76 C 175 76 178 72 178 66 C 178 60 175 56 169 56 C 171 52 173 48 173 42 C 173 26 165 14 150 14 Z"/>
                   </g>
 
-                  <!-- Base Anatomical Silhouette (Front) -->
+                  <!-- Anatomical Silhouette Group (Front Slender Contour + Muscular/Skeletal Lines) -->
                   <g class="anatomy-silhouette-group">
-                    <!-- Head & Neck -->
-                    <path class="body-contour" d="M 150 16 C 128 16 116 32 116 56 C 116 78 128 90 138 98 L 138 114 C 110 120 94 135 88 170 L 64 235 C 60 245 68 254 78 248 L 94 205 L 102 228 C 105 255 112 278 115 315 L 114 410 L 112 470 L 100 514 C 98 520 102 526 110 526 L 138 526 L 140 480 L 142 375 L 148 330 L 152 330 L 158 375 L 160 480 L 162 526 L 190 526 C 198 526 202 520 200 514 L 188 470 L 186 410 L 185 315 C 188 278 195 255 198 228 L 206 205 L 222 248 C 232 254 240 245 236 235 L 212 170 C 206 135 190 120 162 114 L 162 98 C 172 90 184 78 184 56 C 184 32 172 16 150 16 Z" fill="url(#bodySkinGrad)" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.45"/>
-                    <!-- Clavicles / Chest Lines -->
-                    <path d="M 120 120 Q 150 128 180 120" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.35" fill="none"/>
-                    <!-- Sternum line -->
-                    <line x1="150" y1="124" x2="150" y2="200" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3" stroke-opacity="0.3"/>
+                    <!-- Slender Anatomical Human Contour with Ears, Jawline, Delicate Limbs & Arches -->
+                    <path class="body-contour" d="M 150 16 C 133 16 125 28 125 44 C 125 50 127 54 129 58 C 123 58 120 62 120 68 C 120 74 123 78 126 78 C 128 85 134 93 143 97 L 142 106 C 125 110 109 118 101 125 L 90 133 C 84 141 80 155 78 171 L 74 203 C 72 215 70 231 68 251 L 64 273 C 59 277 54 285 52 295 C 50 305 54 315 60 317 C 66 319 72 313 74 305 L 78 281 C 80 277 82 273 84 269 L 88 237 C 90 219 92 205 94 191 C 98 177 104 167 112 163 C 114 175 118 189 120 203 C 122 217 124 229 122 243 C 120 255 118 267 118 277 C 118 295 116 319 116 343 C 116 361 118 371 120 381 C 122 391 120 403 118 419 C 116 437 116 455 118 473 C 118 479 117 483 115 487 L 113 495 C 111 505 109 517 111 523 C 113 527 117 529 125 529 C 133 529 137 525 137 519 L 135 497 C 135 489 137 485 139 481 C 141 473 141 461 139 445 C 137 429 135 413 135 399 C 135 387 137 381 139 375 C 141 367 139 353 137 337 C 135 321 135 305 137 291 C 139 283 143 279 150 279 C 157 279 161 283 163 291 C 165 305 165 321 163 337 C 161 353 159 367 161 375 C 163 381 165 387 165 399 C 165 413 163 429 161 445 C 159 461 159 473 161 481 C 163 485 165 489 165 497 L 163 519 C 163 525 167 529 175 529 C 183 529 187 527 189 523 C 191 517 189 505 187 495 L 185 487 C 183 483 182 479 182 473 C 184 455 184 437 182 419 C 180 403 178 391 180 381 C 182 371 184 361 184 343 C 184 319 182 295 182 277 C 182 267 180 255 178 243 C 176 229 178 217 180 203 C 182 189 186 175 188 163 C 196 167 202 177 206 191 C 208 205 210 219 212 237 L 216 269 C 218 273 220 277 222 281 L 226 305 C 228 313 234 319 240 317 C 246 315 250 305 248 295 C 246 285 241 277 236 273 L 232 251 C 230 231 228 215 226 203 L 222 171 C 220 155 216 141 210 133 L 199 125 C 191 118 175 110 158 106 L 157 97 C 166 93 172 85 174 78 C 177 78 180 74 180 68 C 180 62 177 58 171 58 C 173 54 175 50 175 44 C 175 28 167 16 150 16 Z" fill="url(#bodySkinGrad)" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.6"/>
+
+                    <!-- Anatomic Clavicles (Collar Bones) -->
+                    <path d="M 112 118 Q 132 122 146 114" stroke="#38bdf8" stroke-width="1.3" stroke-opacity="0.45" fill="none"/>
+                    <path d="M 188 118 Q 168 122 154 114" stroke="#38bdf8" stroke-width="1.3" stroke-opacity="0.45" fill="none"/>
+
+                    <!-- Pectoral Muscular Definition -->
+                    <path d="M 114 138 Q 132 152 148 144" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.32" fill="none"/>
+                    <path d="M 186 138 Q 168 152 152 144" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.32" fill="none"/>
+
+                    <!-- Midline Sternum & Rib Costal Arch -->
+                    <line x1="150" y1="116" x2="150" y2="182" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3" stroke-opacity="0.35"/>
+                    <path d="M 124 186 Q 150 174 176 186" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.3" fill="none"/>
+
+                    <!-- Toned Rectus Abdominis & Umbilicus (Navel) -->
+                    <line x1="150" y1="186" x2="150" y2="252" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.25"/>
+                    <line x1="134" y1="198" x2="166" y2="198" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.22"/>
+                    <line x1="132" y1="216" x2="168" y2="216" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.22"/>
+                    <circle cx="150" cy="226" r="1.8" fill="#38bdf8" fill-opacity="0.6"/>
+                    <line x1="134" y1="238" x2="166" y2="238" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.22"/>
+
+                    <!-- Pelvic Inguinal Grooves -->
+                    <path d="M 122 246 Q 136 266 148 274" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.3" fill="none"/>
+                    <path d="M 178 246 Q 164 266 152 274" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.3" fill="none"/>
+
+                    <!-- Knee Patella Contours & Tendons -->
+                    <ellipse cx="128" cy="378" rx="8" ry="9" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4" fill="none"/>
+                    <ellipse cx="172" cy="378" rx="8" ry="9" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4" fill="none"/>
+                    <line x1="128" y1="387" x2="128" y2="398" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.35"/>
+                    <line x1="172" y1="387" x2="172" y2="398" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.35"/>
+
+                    <!-- Tibial Crests (Shins) -->
+                    <line x1="128" y1="404" x2="128" y2="456" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="2 3" stroke-opacity="0.3"/>
+                    <line x1="172" y1="404" x2="172" y2="456" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="2 3" stroke-opacity="0.3"/>
+
+                    <!-- Ankle Malleolus Bones -->
+                    <circle cx="118" cy="482" r="2.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.45" fill="none"/>
+                    <circle cx="138" cy="480" r="2.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.45" fill="none"/>
+                    <circle cx="162" cy="480" r="2.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.45" fill="none"/>
+                    <circle cx="182" cy="482" r="2.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.45" fill="none"/>
                   </g>
 
-                  <!-- 1. Head & Brain (Neurological / Cranial) -->
+                  <!-- ======================================================= -->
+                  <!-- EXACT ANATOMICAL ZONES (FRONT VIEW)                    -->
+                  <!-- ======================================================= -->
+
+                  <!-- 1. Head & Cranium (Neurological) -->
                   <g class="anatomy-zone zone-head" data-target-id="head" data-organ-name="Head & Brain (Cranium)">
-                    <ellipse cx="150" cy="54" rx="30" ry="36" class="zone-surface"/>
-                    <!-- Stylized brain cortex sulci -->
-                    <path d="M 140 40 Q 146 34 154 38 Q 162 44 156 52 Q 148 56 142 48" class="internal-organ-detail"/>
-                    <path d="M 136 56 Q 144 62 152 60 Q 160 62 164 56" class="internal-organ-detail"/>
-                    <circle cx="150" cy="54" r="5" class="zone-target-beacon"/>
+                    <ellipse cx="150" cy="46" rx="24" ry="28" class="zone-surface"/>
+                    <!-- Stylized cerebral cortex sulci -->
+                    <path d="M 142 34 Q 148 28 156 32 Q 162 38 156 46 Q 148 50 142 42" class="internal-organ-detail"/>
+                    <path d="M 138 50 Q 146 56 154 54 Q 160 56 164 50" class="internal-organ-detail"/>
+                    <circle cx="150" cy="46" r="4.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 2. Eyes & Vision -->
+                  <!-- 2. Eyes & Vision (Exact Optical Orbit Level) -->
                   <g class="anatomy-zone zone-eyes" data-target-id="eyes" data-organ-name="Eyes & Optical Region">
-                    <ellipse cx="138" cy="50" rx="5" ry="3.5" class="zone-surface"/>
-                    <ellipse cx="162" cy="50" rx="5" ry="3.5" class="zone-surface"/>
-                    <circle cx="138" cy="50" r="1.5" fill="#38bdf8"/>
-                    <circle cx="162" cy="50" r="1.5" fill="#38bdf8"/>
+                    <ellipse cx="139" cy="48" rx="4.5" ry="3" class="zone-surface"/>
+                    <ellipse cx="161" cy="48" rx="4.5" ry="3" class="zone-surface"/>
+                    <circle cx="139" cy="48" r="1.5" fill="#38bdf8"/>
+                    <circle cx="161" cy="48" r="1.5" fill="#38bdf8"/>
+                    <circle cx="150" cy="48" r="3.5" class="zone-target-beacon" style="opacity:0.3;"/>
                   </g>
 
-                  <!-- 3. Jaw & Oral / Dental -->
+                  <!-- 3. Jaw & Oral / Dental (Mandible & Teeth) -->
                   <g class="anatomy-zone zone-jaw" data-target-id="jaw" data-organ-name="Jaw & Teeth / Dental">
-                    <path d="M 138 72 Q 150 82 162 72 Q 150 78 138 72 Z" class="zone-surface"/>
-                    <circle cx="150" cy="74" r="3.5" class="zone-target-beacon"/>
+                    <path d="M 138 66 Q 150 76 162 66 Q 150 71 138 66 Z" class="zone-surface"/>
+                    <circle cx="150" cy="69" r="3.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 4. Throat & Cervical Airway -->
+                  <!-- 4. Throat & Cervical Airway (Trachea & Larynx) -->
                   <g class="anatomy-zone zone-throat" data-target-id="throat" data-organ-name="Throat & Upper Airway">
-                    <rect x="142" y="94" width="16" height="20" rx="4" class="zone-surface"/>
-                    <line x1="145" y1="104" x2="155" y2="104" stroke="#06b6d4" stroke-width="1.5" stroke-opacity="0.8"/>
-                    <circle cx="150" cy="104" r="3.5" class="zone-target-beacon"/>
+                    <rect x="142" y="86" width="16" height="20" rx="4" class="zone-surface"/>
+                    <line x1="145" y1="96" x2="155" y2="96" stroke="#06b6d4" stroke-width="1.5" stroke-opacity="0.8"/>
+                    <circle cx="150" cy="96" r="3.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 5. Shoulders (Bilateral) -->
+                  <!-- 5. Shoulders (Deltoid & Acromion Joints - Bilateral) -->
                   <g class="anatomy-zone zone-shoulder-left" data-target-id="shoulders" data-organ-name="Right Shoulder Joint">
-                    <circle cx="94" cy="126" r="13" class="zone-surface"/>
-                    <circle cx="94" cy="126" r="4" class="zone-target-beacon"/>
+                    <circle cx="98" cy="120" r="13" class="zone-surface"/>
+                    <circle cx="98" cy="120" r="4" class="zone-target-beacon"/>
                   </g>
                   <g class="anatomy-zone zone-shoulder-right" data-target-id="shoulders" data-organ-name="Left Shoulder Joint">
-                    <circle cx="206" cy="126" r="13" class="zone-surface"/>
-                    <circle cx="206" cy="126" r="4" class="zone-target-beacon"/>
+                    <circle cx="202" cy="120" r="13" class="zone-surface"/>
+                    <circle cx="202" cy="120" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 6. Lungs & Respiratory Tract -->
+                  <!-- 6. Lungs & Respiratory Tract (Bilateral Bronchial Lobes) -->
                   <g class="anatomy-zone zone-lungs" data-target-id="lungs" data-organ-name="Lungs & Bronchial Tree">
                     <!-- Left Lung (Viewer Right) -->
-                    <path d="M 160 134 C 172 136 182 148 180 174 C 176 184 164 186 156 180 C 154 165 156 142 160 134 Z" class="zone-surface organ-lung"/>
+                    <path d="M 158 126 C 172 128 182 140 180 166 C 176 176 164 178 156 172 C 154 157 156 134 158 126 Z" class="zone-surface organ-lung"/>
                     <!-- Right Lung (Viewer Left) -->
-                    <path d="M 140 134 C 128 136 118 148 120 174 C 124 184 136 186 144 180 C 146 165 144 142 140 134 Z" class="zone-surface organ-lung"/>
+                    <path d="M 142 126 C 128 128 118 140 120 166 C 124 176 136 178 144 172 C 146 157 144 134 142 126 Z" class="zone-surface organ-lung"/>
+                    <circle cx="150" cy="146" r="3.5" class="zone-target-beacon" style="opacity:0.3;"/>
                   </g>
 
-                  <!-- 7. Heart (Cardiac Organ with Active Pulse) -->
+                  <!-- 7. Heart (Anatomically Located in Left Mid-Thorax with Active Cardiac Pulse) -->
                   <g class="anatomy-zone zone-heart" data-target-id="heart" data-organ-name="Heart (Cardiac Focus)">
-                    <circle cx="159" cy="158" r="16" class="zone-surface organ-heart-halo"/>
-                    <path d="M 158 148 C 151 142 142 150 150 162 L 158 171 L 166 162 C 174 150 165 142 158 148 Z" class="organ-heart-body"/>
-                    <circle cx="158" cy="159" r="4" class="zone-target-beacon heart-active-beacon"/>
+                    <circle cx="159" cy="150" r="15" class="zone-surface organ-heart-halo"/>
+                    <path d="M 159 140 C 152 134 143 142 151 154 L 159 163 L 167 154 C 175 142 166 134 159 140 Z" class="organ-heart-body"/>
+                    <circle cx="159" cy="151" r="4.5" class="zone-target-beacon heart-active-beacon"/>
                   </g>
 
-                  <!-- 8. Stomach & Abdomen -->
+                  <!-- 8. Stomach & Upper Abdomen (Epigastric / Digestive) -->
                   <g class="anatomy-zone zone-stomach" data-target-id="stomach" data-organ-name="Stomach & Digestive Tract">
-                    <path d="M 134 195 Q 155 188 166 200 Q 170 218 148 224 Q 130 220 134 195 Z" class="zone-surface organ-stomach"/>
-                    <circle cx="150" cy="208" r="4.5" class="zone-target-beacon"/>
+                    <path d="M 146 182 Q 166 176 174 188 Q 176 206 154 210 Q 142 206 146 182 Z" class="zone-surface organ-stomach"/>
+                    <circle cx="158" cy="194" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 9. Pelvis & Groin -->
+                  <!-- 9. Pelvis & Lower Abdomen (Groin / Hypogastric) -->
                   <g class="anatomy-zone zone-pelvis" data-target-id="stomach" data-organ-name="Pelvic & Lower Abdominal Area">
-                    <path d="M 124 242 Q 150 252 176 242 L 180 272 Q 150 278 120 272 Z" class="zone-surface"/>
+                    <path d="M 126 238 Q 150 248 174 238 L 176 268 Q 150 274 124 268 Z" class="zone-surface"/>
+                    <circle cx="150" cy="254" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 10. Arms & Forearms -->
+                  <!-- 10. Arms & Forearms (Slender Brachial Curves) -->
                   <g class="anatomy-zone zone-arm-left" data-target-id="arms" data-organ-name="Right Arm (Brachial)">
-                    <rect x="74" y="148" width="16" height="52" rx="7" transform="rotate(16 82 174)" class="zone-surface"/>
+                    <rect x="76" y="142" width="16" height="50" rx="7" transform="rotate(12 84 167)" class="zone-surface"/>
                   </g>
                   <g class="anatomy-zone zone-arm-right" data-target-id="arms" data-organ-name="Left Arm (Brachial)">
-                    <rect x="210" y="148" width="16" height="52" rx="7" transform="rotate(-16 218 174)" class="zone-surface"/>
+                    <rect x="208" y="142" width="16" height="50" rx="7" transform="rotate(-12 216 167)" class="zone-surface"/>
                   </g>
 
-                  <!-- 11. Hands & Wrists -->
+                  <!-- 11. Hands & Wrists (Distal Extremities) -->
                   <g class="anatomy-zone zone-hand-left" data-target-id="hands" data-organ-name="Right Hand & Wrist">
-                    <circle cx="64" cy="242" r="12" class="zone-surface"/>
-                    <circle cx="64" cy="242" r="4" class="zone-target-beacon"/>
+                    <ellipse cx="64" cy="292" rx="11" ry="14" class="zone-surface"/>
+                    <circle cx="64" cy="292" r="4" class="zone-target-beacon"/>
                   </g>
                   <g class="anatomy-zone zone-hand-right" data-target-id="hands" data-organ-name="Left Hand & Wrist">
-                    <circle cx="236" cy="242" r="12" class="zone-surface"/>
-                    <circle cx="236" cy="242" r="4" class="zone-target-beacon"/>
+                    <ellipse cx="236" cy="292" rx="11" ry="14" class="zone-surface"/>
+                    <circle cx="236" cy="292" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 12. Thighs -->
+                  <!-- 12. Thighs (Slender Femoral & Quadriceps) -->
                   <g class="anatomy-zone zone-thigh-left" data-target-id="legs" data-organ-name="Right Thigh (Femoral)">
-                    <rect x="116" y="278" width="22" height="74" rx="10" transform="rotate(2 127 315)" class="zone-surface"/>
+                    <rect x="118" y="284" width="20" height="72" rx="9" transform="rotate(2 128 320)" class="zone-surface"/>
                   </g>
                   <g class="anatomy-zone zone-thigh-right" data-target-id="legs" data-organ-name="Left Thigh (Femoral)">
-                    <rect x="162" y="278" width="22" height="74" rx="10" transform="rotate(-2 173 315)" class="zone-surface"/>
+                    <rect x="162" y="284" width="20" height="72" rx="9" transform="rotate(-2 172 320)" class="zone-surface"/>
                   </g>
 
-                  <!-- 13. Knees (Patella) -->
+                  <!-- 13. Knees & Patella Joints (Exact Knee Height y=378) -->
                   <g class="anatomy-zone zone-knee-left" data-target-id="knees" data-organ-name="Right Knee Joint (Patella)">
-                    <circle cx="126" cy="368" r="13" class="zone-surface"/>
-                    <circle cx="126" cy="368" r="4.5" class="zone-target-beacon"/>
+                    <circle cx="128" cy="378" r="13" class="zone-surface"/>
+                    <circle cx="128" cy="378" r="4.5" class="zone-target-beacon"/>
                   </g>
                   <g class="anatomy-zone zone-knee-right" data-target-id="knees" data-organ-name="Left Knee Joint (Patella)">
-                    <circle cx="174" cy="368" r="13" class="zone-surface"/>
-                    <circle cx="174" cy="368" r="4.5" class="zone-target-beacon"/>
+                    <circle cx="172" cy="378" r="13" class="zone-surface"/>
+                    <circle cx="172" cy="378" r="4.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 14. Calves & Shins -->
+                  <!-- 14. Calves & Shins (Tibia / Distal Leg) -->
                   <g class="anatomy-zone zone-calf-left" data-target-id="legs" data-organ-name="Right Calf & Shin">
-                    <rect x="115" y="388" width="18" height="68" rx="8" class="zone-surface"/>
+                    <rect x="118" y="398" width="18" height="66" rx="8" class="zone-surface"/>
                   </g>
                   <g class="anatomy-zone zone-calf-right" data-target-id="legs" data-organ-name="Left Calf & Shin">
-                    <rect x="167" y="388" width="18" height="68" rx="8" class="zone-surface"/>
+                    <rect x="164" y="398" width="18" height="66" rx="8" class="zone-surface"/>
                   </g>
 
-                  <!-- 15. Ankles (Focused Beacon) -->
+                  <!-- 15. Ankles (Focused Malleolus Beacon at y=478) -->
                   <g class="anatomy-zone zone-ankle-left" data-target-id="ankles" data-organ-name="Right Ankle Joint">
-                    <circle cx="123" cy="472" r="11" class="zone-surface"/>
-                    <circle cx="123" cy="472" r="4" class="zone-target-beacon"/>
+                    <circle cx="128" cy="478" r="11" class="zone-surface"/>
+                    <circle cx="128" cy="478" r="4.5" class="zone-target-beacon"/>
                   </g>
                   <g class="anatomy-zone zone-ankle-right" data-target-id="ankles" data-organ-name="Left Ankle Joint">
-                    <circle cx="177" cy="472" r="11" class="zone-surface"/>
-                    <circle cx="177" cy="472" r="4" class="zone-target-beacon"/>
+                    <circle cx="172" cy="478" r="11" class="zone-surface"/>
+                    <circle cx="172" cy="478" r="4.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 16. Feet & Toes -->
+                  <!-- 16. Feet & Toes (Arches & Phalanges) -->
                   <g class="anatomy-zone zone-foot-left" data-target-id="feet" data-organ-name="Right Foot & Toes">
-                    <path d="M 112 486 L 134 486 L 132 522 L 102 522 Z" class="zone-surface"/>
-                    <circle cx="118" cy="510" r="3.5" class="zone-target-beacon"/>
+                    <path d="M 116 492 L 134 492 L 132 526 L 110 524 Z" class="zone-surface"/>
+                    <circle cx="122" cy="512" r="3.5" class="zone-target-beacon"/>
                   </g>
                   <g class="anatomy-zone zone-foot-right" data-target-id="feet" data-organ-name="Left Foot & Toes">
-                    <path d="M 166 486 L 188 486 L 198 522 L 168 522 Z" class="zone-surface"/>
-                    <circle cx="182" cy="510" r="3.5" class="zone-target-beacon"/>
+                    <path d="M 166 492 L 184 492 L 190 524 L 168 526 Z" class="zone-surface"/>
+                    <circle cx="178" cy="512" r="3.5" class="zone-target-beacon"/>
                   </g>
 
+                  <!-- 17. Full Body Skin Surface (Dermatological) -->
+                  <g class="anatomy-zone zone-skin-front" data-target-id="skin" data-organ-name="Cutaneous Skin Surface (Front)" style="display:none;">
+                    <circle cx="150" cy="275" r="5" class="zone-target-beacon"/>
+                  </g>
                 </svg>
 
                 <!-- BACK VIEW ANATOMY SVG (Toggled via Switch or Back Symptoms) -->
                 <svg id="svg-anatomy-back" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet" style="display: none;">
                   <defs>
                     <linearGradient id="bodySkinBackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#0c192e" stop-opacity="0.88"/>
-                      <stop offset="50%" stop-color="#11223e" stop-opacity="0.78"/>
-                      <stop offset="100%" stop-color="#091424" stop-opacity="0.92"/>
+                      <stop offset="0%" stop-color="#1b283e" stop-opacity="0.94"/>
+                      <stop offset="35%" stop-color="#142133" stop-opacity="0.90"/>
+                      <stop offset="70%" stop-color="#101b2a" stop-opacity="0.87"/>
+                      <stop offset="100%" stop-color="#091320" stop-opacity="0.95"/>
                     </linearGradient>
                   </defs>
 
                   <!-- Whole Body Systemic Aura (Back) -->
                   <g id="body-systemic-aura-back" class="body-systemic-aura">
-                    <path class="aura-silhouette" d="M 150 12 C 122 12 108 30 108 55 C 108 75 120 90 134 98 L 130 114 C 95 124 74 140 68 180 L 40 240 C 34 252 44 262 56 256 L 78 220 L 92 230 C 96 265 106 280 110 320 L 108 420 L 104 480 L 88 522 C 86 528 92 534 100 534 L 140 534 L 144 480 L 146 380 L 150 340 L 154 380 L 156 480 L 160 534 L 200 534 C 208 534 214 528 212 522 L 196 480 L 192 420 L 190 320 C 194 280 204 265 208 230 L 222 220 L 244 256 C 256 262 266 252 260 240 L 232 180 C 226 140 205 124 170 114 L 166 98 C 180 90 192 75 192 55 C 192 30 178 12 150 12 Z"/>
+                    <path class="aura-silhouette" d="M 150 14 C 131 14 123 26 123 42 C 123 48 125 52 127 56 C 121 56 118 60 118 66 C 118 72 121 76 124 76 C 126 83 132 91 141 95 L 140 104 C 123 108 107 116 99 123 L 88 131 C 82 139 78 153 76 169 L 72 201 C 70 213 68 229 66 249 L 62 271 C 57 275 52 283 50 293 C 48 303 52 313 58 315 C 64 317 70 311 72 303 L 76 279 C 78 275 80 271 82 267 L 86 235 C 88 217 90 203 92 189 C 96 175 102 165 110 161 C 112 173 116 187 118 201 C 120 215 122 227 120 241 C 118 253 116 265 116 275 C 116 293 114 317 114 341 C 114 359 116 369 118 379 C 120 389 118 401 116 417 C 114 435 114 453 116 471 C 116 477 115 481 113 485 L 111 493 C 109 503 107 515 109 521 C 111 525 115 527 123 527 C 131 527 135 523 135 517 L 133 495 C 133 487 135 483 137 479 C 139 471 139 459 137 443 C 135 427 133 411 133 397 C 133 385 135 379 137 373 C 139 365 137 351 135 335 C 133 319 133 303 135 289 C 137 281 141 277 148 277 C 155 277 159 281 161 289 C 163 303 163 319 161 335 C 159 351 157 365 159 373 C 161 379 163 385 163 397 C 163 411 161 427 159 443 C 157 459 157 471 159 479 C 161 483 163 487 163 495 L 161 517 C 161 523 165 527 173 527 C 181 527 185 525 187 521 C 189 515 187 503 185 493 L 183 485 C 181 481 180 477 180 471 C 182 453 182 435 180 417 C 178 401 176 389 178 379 C 180 369 182 359 182 341 C 182 317 180 293 180 275 C 180 265 178 253 176 241 C 174 227 176 215 178 201 C 180 187 184 173 186 161 C 194 165 200 175 204 189 C 206 203 208 217 210 235 L 214 267 C 216 271 218 275 220 279 L 224 303 C 226 311 232 317 238 315 C 244 313 248 303 246 293 C 244 283 239 275 234 271 L 230 249 C 228 229 226 213 224 201 L 220 169 C 218 153 214 139 208 131 L 197 123 C 189 116 173 108 156 104 L 155 95 C 164 91 170 83 172 76 C 175 76 178 72 178 66 C 178 60 175 56 169 56 C 171 52 173 48 173 42 C 173 26 165 14 150 14 Z"/>
                   </g>
 
-                  <!-- Back Silhouette -->
+                  <!-- Back Anatomical Silhouette Group -->
                   <g class="anatomy-silhouette-group">
-                    <path class="body-contour" d="M 150 16 C 128 16 116 32 116 56 C 116 78 128 90 138 98 L 138 114 C 110 120 94 135 88 170 L 64 235 C 60 245 68 254 78 248 L 94 205 L 102 228 C 105 255 112 278 115 315 L 114 410 L 112 470 L 100 514 C 98 520 102 526 110 526 L 138 526 L 140 480 L 142 375 L 148 330 L 152 330 L 158 375 L 160 480 L 162 526 L 190 526 C 198 526 202 520 200 514 L 188 470 L 186 410 L 185 315 C 188 278 195 255 198 228 L 206 205 L 222 248 C 232 254 240 245 236 235 L 212 170 C 206 135 190 120 162 114 L 162 98 C 172 90 184 78 184 56 C 184 32 172 16 150 16 Z" fill="url(#bodySkinBackGrad)" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.45"/>
-                    <!-- Scapular Winging lines -->
-                    <path d="M 122 135 Q 115 155 128 172" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.35" fill="none"/>
-                    <path d="M 178 135 Q 185 155 172 172" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.35" fill="none"/>
+                    <path class="body-contour" d="M 150 16 C 133 16 125 28 125 44 C 125 50 127 54 129 58 C 123 58 120 62 120 68 C 120 74 123 78 126 78 C 128 85 134 93 143 97 L 142 106 C 125 110 109 118 101 125 L 90 133 C 84 141 80 155 78 171 L 74 203 C 72 215 70 231 68 251 L 64 273 C 59 277 54 285 52 295 C 50 305 54 315 60 317 C 66 319 72 313 74 305 L 78 281 C 80 277 82 273 84 269 L 88 237 C 90 219 92 205 94 191 C 98 177 104 167 112 163 C 114 175 118 189 120 203 C 122 217 124 229 122 243 C 120 255 118 267 118 277 C 118 295 116 319 116 343 C 116 361 118 371 120 381 C 122 391 120 403 118 419 C 116 437 116 455 118 473 C 118 479 117 483 115 487 L 113 495 C 111 505 109 517 111 523 C 113 527 117 529 125 529 C 133 529 137 525 137 519 L 135 497 C 135 489 137 485 139 481 C 141 473 141 461 139 445 C 137 429 135 413 135 399 C 135 387 137 381 139 375 C 141 367 139 353 137 337 C 135 321 135 305 137 291 C 139 283 143 279 150 279 C 157 279 161 283 163 291 C 165 305 165 321 163 337 C 161 353 159 367 161 375 C 163 381 165 387 165 399 C 165 413 163 429 161 445 C 159 461 159 473 161 481 C 163 485 165 489 165 497 L 163 519 C 163 525 167 529 175 529 C 183 529 187 527 189 523 C 191 517 189 505 187 495 L 185 487 C 183 483 182 479 182 473 C 184 455 184 437 182 419 C 180 403 178 391 180 381 C 182 371 184 361 184 343 C 184 319 182 295 182 277 C 182 267 180 255 178 243 C 176 229 178 217 180 203 C 182 189 186 175 188 163 C 196 167 202 177 206 191 C 208 205 210 219 212 237 L 216 269 C 218 273 220 277 222 281 L 226 305 C 228 313 234 319 240 317 C 246 315 250 305 248 295 C 246 285 241 277 236 273 L 232 251 C 230 231 228 215 226 203 L 222 171 C 220 155 216 141 210 133 L 199 125 C 191 118 175 110 158 106 L 157 97 C 166 93 172 85 174 78 C 177 78 180 74 180 68 C 180 62 177 58 171 58 C 173 54 175 50 175 44 C 175 28 167 16 150 16 Z" fill="url(#bodySkinBackGrad)" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.6"/>
+
+                    <!-- Anatomic Scapular Wings (Shoulder Blades) -->
+                    <path d="M 122 126 L 138 128 L 132 162 Z" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4" fill="none"/>
+                    <path d="M 178 126 L 162 128 L 168 162 Z" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4" fill="none"/>
+
+                    <!-- Latissimus Dorsi & Trapezius Contours -->
+                    <path d="M 112 164 Q 130 186 146 194" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3" fill="none"/>
+                    <path d="M 188 164 Q 170 186 154 194" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3" fill="none"/>
+
+                    <!-- Gluteal Cleft & Fold -->
+                    <line x1="150" y1="242" x2="150" y2="280" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.38"/>
+                    <path d="M 122 278 Q 136 284 148 280" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.3" fill="none"/>
+                    <path d="M 178 278 Q 164 284 152 280" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.3" fill="none"/>
+
+                    <!-- Popliteal Fossa (Back of Knees) -->
+                    <path d="M 122 378 L 128 372 L 134 378 L 128 384 Z" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.35" fill="none"/>
+                    <path d="M 166 378 L 172 372 L 178 378 L 172 384 Z" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.35" fill="none"/>
+
+                    <!-- Achilles Tendon Cords -->
+                    <line x1="128" y1="462" x2="128" y2="502" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.45"/>
+                    <line x1="172" y1="462" x2="172" y2="502" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.45"/>
                   </g>
 
-                  <!-- 1. Posterior Cranium / Occipital -->
+                  <!-- ======================================================= -->
+                  <!-- EXACT ANATOMICAL ZONES (BACK VIEW)                     -->
+                  <!-- ======================================================= -->
+
+                  <!-- 1. Posterior Cranium / Occipital Region -->
                   <g class="anatomy-zone zone-head-back" data-target-id="head" data-organ-name="Posterior Head & Occipital">
-                    <ellipse cx="150" cy="54" rx="30" ry="36" class="zone-surface"/>
-                    <circle cx="150" cy="62" r="5" class="zone-target-beacon"/>
+                    <ellipse cx="150" cy="46" rx="24" ry="28" class="zone-surface"/>
+                    <circle cx="150" cy="54" r="4.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 2. Cervical Spine & Nape -->
+                  <!-- 2. Cervical Spine & Nape (C1 - C7) -->
                   <g class="anatomy-zone zone-neck-back" data-target-id="throat" data-organ-name="Nape & Cervical Spine">
-                    <rect x="142" y="94" width="16" height="20" rx="4" class="zone-surface"/>
-                    <circle cx="150" cy="104" r="3.5" class="zone-target-beacon"/>
+                    <rect x="142" y="86" width="16" height="20" rx="4" class="zone-surface"/>
+                    <circle cx="150" cy="96" r="3.5" class="zone-target-beacon"/>
                   </g>
 
                   <!-- 3. Spinal Column (Vertebrae chain - Cervical, Thoracic, Lumbar, Sacral) -->
                   <g class="anatomy-zone zone-spine" data-target-id="back" data-organ-name="Vertebral Column (Entire Spine)">
-                    <rect x="145" y="116" width="10" height="140" rx="4" class="zone-surface organ-spine-track"/>
+                    <rect x="145" y="106" width="10" height="150" rx="4" class="zone-surface organ-spine-track"/>
                     <!-- Segmented vertebrae discs -->
-                    <circle cx="150" cy="122" r="3" fill="#e11d48"/>
-                    <circle cx="150" cy="138" r="3" fill="#e11d48"/>
-                    <circle cx="150" cy="154" r="3" fill="#e11d48"/>
-                    <circle cx="150" cy="170" r="3" fill="#e11d48"/>
-                    <circle cx="150" cy="186" r="3.5" fill="#e11d48"/>
-                    <circle cx="150" cy="202" r="3.5" fill="#e11d48"/>
-                    <circle cx="150" cy="218" r="4" fill="#e11d48"/>
-                    <circle cx="150" cy="234" r="4" fill="#e11d48"/>
-                    <circle cx="150" cy="250" r="4" class="zone-target-beacon"/>
+                    <circle cx="150" cy="112" r="2.8" fill="#e11d48"/>
+                    <circle cx="150" cy="126" r="3" fill="#e11d48"/>
+                    <circle cx="150" cy="140" r="3" fill="#e11d48"/>
+                    <circle cx="150" cy="154" r="3.2" fill="#e11d48"/>
+                    <circle cx="150" cy="168" r="3.5" fill="#e11d48"/>
+                    <circle cx="150" cy="182" r="3.5" fill="#e11d48"/>
+                    <circle cx="150" cy="196" r="3.5" fill="#e11d48"/>
+                    <circle cx="150" cy="210" r="3.8" fill="#e11d48"/>
+                    <circle cx="150" cy="224" r="4" fill="#e11d48"/>
+                    <circle cx="150" cy="238" r="4" fill="#e11d48"/>
+                    <circle cx="150" cy="250" r="4.2" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 4. Upper Back / Rhomboids -->
+                  <!-- 4. Upper Back / Rhomboids & Scapula -->
                   <g class="anatomy-zone zone-back-upper" data-target-id="back" data-organ-name="Upper Back (Trapezius & Scapula)">
-                    <path d="M 120 125 L 180 125 L 175 180 L 125 180 Z" class="zone-surface"/>
+                    <path d="M 120 120 L 180 120 L 174 172 L 126 172 Z" class="zone-surface"/>
                   </g>
 
-                  <!-- 5. Lower Back (Lumbar) & Kidneys -->
+                  <!-- 5. Posterior Shoulders & Scapula -->
+                  <g class="anatomy-zone zone-shoulders-back" data-target-id="shoulders" data-organ-name="Shoulder Blades & Upper Back">
+                    <circle cx="98" cy="120" r="13" class="zone-surface"/>
+                    <circle cx="202" cy="120" r="13" class="zone-surface"/>
+                    <circle cx="150" cy="126" r="4" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 6. Lower Back (Lumbar) & Kidneys (Bilateral Renal Lodges) -->
                   <g class="anatomy-zone zone-back-lower" data-target-id="back" data-organ-name="Lower Back (Lumbar) & Renal Flank">
-                    <path d="M 125 186 L 175 186 L 172 238 L 128 238 Z" class="zone-surface"/>
+                    <path d="M 125 178 L 175 178 L 172 232 L 128 232 Z" class="zone-surface"/>
                     <!-- Kidneys (Bilateral) -->
-                    <ellipse cx="132" cy="204" rx="7" ry="11" fill="#9333ea" fill-opacity="0.6"/>
-                    <ellipse cx="168" cy="204" rx="7" ry="11" fill="#9333ea" fill-opacity="0.6"/>
-                    <circle cx="132" cy="204" r="3" class="zone-target-beacon"/>
-                    <circle cx="168" cy="204" r="3" class="zone-target-beacon"/>
+                    <ellipse cx="134" cy="196" rx="7" ry="11" fill="#9333ea" fill-opacity="0.65"/>
+                    <ellipse cx="166" cy="196" rx="7" ry="11" fill="#9333ea" fill-opacity="0.65"/>
+                    <circle cx="134" cy="196" r="3.5" class="zone-target-beacon"/>
+                    <circle cx="166" cy="196" r="3.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 6. Gluteal Region -->
+                  <!-- 7. Posterior Arms & Triceps -->
+                  <g class="anatomy-zone zone-arms-back" data-target-id="arms" data-organ-name="Posterior Arms & Triceps">
+                    <rect x="76" y="142" width="16" height="50" rx="7" transform="rotate(12 84 167)" class="zone-surface"/>
+                    <rect x="208" y="142" width="16" height="50" rx="7" transform="rotate(-12 216 167)" class="zone-surface"/>
+                  </g>
+
+                  <!-- 8. Posterior Hands & Wrists -->
+                  <g class="anatomy-zone zone-hands-back" data-target-id="hands" data-organ-name="Posterior Hands & Wrists">
+                    <ellipse cx="64" cy="292" rx="11" ry="14" class="zone-surface"/>
+                    <ellipse cx="236" cy="292" rx="11" ry="14" class="zone-surface"/>
+                    <circle cx="64" cy="292" r="3.5" class="zone-target-beacon"/>
+                    <circle cx="236" cy="292" r="3.5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 9. Gluteal Region & Sacrum -->
                   <g class="anatomy-zone zone-glutes" data-target-id="back" data-organ-name="Gluteal & Sacrum">
-                    <path d="M 122 248 Q 150 242 178 248 L 182 288 Q 150 292 118 288 Z" class="zone-surface"/>
+                    <path d="M 122 242 Q 150 248 178 242 L 180 278 Q 150 284 120 278 Z" class="zone-surface"/>
                   </g>
 
-                  <!-- 7. Hamstrings -->
+                  <!-- 10. Posterior Thighs (Hamstrings) -->
                   <g class="anatomy-zone zone-hamstrings-back" data-target-id="legs" data-organ-name="Posterior Thighs (Hamstrings)">
-                    <rect x="116" y="294" width="22" height="66" rx="8" class="zone-surface"/>
-                    <rect x="162" y="294" width="22" height="66" rx="8" class="zone-surface"/>
+                    <rect x="118" y="288" width="20" height="70" rx="8" class="zone-surface"/>
+                    <rect x="162" y="288" width="20" height="70" rx="8" class="zone-surface"/>
                   </g>
 
-                  <!-- 8. Posterior Knees (Popliteal) -->
+                  <!-- 11. Posterior Knees (Popliteal Fossa) -->
                   <g class="anatomy-zone zone-knees-back" data-target-id="knees" data-organ-name="Posterior Knees (Popliteal)">
-                    <circle cx="126" cy="368" r="12" class="zone-surface"/>
-                    <circle cx="174" cy="368" r="12" class="zone-surface"/>
-                    <circle cx="126" cy="368" r="4" class="zone-target-beacon"/>
-                    <circle cx="174" cy="368" r="4" class="zone-target-beacon"/>
+                    <circle cx="128" cy="378" r="12" class="zone-surface"/>
+                    <circle cx="172" cy="378" r="12" class="zone-surface"/>
+                    <circle cx="128" cy="378" r="4" class="zone-target-beacon"/>
+                    <circle cx="172" cy="378" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 9. Calves & Achilles -->
+                  <!-- 12. Calves & Achilles Tendons -->
                   <g class="anatomy-zone zone-calves-back" data-target-id="legs" data-organ-name="Calves & Achilles Tendons">
-                    <rect x="115" y="388" width="18" height="74" rx="8" class="zone-surface"/>
-                    <rect x="167" y="388" width="18" height="74" rx="8" class="zone-surface"/>
+                    <rect x="118" y="398" width="18" height="66" rx="8" class="zone-surface"/>
+                    <rect x="164" y="398" width="18" height="66" rx="8" class="zone-surface"/>
                   </g>
 
-                  <!-- 10. Heels -->
+                  <!-- 13. Heels & Calcaneus -->
                   <g class="anatomy-zone zone-heels-back" data-target-id="feet" data-organ-name="Heels & Calcaneus">
-                    <circle cx="124" cy="492" r="11" class="zone-surface"/>
-                    <circle cx="176" cy="492" r="11" class="zone-surface"/>
-                    <circle cx="124" cy="492" r="3.5" class="zone-target-beacon"/>
-                    <circle cx="176" cy="492" r="3.5" class="zone-target-beacon"/>
+                    <circle cx="126" cy="492" r="11" class="zone-surface"/>
+                    <circle cx="174" cy="492" r="11" class="zone-surface"/>
+                    <circle cx="126" cy="492" r="3.5" class="zone-target-beacon"/>
+                    <circle cx="174" cy="492" r="3.5" class="zone-target-beacon"/>
+                  </g>
+
+                  <!-- 14. Posterior Skin Surface (Dermatological) -->
+                  <g class="anatomy-zone zone-skin-back" data-target-id="skin" data-organ-name="Cutaneous Skin Surface (Back)" style="display:none;">
+                    <circle cx="150" cy="275" r="5" class="zone-target-beacon"/>
                   </g>
                 </svg>
 
