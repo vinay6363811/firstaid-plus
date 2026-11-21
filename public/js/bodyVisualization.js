@@ -231,7 +231,7 @@
   };
 
   const SYSTEM_NAMES = {
-    all: 'All Anatomical Layers (Complete Anatomy)',
+    all: 'Real Human Body (Natural Skin & Anatomy)',
     cardiovascular: 'Cardiovascular System (Heart & Arterial Network)',
     respiratory: 'Respiratory System (Airways, Lungs & Bronchi)',
     skeletal: 'Skeletal Framework (Bones, Joints & Cranium)',

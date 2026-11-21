@@ -2757,9 +2757,33 @@ body {
   transition: opacity 0.35s ease, filter 0.35s ease;
 }
 
-/* System Isolation Modes */
-.svg-anatomy[data-active-system="cardiovascular"] .system-layer:not(.system-cardiovascular):not(.system-silhouette) {
-  opacity: 0.12;
+/* REAL HUMAN DEFAULT VIEW: Natural Skin & Real Human Body Contours */
+.svg-anatomy[data-active-system="all"] .system-skin {
+  opacity: 1 !important;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.45));
+}
+.svg-anatomy[data-active-system="all"] .system-layer:not(.system-skin):not(.system-silhouette) {
+  opacity: 0.04 !important;
+  filter: grayscale(100%);
+  pointer-events: none;
+}
+.svg-anatomy[data-active-system="all"] .system-silhouette {
+  opacity: 0.15;
+}
+
+/* System Isolation Modes - Skin becomes Translucent Medical Shell */
+.svg-anatomy[data-active-system="cardiovascular"] .system-skin,
+.svg-anatomy[data-active-system="respiratory"] .system-skin,
+.svg-anatomy[data-active-system="skeletal"] .system-skin,
+.svg-anatomy[data-active-system="nervous"] .system-skin,
+.svg-anatomy[data-active-system="muscular"] .system-skin,
+.svg-anatomy[data-active-system="lymphatic"] .system-skin {
+  opacity: 0.22 !important;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.35));
+}
+
+.svg-anatomy[data-active-system="cardiovascular"] .system-layer:not(.system-cardiovascular):not(.system-silhouette):not(.system-skin) {
+  opacity: 0.08;
   filter: grayscale(80%);
 }
 .svg-anatomy[data-active-system="cardiovascular"] .system-cardiovascular {
@@ -2767,8 +2791,8 @@ body {
   filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
 }
 
-.svg-anatomy[data-active-system="respiratory"] .system-layer:not(.system-respiratory):not(.system-silhouette) {
-  opacity: 0.12;
+.svg-anatomy[data-active-system="respiratory"] .system-layer:not(.system-respiratory):not(.system-silhouette):not(.system-skin) {
+  opacity: 0.08;
   filter: grayscale(80%);
 }
 .svg-anatomy[data-active-system="respiratory"] .system-respiratory {
@@ -2776,8 +2800,8 @@ body {
   filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));
 }
 
-.svg-anatomy[data-active-system="skeletal"] .system-layer:not(.system-skeletal):not(.system-silhouette) {
-  opacity: 0.12;
+.svg-anatomy[data-active-system="skeletal"] .system-layer:not(.system-skeletal):not(.system-silhouette):not(.system-skin) {
+  opacity: 0.08;
   filter: grayscale(80%);
 }
 .svg-anatomy[data-active-system="skeletal"] .system-skeletal {
@@ -2785,8 +2809,8 @@ body {
   filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.7));
 }
 
-.svg-anatomy[data-active-system="nervous"] .system-layer:not(.system-nervous):not(.system-silhouette) {
-  opacity: 0.12;
+.svg-anatomy[data-active-system="nervous"] .system-layer:not(.system-nervous):not(.system-silhouette):not(.system-skin) {
+  opacity: 0.08;
   filter: grayscale(80%);
 }
 .svg-anatomy[data-active-system="nervous"] .system-nervous {
@@ -2794,8 +2818,8 @@ body {
   filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
 }
 
-.svg-anatomy[data-active-system="muscular"] .system-layer:not(.system-muscular):not(.system-silhouette) {
-  opacity: 0.12;
+.svg-anatomy[data-active-system="muscular"] .system-layer:not(.system-muscular):not(.system-silhouette):not(.system-skin) {
+  opacity: 0.08;
   filter: grayscale(80%);
 }
 .svg-anatomy[data-active-system="muscular"] .system-muscular {
@@ -2803,17 +2827,13 @@ body {
   filter: drop-shadow(0 0 8px rgba(234, 88, 12, 0.7));
 }
 
-.svg-anatomy[data-active-system="lymphatic"] .system-layer:not(.system-lymphatic):not(.system-silhouette) {
-  opacity: 0.12;
+.svg-anatomy[data-active-system="lymphatic"] .system-layer:not(.system-lymphatic):not(.system-silhouette):not(.system-skin) {
+  opacity: 0.08;
   filter: grayscale(80%);
 }
 .svg-anatomy[data-active-system="lymphatic"] .system-lymphatic {
   opacity: 1 !important;
   filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.8));
-}
-
-.svg-anatomy[data-active-system="all"] .system-layer {
-  opacity: 0.95;
 }
 
 /* 3D Perspective Stage Wrapper */
