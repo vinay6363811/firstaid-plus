@@ -316,7 +316,26 @@ async function runTests() {
     assert(appCode.includes('problemInput.addEventListener("input"'), 'App has live typing listener to adapt voice and language dynamically');
     assert(appCode.includes('window.updateVoiceDiagnosticLabel'), 'App updates active voice diagnostic label when language changes');
 
-    console.log('\n🎉 ALL 70 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
+    console.log('\n--- 11. Testing Muscular Anatomy & 6-System Interactive Layer Switching ---');
+    const bodyVisCode = fs.readFileSync(path.join(__dirname, 'public', 'js', 'bodyVisualization.js'), 'utf-8');
+    assert(htmlText.includes('class="anatomy-systems-toolbar"'), 'HTML contains anatomical systems mode toolbar');
+    assert(htmlText.includes('data-system="cardiovascular"'), 'HTML contains Cardiovascular system mode selector');
+    assert(htmlText.includes('data-system="respiratory"'), 'HTML contains Respiratory system mode selector');
+    assert(htmlText.includes('data-system="skeletal"'), 'HTML contains Skeletal system mode selector');
+    assert(htmlText.includes('data-system="nervous"'), 'HTML contains Nervous system mode selector');
+    assert(htmlText.includes('data-system="muscular"'), 'HTML contains Muscular system mode selector');
+    assert(htmlText.includes('data-system="lymphatic"'), 'HTML contains Lymphatic system mode selector');
+    assert(htmlText.includes('system-muscular'), 'SVG contains muscular anatomy striated muscle layers');
+    assert(htmlText.includes('system-cardiovascular'), 'SVG contains cardiovascular heart and vessel networks');
+    assert(htmlText.includes('system-skeletal'), 'SVG contains skeletal framework and bone structures');
+    assert(htmlText.includes('system-respiratory'), 'SVG contains respiratory lungs and airway structures');
+    assert(htmlText.includes('system-nervous'), 'SVG contains nervous system brain and nerve network');
+    assert(htmlText.includes('system-lymphatic'), 'SVG contains lymphatic system nodes and vessels');
+    assert(bodyVisCode.includes('bindSystemSelector'), 'Body visualization binds system selector toolbar');
+    assert(bodyVisCode.includes('setSystem(systemId'), 'Body visualization supports dynamic setSystem switching');
+    assert(bodyVisCode.includes('SYSTEM_ASSOCIATIONS'), 'Body visualization has symptom-to-system mapping for auto-isolation');
+
+    console.log('\n🎉 ALL 86 UNIT & INTEGRATION TESTS COMPLETED SUCCESSFULLY! 🎉\n');
   } catch (err) {
     console.error('Test error:', err);
     process.exit(1);

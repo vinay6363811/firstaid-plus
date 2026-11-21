@@ -2665,6 +2665,157 @@ body {
   text-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
 }
 
+/* ==========================================================================
+   ANATOMICAL SYSTEMS SELECTOR TOOLBAR (Cardiovascular, Lymphatic, etc. - Image 2)
+   ========================================================================== */
+.anatomy-systems-toolbar {
+  background: rgba(6, 15, 33, 0.92);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.systems-toolbar-label {
+  font-family: ui-monospace, SFMono-Regular, "Courier New", monospace;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #38bdf8;
+  text-transform: uppercase;
+}
+
+.systems-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 242, 254, 0.3) transparent;
+}
+
+.systems-btn-group::-webkit-scrollbar {
+  height: 4px;
+}
+.systems-btn-group::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 254, 0.4);
+  border-radius: 4px;
+}
+
+.system-tab-btn {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: #94a3b8;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.system-tab-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: #38bdf8;
+  color: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.system-tab-btn.active {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.45), rgba(14, 165, 233, 0.25));
+  border-color: #00f2fe;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+}
+
+.system-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-all { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+.dot-cardio { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+.dot-resp { background: #06b6d4; box-shadow: 0 0 6px #06b6d4; }
+.dot-skel { background: #e0f2fe; box-shadow: 0 0 6px #e0f2fe; }
+.dot-nerv { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+.dot-musc { background: #ea580c; box-shadow: 0 0 6px #ea580c; }
+.dot-lymph { background: #10b981; box-shadow: 0 0 6px #10b981; }
+
+/* Anatomical System Layer Transitions */
+.system-layer {
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+/* System Isolation Modes */
+.svg-anatomy[data-active-system="cardiovascular"] .system-layer:not(.system-cardiovascular):not(.system-silhouette) {
+  opacity: 0.12;
+  filter: grayscale(80%);
+}
+.svg-anatomy[data-active-system="cardiovascular"] .system-cardiovascular {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+}
+
+.svg-anatomy[data-active-system="respiratory"] .system-layer:not(.system-respiratory):not(.system-silhouette) {
+  opacity: 0.12;
+  filter: grayscale(80%);
+}
+.svg-anatomy[data-active-system="respiratory"] .system-respiratory {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));
+}
+
+.svg-anatomy[data-active-system="skeletal"] .system-layer:not(.system-skeletal):not(.system-silhouette) {
+  opacity: 0.12;
+  filter: grayscale(80%);
+}
+.svg-anatomy[data-active-system="skeletal"] .system-skeletal {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.7));
+}
+
+.svg-anatomy[data-active-system="nervous"] .system-layer:not(.system-nervous):not(.system-silhouette) {
+  opacity: 0.12;
+  filter: grayscale(80%);
+}
+.svg-anatomy[data-active-system="nervous"] .system-nervous {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
+}
+
+.svg-anatomy[data-active-system="muscular"] .system-layer:not(.system-muscular):not(.system-silhouette) {
+  opacity: 0.12;
+  filter: grayscale(80%);
+}
+.svg-anatomy[data-active-system="muscular"] .system-muscular {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px rgba(234, 88, 12, 0.7));
+}
+
+.svg-anatomy[data-active-system="lymphatic"] .system-layer:not(.system-lymphatic):not(.system-silhouette) {
+  opacity: 0.12;
+  filter: grayscale(80%);
+}
+.svg-anatomy[data-active-system="lymphatic"] .system-lymphatic {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.8));
+}
+
+.svg-anatomy[data-active-system="all"] .system-layer {
+  opacity: 0.95;
+}
+
 /* 3D Perspective Stage Wrapper */
 .body-stage-wrapper {
   position: relative;

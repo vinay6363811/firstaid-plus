@@ -826,20 +826,98 @@
               </div>
             </div>
 
+                        <!-- Anatomical Systems Mode Toolbar (Cardiovascular, Lymphatic, Skeletal, Respiratory, Nervous, Muscular - Image 2) -->
+            <div class="anatomy-systems-toolbar" aria-label="Anatomical System Explorer">
+              <span class="systems-toolbar-label">Anatomical System:</span>
+              <div class="systems-btn-group" role="tablist">
+                <button type="button" class="system-tab-btn active" data-system="all" title="View all combined anatomical layers">
+                  <span class="system-dot dot-all"></span>
+                  <span>🌐 All</span>
+                </button>
+                <button type="button" class="system-tab-btn" data-system="cardiovascular" title="Cardiovascular System (Heart, Arteries & Veins)">
+                  <span class="system-dot dot-cardio"></span>
+                  <span>🫀 Cardiovascular</span>
+                </button>
+                <button type="button" class="system-tab-btn" data-system="respiratory" title="Respiratory System (Lungs & Airway)">
+                  <span class="system-dot dot-resp"></span>
+                  <span>🫁 Respiratory</span>
+                </button>
+                <button type="button" class="system-tab-btn" data-system="skeletal" title="Skeletal System (Bones & Joints)">
+                  <span class="system-dot dot-skel"></span>
+                  <span>🦴 Skeletal</span>
+                </button>
+                <button type="button" class="system-tab-btn" data-system="nervous" title="Nervous System (Brain, Spinal Cord & Nerves)">
+                  <span class="system-dot dot-nerv"></span>
+                  <span>🧠 Nervous</span>
+                </button>
+                <button type="button" class="system-tab-btn" data-system="muscular" title="Muscular System (Striated Muscles & Tendons - Image 1)">
+                  <span class="system-dot dot-musc"></span>
+                  <span>💪 Muscular</span>
+                </button>
+                <button type="button" class="system-tab-btn" data-system="lymphatic" title="Lymphatic System (Immune & Nodes)">
+                  <span class="system-dot dot-lymph"></span>
+                  <span>🛡️ Lymphatic</span>
+                </button>
+              </div>
+            </div>
+
             <!-- 3D Perspective Stage Wrapper -->
             <div class="body-stage-wrapper">
               <div id="body-model-3d-wrapper" class="body-model-3d-wrapper" title="Click & drag horizontally to rotate model angle">
                 
-                <!-- FRONT VIEW ANATOMY SVG (Realistic Slender Anatomical Silhouette & Exact Coordinates) -->
-                <svg id="svg-anatomy-front" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet">
+                <!-- FRONT VIEW ANATOMY SVG (Multi-System Architecture: Muscular, Cardiovascular, Skeletal, Respiratory, Nervous, Lymphatic) -->
+                <svg id="svg-anatomy-front" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet" data-active-system="all">
                   <defs>
-                    <!-- Realistic Human Semi-Translucent Medical Skin Shading -->
-                    <linearGradient id="bodySkinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#1e2c44" stop-opacity="0.94"/>
-                      <stop offset="25%" stop-color="#18253b" stop-opacity="0.90"/>
-                      <stop offset="50%" stop-color="#121d2e" stop-opacity="0.87"/>
-                      <stop offset="75%" stop-color="#152338" stop-opacity="0.90"/>
-                      <stop offset="100%" stop-color="#0c1524" stop-opacity="0.95"/>
+                    <!-- Realistic Muscular Gradient (Terracotta / Crimson - Image 1) -->
+                    <linearGradient id="muscleGradFront" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#b91c1c" stop-opacity="0.95"/>
+                      <stop offset="35%" stop-color="#c2410c" stop-opacity="0.92"/>
+                      <stop offset="70%" stop-color="#991b1b" stop-opacity="0.95"/>
+                      <stop offset="100%" stop-color="#7f1d1d" stop-opacity="0.98"/>
+                    </linearGradient>
+
+                    <linearGradient id="muscleHighlightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.92"/>
+                      <stop offset="50%" stop-color="#f97316" stop-opacity="0.8"/>
+                      <stop offset="100%" stop-color="#c2410c" stop-opacity="0.9"/>
+                    </linearGradient>
+
+                    <!-- Tendon & Aponeurosis Fascia (Ivory/Cream - Image 1) -->
+                    <linearGradient id="tendonFasciaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.92"/>
+                      <stop offset="50%" stop-color="#fde68a" stop-opacity="0.85"/>
+                      <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0.88"/>
+                    </linearGradient>
+
+                    <!-- Skeletal Bone Gradient (Luminous cyan-white - Image 2) -->
+                    <linearGradient id="boneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#f0f9ff" stop-opacity="0.95"/>
+                      <stop offset="50%" stop-color="#bae6fd" stop-opacity="0.88"/>
+                      <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.92"/>
+                    </linearGradient>
+
+                    <!-- Cardiovascular Arterial Red & Venous Blue -->
+                    <linearGradient id="arteryGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.95"/>
+                      <stop offset="100%" stop-color="#dc2626" stop-opacity="0.9"/>
+                    </linearGradient>
+                    <linearGradient id="veinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.95"/>
+                      <stop offset="100%" stop-color="#2563eb" stop-opacity="0.9"/>
+                    </linearGradient>
+
+                    <!-- Nervous System Gold -->
+                    <linearGradient id="nerveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95"/>
+                      <stop offset="50%" stop-color="#f59e0b" stop-opacity="0.9"/>
+                      <stop offset="100%" stop-color="#d97706" stop-opacity="0.85"/>
+                    </linearGradient>
+
+                    <!-- Lymphatic System Emerald -->
+                    <linearGradient id="lymphGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#86efac" stop-opacity="0.95"/>
+                      <stop offset="50%" stop-color="#22c55e" stop-opacity="0.9"/>
+                      <stop offset="100%" stop-color="#15803d" stop-opacity="0.85"/>
                     </linearGradient>
 
                     <!-- Whole Body Systemic Aura Radial Gradient (Fever, Fatigue, Chills) -->
@@ -859,66 +937,257 @@
                     </filter>
                   </defs>
 
-                  <!-- Whole Body Systemic Aura (for Fever, Fatigue, Chills, Viral) -->
+                  <!-- 0. Whole Body Systemic Aura (for Fever, Fatigue, Chills, Viral) -->
                   <g id="body-systemic-aura-front" class="body-systemic-aura">
                     <path class="aura-silhouette" d="M 150 14 C 131 14 123 26 123 42 C 123 48 125 52 127 56 C 121 56 118 60 118 66 C 118 72 121 76 124 76 C 126 83 132 91 141 95 L 140 104 C 123 108 107 116 99 123 L 88 131 C 82 139 78 153 76 169 L 72 201 C 70 213 68 229 66 249 L 62 271 C 57 275 52 283 50 293 C 48 303 52 313 58 315 C 64 317 70 311 72 303 L 76 279 C 78 275 80 271 82 267 L 86 235 C 88 217 90 203 92 189 C 96 175 102 165 110 161 C 112 173 116 187 118 201 C 120 215 122 227 120 241 C 118 253 116 265 116 275 C 116 293 114 317 114 341 C 114 359 116 369 118 379 C 120 389 118 401 116 417 C 114 435 114 453 116 471 C 116 477 115 481 113 485 L 111 493 C 109 503 107 515 109 521 C 111 525 115 527 123 527 C 131 527 135 523 135 517 L 133 495 C 133 487 135 483 137 479 C 139 471 139 459 137 443 C 135 427 133 411 133 397 C 133 385 135 379 137 373 C 139 365 137 351 135 335 C 133 319 133 303 135 289 C 137 281 141 277 148 277 C 155 277 159 281 161 289 C 163 303 163 319 161 335 C 159 351 157 365 159 373 C 161 379 163 385 163 397 C 163 411 161 427 159 443 C 157 459 157 471 159 479 C 161 483 163 487 163 495 L 161 517 C 161 523 165 527 173 527 C 181 527 185 525 187 521 C 189 515 187 503 185 493 L 183 485 C 181 481 180 477 180 471 C 182 453 182 435 180 417 C 178 401 176 389 178 379 C 180 369 182 359 182 341 C 182 317 180 293 180 275 C 180 265 178 253 176 241 C 174 227 176 215 178 201 C 180 187 184 173 186 161 C 194 165 200 175 204 189 C 206 203 208 217 210 235 L 214 267 C 216 271 218 275 220 279 L 224 303 C 226 311 232 317 238 315 C 244 313 248 303 246 293 C 244 283 239 275 234 271 L 230 249 C 228 229 226 213 224 201 L 220 169 C 218 153 214 139 208 131 L 197 123 C 189 116 173 108 156 104 L 155 95 C 164 91 170 83 172 76 C 175 76 178 72 178 66 C 178 60 175 56 169 56 C 171 52 173 48 173 42 C 173 26 165 14 150 14 Z"/>
                   </g>
 
-                  <!-- Anatomical Silhouette Group (Front Slender Contour + Muscular/Skeletal Lines) -->
-                  <g class="anatomy-silhouette-group">
-                    <!-- Slender Anatomical Human Contour with Ears, Jawline, Delicate Limbs & Arches -->
-                    <path class="body-contour" d="M 150 16 C 133 16 125 28 125 44 C 125 50 127 54 129 58 C 123 58 120 62 120 68 C 120 74 123 78 126 78 C 128 85 134 93 143 97 L 142 106 C 125 110 109 118 101 125 L 90 133 C 84 141 80 155 78 171 L 74 203 C 72 215 70 231 68 251 L 64 273 C 59 277 54 285 52 295 C 50 305 54 315 60 317 C 66 319 72 313 74 305 L 78 281 C 80 277 82 273 84 269 L 88 237 C 90 219 92 205 94 191 C 98 177 104 167 112 163 C 114 175 118 189 120 203 C 122 217 124 229 122 243 C 120 255 118 267 118 277 C 118 295 116 319 116 343 C 116 361 118 371 120 381 C 122 391 120 403 118 419 C 116 437 116 455 118 473 C 118 479 117 483 115 487 L 113 495 C 111 505 109 517 111 523 C 113 527 117 529 125 529 C 133 529 137 525 137 519 L 135 497 C 135 489 137 485 139 481 C 141 473 141 461 139 445 C 137 429 135 413 135 399 C 135 387 137 381 139 375 C 141 367 139 353 137 337 C 135 321 135 305 137 291 C 139 283 143 279 150 279 C 157 279 161 283 163 291 C 165 305 165 321 163 337 C 161 353 159 367 161 375 C 163 381 165 387 165 399 C 165 413 163 429 161 445 C 159 461 159 473 161 481 C 163 485 165 489 165 497 L 163 519 C 163 525 167 529 175 529 C 183 529 187 527 189 523 C 191 517 189 505 187 495 L 185 487 C 183 483 182 479 182 473 C 184 455 184 437 182 419 C 180 403 178 391 180 381 C 182 371 184 361 184 343 C 184 319 182 295 182 277 C 182 267 180 255 178 243 C 176 229 178 217 180 203 C 182 189 186 175 188 163 C 196 167 202 177 206 191 C 208 205 210 219 212 237 L 216 269 C 218 273 220 277 222 281 L 226 305 C 228 313 234 319 240 317 C 246 315 250 305 248 295 C 246 285 241 277 236 273 L 232 251 C 230 231 228 215 226 203 L 222 171 C 220 155 216 141 210 133 L 199 125 C 191 118 175 110 158 106 L 157 97 C 166 93 172 85 174 78 C 177 78 180 74 180 68 C 180 62 177 58 171 58 C 173 54 175 50 175 44 C 175 28 167 16 150 16 Z" fill="url(#bodySkinGrad)" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.6"/>
+                  <!-- 1. BASE BODY SILHOUETTE (Standing Anatomical Position) -->
+                  <g class="system-layer system-silhouette">
+                    <path class="body-contour" d="M 150 16 C 133 16 125 28 125 44 C 125 50 127 54 129 58 C 123 58 120 62 120 68 C 120 74 123 78 126 78 C 128 85 134 93 143 97 L 142 106 C 125 110 109 118 101 125 L 90 133 C 84 141 80 155 78 171 L 74 203 C 72 215 70 231 68 251 L 64 273 C 59 277 54 285 52 295 C 50 305 54 315 60 317 C 66 319 72 313 74 305 L 78 281 C 80 277 82 273 84 269 L 88 237 C 90 219 92 205 94 191 C 98 177 104 167 112 163 C 114 175 118 189 120 203 C 122 217 124 229 122 243 C 120 255 118 267 118 277 C 118 295 116 319 116 343 C 116 361 118 371 120 381 C 122 391 120 403 118 419 C 116 437 116 455 118 473 C 118 479 117 483 115 487 L 113 495 C 111 505 109 517 111 523 C 113 527 117 529 125 529 C 133 529 137 525 137 519 L 135 497 C 135 489 137 485 139 481 C 141 473 141 461 139 445 C 137 429 135 413 135 399 C 135 387 137 381 139 375 C 141 367 139 353 137 337 C 135 321 135 305 137 291 C 139 283 143 279 150 279 C 157 279 161 283 163 291 C 165 305 165 321 163 337 C 161 353 159 367 161 375 C 163 381 165 387 165 399 C 165 413 163 429 161 445 C 159 461 159 473 161 481 C 163 485 165 489 165 497 L 163 519 C 163 525 167 529 175 529 C 183 529 187 527 189 523 C 191 517 189 505 187 495 L 185 487 C 183 483 182 479 182 473 C 184 455 184 437 182 419 C 180 403 178 391 180 381 C 182 371 184 361 184 343 C 184 319 182 295 182 277 C 182 267 180 255 178 243 C 176 229 178 217 180 203 C 182 189 186 175 188 163 C 196 167 202 177 206 191 C 208 205 210 219 212 237 L 216 269 C 218 273 220 277 222 281 L 226 305 C 228 313 234 319 240 317 C 246 315 250 305 248 295 C 246 285 241 277 236 273 L 232 251 C 230 231 228 215 226 203 L 222 171 C 220 155 216 141 210 133 L 199 125 C 191 118 175 110 158 106 L 157 97 C 166 93 172 85 174 78 C 177 78 180 74 180 68 C 180 62 177 58 171 58 C 173 54 175 50 175 44 C 175 28 167 16 150 16 Z" fill="#0b172a" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.5"/>
+                  </g>
 
-                    <!-- Anatomic Clavicles (Collar Bones) -->
-                    <path d="M 112 118 Q 132 122 146 114" stroke="#38bdf8" stroke-width="1.3" stroke-opacity="0.45" fill="none"/>
-                    <path d="M 188 118 Q 168 122 154 114" stroke="#38bdf8" stroke-width="1.3" stroke-opacity="0.45" fill="none"/>
+                  <!-- 2. MUSCULAR SYSTEM LAYER (Striated Muscles & Tendon Fascia - Image 1) -->
+                  <g class="system-layer system-muscular">
+                    <!-- Head & Facial Muscles -->
+                    <path d="M 134 32 Q 150 26 166 32 L 164 42 Q 150 38 136 42 Z" fill="url(#muscleGradFront)"/>
+                    <ellipse cx="140" cy="48" rx="7" ry="5" fill="#c2410c" fill-opacity="0.7"/>
+                    <ellipse cx="160" cy="48" rx="7" ry="5" fill="#c2410c" fill-opacity="0.7"/>
+                    <path d="M 132 54 L 136 72 L 144 74 L 138 54 Z" fill="url(#muscleGradFront)"/>
+                    <path d="M 168 54 L 164 72 L 156 74 L 162 54 Z" fill="url(#muscleGradFront)"/>
+                    <!-- Neck (Sternocleidomastoid) -->
+                    <path d="M 136 78 L 146 108 L 142 108 L 134 82 Z" fill="url(#muscleHighlightGrad)"/>
+                    <path d="M 164 78 L 154 108 L 158 108 L 166 82 Z" fill="url(#muscleHighlightGrad)"/>
 
-                    <!-- Pectoral Muscular Definition -->
-                    <path d="M 114 138 Q 132 152 148 144" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.32" fill="none"/>
-                    <path d="M 186 138 Q 168 152 152 144" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.32" fill="none"/>
+                    <!-- Shoulders (Deltoids - Bilateral) -->
+                    <path d="M 100 120 C 88 126 82 142 80 156 L 90 152 C 92 140 96 128 106 122 Z" fill="url(#muscleGradFront)"/>
+                    <path d="M 200 120 C 212 126 218 142 220 156 L 210 152 C 208 140 204 128 194 122 Z" fill="url(#muscleGradFront)"/>
 
-                    <!-- Midline Sternum & Rib Costal Arch -->
-                    <line x1="150" y1="116" x2="150" y2="182" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3" stroke-opacity="0.35"/>
-                    <path d="M 124 186 Q 150 174 176 186" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.3" fill="none"/>
+                    <!-- Pectoralis Major (Chest Musculature) -->
+                    <!-- Right Pectoral (Viewer Left) -->
+                    <path d="M 112 118 C 128 120 146 116 148 118 L 148 152 C 136 156 122 152 112 142 Z" fill="url(#muscleGradFront)"/>
+                    <path d="M 116 124 Q 134 130 146 124" stroke="#ea580c" stroke-width="1.2" fill="none"/>
+                    <path d="M 114 134 Q 132 142 146 136" stroke="#ea580c" stroke-width="1.2" fill="none"/>
+                    <path d="M 118 142 Q 130 150 144 146" stroke="#ea580c" stroke-width="1.2" fill="none"/>
 
-                    <!-- Toned Rectus Abdominis & Umbilicus (Navel) -->
-                    <line x1="150" y1="186" x2="150" y2="252" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.25"/>
-                    <line x1="134" y1="198" x2="166" y2="198" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.22"/>
-                    <line x1="132" y1="216" x2="168" y2="216" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.22"/>
-                    <circle cx="150" cy="226" r="1.8" fill="#38bdf8" fill-opacity="0.6"/>
-                    <line x1="134" y1="238" x2="166" y2="238" stroke="#38bdf8" stroke-width="0.8" stroke-opacity="0.22"/>
+                    <!-- Left Pectoral (Viewer Right) -->
+                    <path d="M 188 118 C 172 120 154 116 152 118 L 152 152 C 164 156 178 152 188 142 Z" fill="url(#muscleGradFront)"/>
+                    <path d="M 184 124 Q 166 130 154 124" stroke="#ea580c" stroke-width="1.2" fill="none"/>
+                    <path d="M 186 134 Q 168 142 154 136" stroke="#ea580c" stroke-width="1.2" fill="none"/>
+                    <path d="M 182 142 Q 170 150 156 146" stroke="#ea580c" stroke-width="1.2" fill="none"/>
 
-                    <!-- Pelvic Inguinal Grooves -->
-                    <path d="M 122 246 Q 136 266 148 274" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.3" fill="none"/>
-                    <path d="M 178 246 Q 164 266 152 274" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.3" fill="none"/>
+                    <!-- Biceps & Forearms (Arms in Anatomical Position) -->
+                    <!-- Right Arm -->
+                    <path d="M 82 158 C 78 174 76 190 78 202 L 86 198 C 88 186 90 172 92 158 Z" fill="url(#muscleGradFront)"/>
+                    <path d="M 76 206 C 72 226 68 248 66 268 L 76 266 C 78 246 82 226 84 206 Z" fill="url(#muscleHighlightGrad)"/>
+                    <!-- Left Arm -->
+                    <path d="M 218 158 C 222 174 224 190 222 202 L 214 198 C 212 186 210 172 208 158 Z" fill="url(#muscleGradFront)"/>
+                    <path d="M 224 206 C 228 226 232 248 234 268 L 224 266 C 222 246 218 226 216 206 Z" fill="url(#muscleHighlightGrad)"/>
 
-                    <!-- Knee Patella Contours & Tendons -->
-                    <ellipse cx="128" cy="378" rx="8" ry="9" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4" fill="none"/>
-                    <ellipse cx="172" cy="378" rx="8" ry="9" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.4" fill="none"/>
-                    <line x1="128" y1="387" x2="128" y2="398" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.35"/>
-                    <line x1="172" y1="387" x2="172" y2="398" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.35"/>
+                    <!-- Rectus Abdominis (6-Pack / 8-Pack Striations) -->
+                    <!-- Upper Pair -->
+                    <rect x="136" y="160" width="12" height="18" rx="3" fill="url(#muscleGradFront)"/>
+                    <rect x="152" y="160" width="12" height="18" rx="3" fill="url(#muscleGradFront)"/>
+                    <!-- Mid Pair -->
+                    <rect x="135" y="182" width="13" height="19" rx="3" fill="url(#muscleGradFront)"/>
+                    <rect x="152" y="182" width="13" height="19" rx="3" fill="url(#muscleGradFront)"/>
+                    <!-- Lower Pair -->
+                    <rect x="135" y="205" width="13" height="20" rx="3" fill="url(#muscleGradFront)"/>
+                    <rect x="152" y="205" width="13" height="20" rx="3" fill="url(#muscleGradFront)"/>
+                    <!-- Sub-umbilical Pair -->
+                    <rect x="137" y="229" width="11" height="20" rx="3" fill="url(#muscleGradFront)"/>
+                    <rect x="152" y="229" width="11" height="20" rx="3" fill="url(#muscleGradFront)"/>
 
-                    <!-- Tibial Crests (Shins) -->
-                    <line x1="128" y1="404" x2="128" y2="456" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="2 3" stroke-opacity="0.3"/>
-                    <line x1="172" y1="404" x2="172" y2="456" stroke="#38bdf8" stroke-width="0.8" stroke-dasharray="2 3" stroke-opacity="0.3"/>
+                    <!-- White Linea Alba & Tendinous Inscriptions (Ivory Fascia) -->
+                    <line x1="150" y1="156" x2="150" y2="252" stroke="url(#tendonFasciaGrad)" stroke-width="1.8"/>
+                    <line x1="134" y1="180" x2="166" y2="180" stroke="url(#tendonFasciaGrad)" stroke-width="1.2"/>
+                    <line x1="133" y1="203" x2="167" y2="203" stroke="url(#tendonFasciaGrad)" stroke-width="1.2"/>
+                    <line x1="135" y1="227" x2="165" y2="227" stroke="url(#tendonFasciaGrad)" stroke-width="1.2"/>
 
-                    <!-- Ankle Malleolus Bones -->
-                    <circle cx="118" cy="482" r="2.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.45" fill="none"/>
-                    <circle cx="138" cy="480" r="2.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.45" fill="none"/>
-                    <circle cx="162" cy="480" r="2.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.45" fill="none"/>
-                    <circle cx="182" cy="482" r="2.8" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.45" fill="none"/>
+                    <!-- External Obliques (Flanks) -->
+                    <path d="M 120 178 C 122 198 124 218 122 238 L 132 236 C 132 216 130 196 128 178 Z" fill="url(#muscleHighlightGrad)"/>
+                    <path d="M 180 178 C 178 198 176 218 178 238 L 168 236 C 168 216 170 196 172 178 Z" fill="url(#muscleHighlightGrad)"/>
+
+                    <!-- Inguinal Ligament & Pelvic Fascia -->
+                    <path d="M 124 246 Q 150 256 176 246 L 174 270 Q 150 278 126 270 Z" fill="url(#tendonFasciaGrad)" fill-opacity="0.8"/>
+
+                    <!-- Quadriceps Femoris (Thigh Muscles) -->
+                    <!-- Right Thigh (Viewer Left) -->
+                    <path d="M 120 276 C 116 304 116 336 122 364 L 132 362 C 130 334 130 304 132 276 Z" fill="url(#muscleGradFront)"/>
+                    <!-- Vastus Medialis (Teardrop Muscle) -->
+                    <ellipse cx="134" cy="354" rx="6" ry="12" fill="url(#muscleHighlightGrad)"/>
+                    <!-- Vastus Lateralis -->
+                    <ellipse cx="120" cy="326" rx="5" ry="22" fill="url(#muscleHighlightGrad)"/>
+
+                    <!-- Left Thigh (Viewer Right) -->
+                    <path d="M 180 276 C 184 304 184 336 178 364 L 168 362 C 170 334 170 304 168 276 Z" fill="url(#muscleGradFront)"/>
+                    <!-- Vastus Medialis -->
+                    <ellipse cx="166" cy="354" rx="6" ry="12" fill="url(#muscleHighlightGrad)"/>
+                    <!-- Vastus Lateralis -->
+                    <ellipse cx="180" cy="326" rx="5" ry="22" fill="url(#muscleHighlightGrad)"/>
+
+                    <!-- Patellar Tendons & Retinacula (Ivory Fascia) -->
+                    <ellipse cx="128" cy="378" rx="8" ry="9" fill="url(#tendonFasciaGrad)" fill-opacity="0.85"/>
+                    <ellipse cx="172" cy="378" rx="8" ry="9" fill="url(#tendonFasciaGrad)" fill-opacity="0.85"/>
+                    <line x1="128" y1="387" x2="128" y2="400" stroke="url(#tendonFasciaGrad)" stroke-width="2.5"/>
+                    <line x1="172" y1="387" x2="172" y2="400" stroke="url(#tendonFasciaGrad)" stroke-width="2.5"/>
+
+                    <!-- Lower Leg Musculature (Tibialis Anterior & Calves) -->
+                    <!-- Right Leg -->
+                    <path d="M 120 402 C 116 422 118 446 124 468 L 132 466 C 128 446 126 422 128 402 Z" fill="url(#muscleGradFront)"/>
+                    <!-- Left Leg -->
+                    <path d="M 180 402 C 184 422 182 446 176 468 L 168 466 C 172 446 174 422 172 402 Z" fill="url(#muscleGradFront)"/>
+
+                    <!-- Tendons of Ankles & Feet -->
+                    <line x1="124" y1="468" x2="124" y2="512" stroke="url(#tendonFasciaGrad)" stroke-width="2"/>
+                    <line x1="176" y1="468" x2="176" y2="512" stroke="url(#tendonFasciaGrad)" stroke-width="2"/>
+                  </g>
+
+                  <!-- 3. SKELETAL SYSTEM LAYER (Bones & Joints - Image 2) -->
+                  <g class="system-layer system-skeletal">
+                    <!-- Cranium & Facial Bones -->
+                    <ellipse cx="150" cy="44" rx="20" ry="22" fill="url(#boneGrad)" fill-opacity="0.4" stroke="#7dd3fc" stroke-width="1.2"/>
+                    <ellipse cx="141" cy="48" rx="3.5" ry="3.5" fill="#0f172a" stroke="#38bdf8" stroke-width="0.8"/>
+                    <ellipse cx="159" cy="48" rx="3.5" ry="3.5" fill="#0f172a" stroke="#38bdf8" stroke-width="0.8"/>
+                    <!-- Mandible (Jawbone) -->
+                    <path d="M 140 64 Q 150 74 160 64" stroke="#7dd3fc" stroke-width="1.5" fill="none"/>
+
+                    <!-- Cervical Spine -->
+                    <line x1="150" y1="76" x2="150" y2="108" stroke="#38bdf8" stroke-width="4" stroke-dasharray="2 3"/>
+
+                    <!-- Clavicles (Collarbones) -->
+                    <path d="M 112 116 Q 132 120 148 112" stroke="#e0f2fe" stroke-width="2.2" fill="none"/>
+                    <path d="M 188 116 Q 168 120 152 112" stroke="#e0f2fe" stroke-width="2.2" fill="none"/>
+
+                    <!-- Sternum (Breastbone) -->
+                    <rect x="148" y="114" width="4" height="42" rx="1.5" fill="#e0f2fe"/>
+
+                    <!-- Ribcage (Bilateral Rib Arcs) -->
+                    <path d="M 148 122 Q 130 126 122 134" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 152 122 Q 170 126 178 134" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 148 132 Q 126 136 120 148" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 152 132 Q 174 136 180 148" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 148 142 Q 124 148 118 162" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 152 142 Q 176 148 182 162" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 148 152 Q 124 160 120 176" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 152 152 Q 176 160 180 176" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+
+                    <!-- Lumbar Spine -->
+                    <line x1="150" y1="160" x2="150" y2="236" stroke="#38bdf8" stroke-width="5" stroke-dasharray="3 3"/>
+
+                    <!-- Pelvic Girdle (Iliac Crests) -->
+                    <path d="M 124 240 Q 150 252 176 240 L 172 266 Q 150 274 128 266 Z" fill="url(#boneGrad)" fill-opacity="0.5" stroke="#38bdf8" stroke-width="1.4"/>
+
+                    <!-- Arm Bones (Humerus, Radius, Ulna) -->
+                    <line x1="96" y1="126" x2="82" y2="198" stroke="#e0f2fe" stroke-width="2.6"/>
+                    <circle cx="82" cy="198" r="3.5" fill="#7dd3fc"/>
+                    <line x1="82" y1="202" x2="70" y2="268" stroke="#e0f2fe" stroke-width="2"/>
+
+                    <line x1="204" y1="126" x2="218" y2="198" stroke="#e0f2fe" stroke-width="2.6"/>
+                    <circle cx="218" cy="198" r="3.5" fill="#7dd3fc"/>
+                    <line x1="218" y1="202" x2="230" y2="268" stroke="#e0f2fe" stroke-width="2"/>
+
+                    <!-- Leg Bones (Femur, Patella, Tibia, Fibula) -->
+                    <line x1="132" y1="272" x2="128" y2="372" stroke="#e0f2fe" stroke-width="3.5"/>
+                    <circle cx="128" cy="378" r="5" fill="#38bdf8"/>
+                    <line x1="128" y1="384" x2="124" y2="476" stroke="#e0f2fe" stroke-width="3"/>
+
+                    <line x1="168" y1="272" x2="172" y2="372" stroke="#e0f2fe" stroke-width="3.5"/>
+                    <circle cx="172" cy="378" r="5" fill="#38bdf8"/>
+                    <line x1="172" y1="384" x2="176" y2="476" stroke="#e0f2fe" stroke-width="3"/>
+                  </g>
+
+                  <!-- 4. CARDIOVASCULAR SYSTEM LAYER (Heart, Arteries & Veins - Image 2) -->
+                  <g class="system-layer system-cardiovascular">
+                    <!-- Great Arterial Vessels (Red) -->
+                    <!-- Aortic Arch -->
+                    <path d="M 158 144 C 158 132 148 126 142 134" stroke="url(#arteryGrad)" stroke-width="3.2" fill="none"/>
+                    <!-- Carotid Arteries (to Head) -->
+                    <line x1="148" y1="128" x2="142" y2="68" stroke="url(#arteryGrad)" stroke-width="1.8"/>
+                    <line x1="154" y1="128" x2="158" y2="68" stroke="url(#arteryGrad)" stroke-width="1.8"/>
+                    <!-- Subclavian & Brachial Arteries (Arms) -->
+                    <path d="M 148 126 L 102 124 L 84 196 L 72 268" stroke="url(#arteryGrad)" stroke-width="1.8" fill="none"/>
+                    <path d="M 154 126 L 198 124 L 216 196 L 228 268" stroke="url(#arteryGrad)" stroke-width="1.8" fill="none"/>
+                    <!-- Abdominal Aorta -->
+                    <line x1="154" y1="152" x2="152" y2="236" stroke="url(#arteryGrad)" stroke-width="2.8"/>
+                    <!-- Iliac & Femoral Arteries (Legs) -->
+                    <path d="M 152 236 L 134 268 L 128 368 L 124 476" stroke="url(#arteryGrad)" stroke-width="2" fill="none"/>
+                    <path d="M 152 236 L 166 268 L 172 368 L 176 476" stroke="url(#arteryGrad)" stroke-width="2" fill="none"/>
+
+                    <!-- Great Venous Vessels (Blue) -->
+                    <!-- Superior & Inferior Vena Cava -->
+                    <line x1="146" y1="124" x2="146" y2="232" stroke="url(#veinGrad)" stroke-width="2.8"/>
+                    <!-- Jugular Veins -->
+                    <line x1="144" y1="124" x2="140" y2="68" stroke="url(#veinGrad)" stroke-width="1.6"/>
+                    <line x1="156" y1="124" x2="160" y2="68" stroke="url(#veinGrad)" stroke-width="1.6"/>
+                    <!-- Femoral Veins -->
+                    <path d="M 146 232 L 130 268 L 126 368 L 122 476" stroke="url(#veinGrad)" stroke-width="1.8" fill="none"/>
+                    <path d="M 146 232 L 170 268 L 174 368 L 178 476" stroke="url(#veinGrad)" stroke-width="1.8" fill="none"/>
+
+                    <!-- Anatomical Heart (Cardiac Apex & Ventricles) -->
+                    <circle cx="159" cy="150" r="15" class="organ-heart-halo"/>
+                    <path d="M 159 140 C 152 134 143 142 151 154 L 159 163 L 167 154 C 175 142 166 134 159 140 Z" class="organ-heart-body"/>
+                  </g>
+
+                  <!-- 5. RESPIRATORY SYSTEM LAYER (Airway & Lungs - Image 2) -->
+                  <g class="system-layer system-respiratory">
+                    <!-- Trachea (Cartilage Rings) -->
+                    <line x1="150" y1="84" x2="150" y2="124" stroke="#06b6d4" stroke-width="4" stroke-dasharray="1.5 2"/>
+                    <!-- Primary Bronchi Bifurcation -->
+                    <path d="M 150 124 L 140 134 M 150 124 L 160 134" stroke="#06b6d4" stroke-width="2.5" fill="none"/>
+                    <!-- Left Lung (Viewer Right) -->
+                    <path d="M 158 126 C 172 128 182 140 180 166 C 176 176 164 178 156 172 C 154 157 156 134 158 126 Z" class="organ-lung"/>
+                    <!-- Right Lung (Viewer Left) -->
+                    <path d="M 142 126 C 128 128 118 140 120 166 C 124 176 136 178 144 172 C 146 157 144 134 142 126 Z" class="organ-lung"/>
+                  </g>
+
+                  <!-- 6. NERVOUS SYSTEM LAYER (Brain, Spinal Cord & Nerves - Image 2) -->
+                  <g class="system-layer system-nervous">
+                    <!-- Brain & Cerebral Hemispheres -->
+                    <path d="M 136 34 Q 150 26 164 34 Q 168 46 160 52 Q 150 48 140 52 Q 132 46 136 34 Z" fill="url(#nerveGrad)" fill-opacity="0.75" stroke="#fef08a" stroke-width="1.2"/>
+                    <!-- Brainstem & Central Spinal Cord -->
+                    <line x1="150" y1="54" x2="150" y2="242" stroke="url(#nerveGrad)" stroke-width="2.5"/>
+                    <!-- Brachial Plexus Nerves (Arms) -->
+                    <path d="M 150 106 L 102 122 L 82 196 L 70 268" stroke="url(#nerveGrad)" stroke-width="1.2" stroke-dasharray="3 2" fill="none"/>
+                    <path d="M 150 106 L 198 122 L 218 196 L 230 268" stroke="url(#nerveGrad)" stroke-width="1.2" stroke-dasharray="3 2" fill="none"/>
+                    <!-- Intercostal Nerves -->
+                    <path d="M 150 134 L 126 144 M 150 146 L 124 158 M 150 158 L 126 172" stroke="url(#nerveGrad)" stroke-width="0.8" fill="none"/>
+                    <path d="M 150 134 L 174 144 M 150 146 L 176 158 M 150 158 L 174 172" stroke="url(#nerveGrad)" stroke-width="0.8" fill="none"/>
+                    <!-- Femoral Nerves (Legs) -->
+                    <path d="M 150 242 L 132 268 L 126 368 L 122 476" stroke="url(#nerveGrad)" stroke-width="1.4" stroke-dasharray="3 2" fill="none"/>
+                    <path d="M 150 242 L 168 268 L 174 368 L 178 476" stroke="url(#nerveGrad)" stroke-width="1.4" stroke-dasharray="3 2" fill="none"/>
+                  </g>
+
+                  <!-- 7. LYMPHATIC SYSTEM LAYER (Immune Nodes & Vessels - Image 2) -->
+                  <g class="system-layer system-lymphatic">
+                    <!-- Cervical Lymph Nodes -->
+                    <circle cx="140" cy="92" r="2.2" fill="url(#lymphGrad)"/>
+                    <circle cx="160" cy="92" r="2.2" fill="url(#lymphGrad)"/>
+                    <circle cx="142" cy="100" r="2" fill="url(#lymphGrad)"/>
+                    <circle cx="158" cy="100" r="2" fill="url(#lymphGrad)"/>
+                    <!-- Axillary Nodes (Underarms) -->
+                    <circle cx="114" cy="154" r="2.8" fill="url(#lymphGrad)"/>
+                    <circle cx="110" cy="160" r="2.2" fill="url(#lymphGrad)"/>
+                    <circle cx="186" cy="154" r="2.8" fill="url(#lymphGrad)"/>
+                    <circle cx="190" cy="160" r="2.2" fill="url(#lymphGrad)"/>
+                    <!-- Thoracic Duct & Cisterna Chyli -->
+                    <line x1="148" y1="102" x2="148" y2="204" stroke="url(#lymphGrad)" stroke-width="1.2" stroke-dasharray="2 2"/>
+                    <!-- Spleen (Left Upper Quadrant) -->
+                    <ellipse cx="168" cy="180" rx="6" ry="8" fill="url(#lymphGrad)" stroke="#86efac" stroke-width="1"/>
+                    <!-- Inguinal Lymph Nodes (Groin) -->
+                    <circle cx="134" cy="256" r="2.5" fill="url(#lymphGrad)"/>
+                    <circle cx="138" cy="262" r="2" fill="url(#lymphGrad)"/>
+                    <circle cx="166" cy="256" r="2.5" fill="url(#lymphGrad)"/>
+                    <circle cx="162" cy="262" r="2" fill="url(#lymphGrad)"/>
                   </g>
 
                   <!-- ======================================================= -->
-                  <!-- EXACT ANATOMICAL ZONES (FRONT VIEW)                    -->
+                  <!-- INTERACTIVE TARGET ANATOMICAL ZONES                     -->
                   <!-- ======================================================= -->
 
                   <!-- 1. Head & Cranium (Neurological) -->
                   <g class="anatomy-zone zone-head" data-target-id="head" data-organ-name="Head & Brain (Cranium)">
                     <ellipse cx="150" cy="46" rx="24" ry="28" class="zone-surface"/>
-                    <!-- Stylized cerebral cortex sulci -->
-                    <path d="M 142 34 Q 148 28 156 32 Q 162 38 156 46 Q 148 50 142 42" class="internal-organ-detail"/>
-                    <path d="M 138 50 Q 146 56 154 54 Q 160 56 164 50" class="internal-organ-detail"/>
                     <circle cx="150" cy="46" r="4.5" class="zone-target-beacon"/>
                   </g>
 
@@ -926,8 +1195,6 @@
                   <g class="anatomy-zone zone-eyes" data-target-id="eyes" data-organ-name="Eyes & Optical Region">
                     <ellipse cx="139" cy="48" rx="4.5" ry="3" class="zone-surface"/>
                     <ellipse cx="161" cy="48" rx="4.5" ry="3" class="zone-surface"/>
-                    <circle cx="139" cy="48" r="1.5" fill="#38bdf8"/>
-                    <circle cx="161" cy="48" r="1.5" fill="#38bdf8"/>
                     <circle cx="150" cy="48" r="3.5" class="zone-target-beacon" style="opacity:0.3;"/>
                   </g>
 
@@ -940,7 +1207,6 @@
                   <!-- 4. Throat & Cervical Airway (Trachea & Larynx) -->
                   <g class="anatomy-zone zone-throat" data-target-id="throat" data-organ-name="Throat & Upper Airway">
                     <rect x="142" y="86" width="16" height="20" rx="4" class="zone-surface"/>
-                    <line x1="145" y1="96" x2="155" y2="96" stroke="#06b6d4" stroke-width="1.5" stroke-opacity="0.8"/>
                     <circle cx="150" cy="96" r="3.5" class="zone-target-beacon"/>
                   </g>
 
@@ -954,19 +1220,16 @@
                     <circle cx="202" cy="120" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 6. Lungs & Respiratory Tract (Bilateral Bronchial Lobes) -->
+                  <!-- 6. Lungs & Respiratory Tract -->
                   <g class="anatomy-zone zone-lungs" data-target-id="lungs" data-organ-name="Lungs & Bronchial Tree">
-                    <!-- Left Lung (Viewer Right) -->
-                    <path d="M 158 126 C 172 128 182 140 180 166 C 176 176 164 178 156 172 C 154 157 156 134 158 126 Z" class="zone-surface organ-lung"/>
-                    <!-- Right Lung (Viewer Left) -->
-                    <path d="M 142 126 C 128 128 118 140 120 166 C 124 176 136 178 144 172 C 146 157 144 134 142 126 Z" class="zone-surface organ-lung"/>
+                    <path d="M 158 126 C 172 128 182 140 180 166 C 176 176 164 178 156 172 C 154 157 156 134 158 126 Z" class="zone-surface"/>
+                    <path d="M 142 126 C 128 128 118 140 120 166 C 124 176 136 178 144 172 C 146 157 144 134 142 126 Z" class="zone-surface"/>
                     <circle cx="150" cy="146" r="3.5" class="zone-target-beacon" style="opacity:0.3;"/>
                   </g>
 
                   <!-- 7. Heart (Anatomically Located in Left Mid-Thorax with Active Cardiac Pulse) -->
                   <g class="anatomy-zone zone-heart" data-target-id="heart" data-organ-name="Heart (Cardiac Focus)">
-                    <circle cx="159" cy="150" r="15" class="zone-surface organ-heart-halo"/>
-                    <path d="M 159 140 C 152 134 143 142 151 154 L 159 163 L 167 154 C 175 142 166 134 159 140 Z" class="organ-heart-body"/>
+                    <circle cx="159" cy="150" r="15" class="zone-surface"/>
                     <circle cx="159" cy="151" r="4.5" class="zone-target-beacon heart-active-beacon"/>
                   </g>
 
@@ -982,7 +1245,7 @@
                     <circle cx="150" cy="254" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 10. Arms & Forearms (Slender Brachial Curves) -->
+                  <!-- 10. Arms & Forearms -->
                   <g class="anatomy-zone zone-arm-left" data-target-id="arms" data-organ-name="Right Arm (Brachial)">
                     <rect x="76" y="142" width="16" height="50" rx="7" transform="rotate(12 84 167)" class="zone-surface"/>
                   </g>
@@ -990,7 +1253,7 @@
                     <rect x="208" y="142" width="16" height="50" rx="7" transform="rotate(-12 216 167)" class="zone-surface"/>
                   </g>
 
-                  <!-- 11. Hands & Wrists (Distal Extremities) -->
+                  <!-- 11. Hands & Wrists -->
                   <g class="anatomy-zone zone-hand-left" data-target-id="hands" data-organ-name="Right Hand & Wrist">
                     <ellipse cx="64" cy="292" rx="11" ry="14" class="zone-surface"/>
                     <circle cx="64" cy="292" r="4" class="zone-target-beacon"/>
@@ -1000,7 +1263,7 @@
                     <circle cx="236" cy="292" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 12. Thighs (Slender Femoral & Quadriceps) -->
+                  <!-- 12. Thighs -->
                   <g class="anatomy-zone zone-thigh-left" data-target-id="legs" data-organ-name="Right Thigh (Femoral)">
                     <rect x="118" y="284" width="20" height="72" rx="9" transform="rotate(2 128 320)" class="zone-surface"/>
                   </g>
@@ -1008,7 +1271,7 @@
                     <rect x="162" y="284" width="20" height="72" rx="9" transform="rotate(-2 172 320)" class="zone-surface"/>
                   </g>
 
-                  <!-- 13. Knees & Patella Joints (Exact Knee Height y=378) -->
+                  <!-- 13. Knees & Patella Joints -->
                   <g class="anatomy-zone zone-knee-left" data-target-id="knees" data-organ-name="Right Knee Joint (Patella)">
                     <circle cx="128" cy="378" r="13" class="zone-surface"/>
                     <circle cx="128" cy="378" r="4.5" class="zone-target-beacon"/>
@@ -1018,7 +1281,7 @@
                     <circle cx="172" cy="378" r="4.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 14. Calves & Shins (Tibia / Distal Leg) -->
+                  <!-- 14. Calves & Shins -->
                   <g class="anatomy-zone zone-calf-left" data-target-id="legs" data-organ-name="Right Calf & Shin">
                     <rect x="118" y="398" width="18" height="66" rx="8" class="zone-surface"/>
                   </g>
@@ -1026,7 +1289,7 @@
                     <rect x="164" y="398" width="18" height="66" rx="8" class="zone-surface"/>
                   </g>
 
-                  <!-- 15. Ankles (Focused Malleolus Beacon at y=478) -->
+                  <!-- 15. Ankles -->
                   <g class="anatomy-zone zone-ankle-left" data-target-id="ankles" data-organ-name="Right Ankle Joint">
                     <circle cx="128" cy="478" r="11" class="zone-surface"/>
                     <circle cx="128" cy="478" r="4.5" class="zone-target-beacon"/>
@@ -1036,7 +1299,7 @@
                     <circle cx="172" cy="478" r="4.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 16. Feet & Toes (Arches & Phalanges) -->
+                  <!-- 16. Feet & Toes -->
                   <g class="anatomy-zone zone-foot-left" data-target-id="feet" data-organ-name="Right Foot & Toes">
                     <path d="M 116 492 L 134 492 L 132 526 L 110 524 Z" class="zone-surface"/>
                     <circle cx="122" cy="512" r="3.5" class="zone-target-beacon"/>
@@ -1046,56 +1309,135 @@
                     <circle cx="178" cy="512" r="3.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 17. Full Body Skin Surface (Dermatological) -->
+                  <!-- 17. Full Body Skin Surface -->
                   <g class="anatomy-zone zone-skin-front" data-target-id="skin" data-organ-name="Cutaneous Skin Surface (Front)" style="display:none;">
                     <circle cx="150" cy="275" r="5" class="zone-target-beacon"/>
                   </g>
                 </svg>
 
-                <!-- BACK VIEW ANATOMY SVG (Toggled via Switch or Back Symptoms) -->
-                <svg id="svg-anatomy-back" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet" style="display: none;">
+                <!-- BACK VIEW ANATOMY SVG (Multi-System Architecture: Muscular, Skeletal, Nervous, Cardiovascular, Lymphatic) -->
+                <svg id="svg-anatomy-back" class="svg-anatomy" viewBox="0 0 300 550" preserveAspectRatio="xMidYMid meet" data-active-system="all" style="display: none;">
                   <defs>
-                    <linearGradient id="bodySkinBackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#1b283e" stop-opacity="0.94"/>
-                      <stop offset="35%" stop-color="#142133" stop-opacity="0.90"/>
-                      <stop offset="70%" stop-color="#101b2a" stop-opacity="0.87"/>
-                      <stop offset="100%" stop-color="#091320" stop-opacity="0.95"/>
+                    <linearGradient id="muscleGradBack" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#b91c1c" stop-opacity="0.95"/>
+                      <stop offset="40%" stop-color="#c2410c" stop-opacity="0.92"/>
+                      <stop offset="80%" stop-color="#991b1b" stop-opacity="0.95"/>
+                      <stop offset="100%" stop-color="#7f1d1d" stop-opacity="0.98"/>
                     </linearGradient>
                   </defs>
 
-                  <!-- Whole Body Systemic Aura (Back) -->
+                  <!-- 0. Whole Body Systemic Aura (Back) -->
                   <g id="body-systemic-aura-back" class="body-systemic-aura">
                     <path class="aura-silhouette" d="M 150 14 C 131 14 123 26 123 42 C 123 48 125 52 127 56 C 121 56 118 60 118 66 C 118 72 121 76 124 76 C 126 83 132 91 141 95 L 140 104 C 123 108 107 116 99 123 L 88 131 C 82 139 78 153 76 169 L 72 201 C 70 213 68 229 66 249 L 62 271 C 57 275 52 283 50 293 C 48 303 52 313 58 315 C 64 317 70 311 72 303 L 76 279 C 78 275 80 271 82 267 L 86 235 C 88 217 90 203 92 189 C 96 175 102 165 110 161 C 112 173 116 187 118 201 C 120 215 122 227 120 241 C 118 253 116 265 116 275 C 116 293 114 317 114 341 C 114 359 116 369 118 379 C 120 389 118 401 116 417 C 114 435 114 453 116 471 C 116 477 115 481 113 485 L 111 493 C 109 503 107 515 109 521 C 111 525 115 527 123 527 C 131 527 135 523 135 517 L 133 495 C 133 487 135 483 137 479 C 139 471 139 459 137 443 C 135 427 133 411 133 397 C 133 385 135 379 137 373 C 139 365 137 351 135 335 C 133 319 133 303 135 289 C 137 281 141 277 148 277 C 155 277 159 281 161 289 C 163 303 163 319 161 335 C 159 351 157 365 159 373 C 161 379 163 385 163 397 C 163 411 161 427 159 443 C 157 459 157 471 159 479 C 161 483 163 487 163 495 L 161 517 C 161 523 165 527 173 527 C 181 527 185 525 187 521 C 189 515 187 503 185 493 L 183 485 C 181 481 180 477 180 471 C 182 453 182 435 180 417 C 178 401 176 389 178 379 C 180 369 182 359 182 341 C 182 317 180 293 180 275 C 180 265 178 253 176 241 C 174 227 176 215 178 201 C 180 187 184 173 186 161 C 194 165 200 175 204 189 C 206 203 208 217 210 235 L 214 267 C 216 271 218 275 220 279 L 224 303 C 226 311 232 317 238 315 C 244 313 248 303 246 293 C 244 283 239 275 234 271 L 230 249 C 228 229 226 213 224 201 L 220 169 C 218 153 214 139 208 131 L 197 123 C 189 116 173 108 156 104 L 155 95 C 164 91 170 83 172 76 C 175 76 178 72 178 66 C 178 60 175 56 169 56 C 171 52 173 48 173 42 C 173 26 165 14 150 14 Z"/>
                   </g>
 
-                  <!-- Back Anatomical Silhouette Group -->
-                  <g class="anatomy-silhouette-group">
-                    <path class="body-contour" d="M 150 16 C 133 16 125 28 125 44 C 125 50 127 54 129 58 C 123 58 120 62 120 68 C 120 74 123 78 126 78 C 128 85 134 93 143 97 L 142 106 C 125 110 109 118 101 125 L 90 133 C 84 141 80 155 78 171 L 74 203 C 72 215 70 231 68 251 L 64 273 C 59 277 54 285 52 295 C 50 305 54 315 60 317 C 66 319 72 313 74 305 L 78 281 C 80 277 82 273 84 269 L 88 237 C 90 219 92 205 94 191 C 98 177 104 167 112 163 C 114 175 118 189 120 203 C 122 217 124 229 122 243 C 120 255 118 267 118 277 C 118 295 116 319 116 343 C 116 361 118 371 120 381 C 122 391 120 403 118 419 C 116 437 116 455 118 473 C 118 479 117 483 115 487 L 113 495 C 111 505 109 517 111 523 C 113 527 117 529 125 529 C 133 529 137 525 137 519 L 135 497 C 135 489 137 485 139 481 C 141 473 141 461 139 445 C 137 429 135 413 135 399 C 135 387 137 381 139 375 C 141 367 139 353 137 337 C 135 321 135 305 137 291 C 139 283 143 279 150 279 C 157 279 161 283 163 291 C 165 305 165 321 163 337 C 161 353 159 367 161 375 C 163 381 165 387 165 399 C 165 413 163 429 161 445 C 159 461 159 473 161 481 C 163 485 165 489 165 497 L 163 519 C 163 525 167 529 175 529 C 183 529 187 527 189 523 C 191 517 189 505 187 495 L 185 487 C 183 483 182 479 182 473 C 184 455 184 437 182 419 C 180 403 178 391 180 381 C 182 371 184 361 184 343 C 184 319 182 295 182 277 C 182 267 180 255 178 243 C 176 229 178 217 180 203 C 182 189 186 175 188 163 C 196 167 202 177 206 191 C 208 205 210 219 212 237 L 216 269 C 218 273 220 277 222 281 L 226 305 C 228 313 234 319 240 317 C 246 315 250 305 248 295 C 246 285 241 277 236 273 L 232 251 C 230 231 228 215 226 203 L 222 171 C 220 155 216 141 210 133 L 199 125 C 191 118 175 110 158 106 L 157 97 C 166 93 172 85 174 78 C 177 78 180 74 180 68 C 180 62 177 58 171 58 C 173 54 175 50 175 44 C 175 28 167 16 150 16 Z" fill="url(#bodySkinBackGrad)" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.6"/>
+                  <!-- 1. BASE BODY SILHOUETTE (Back) -->
+                  <g class="system-layer system-silhouette">
+                    <path class="body-contour" d="M 150 16 C 133 16 125 28 125 44 C 125 50 127 54 129 58 C 123 58 120 62 120 68 C 120 74 123 78 126 78 C 128 85 134 93 143 97 L 142 106 C 125 110 109 118 101 125 L 90 133 C 84 141 80 155 78 171 L 74 203 C 72 215 70 231 68 251 L 64 273 C 59 277 54 285 52 295 C 50 305 54 315 60 317 C 66 319 72 313 74 305 L 78 281 C 80 277 82 273 84 269 L 88 237 C 90 219 92 205 94 191 C 98 177 104 167 112 163 C 114 175 118 189 120 203 C 122 217 124 229 122 243 C 120 255 118 267 118 277 C 118 295 116 319 116 343 C 116 361 118 371 120 381 C 122 391 120 403 118 419 C 116 437 116 455 118 473 C 118 479 117 483 115 487 L 113 495 C 111 505 109 517 111 523 C 113 527 117 529 125 529 C 133 529 137 525 137 519 L 135 497 C 135 489 137 485 139 481 C 141 473 141 461 139 445 C 137 429 135 413 135 399 C 135 387 137 381 139 375 C 141 367 139 353 137 337 C 135 321 135 305 137 291 C 139 283 143 279 150 279 C 157 279 161 283 163 291 C 165 305 165 321 163 337 C 161 353 159 367 161 375 C 163 381 165 387 165 399 C 165 413 163 429 161 445 C 159 461 159 473 161 481 C 163 485 165 489 165 497 L 163 519 C 163 525 167 529 175 529 C 183 529 187 527 189 523 C 191 517 189 505 187 495 L 185 487 C 183 483 182 479 182 473 C 184 455 184 437 182 419 C 180 403 178 391 180 381 C 182 371 184 361 184 343 C 184 319 182 295 182 277 C 182 267 180 255 178 243 C 176 229 178 217 180 203 C 182 189 186 175 188 163 C 196 167 202 177 206 191 C 208 205 210 219 212 237 L 216 269 C 218 273 220 277 222 281 L 226 305 C 228 313 234 319 240 317 C 246 315 250 305 248 295 C 246 285 241 277 236 273 L 232 251 C 230 231 228 215 226 203 L 222 171 C 220 155 216 141 210 133 L 199 125 C 191 118 175 110 158 106 L 157 97 C 166 93 172 85 174 78 C 177 78 180 74 180 68 C 180 62 177 58 171 58 C 173 54 175 50 175 44 C 175 28 167 16 150 16 Z" fill="#091320" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.5"/>
+                  </g>
 
-                    <!-- Anatomic Scapular Wings (Shoulder Blades) -->
-                    <path d="M 122 126 L 138 128 L 132 162 Z" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4" fill="none"/>
-                    <path d="M 178 126 L 162 128 L 168 162 Z" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.4" fill="none"/>
+                  <!-- 2. POSTERIOR MUSCULAR SYSTEM (Trapezius, Lats, Glutes, Hamstrings - Image 1 Back) -->
+                  <g class="system-layer system-muscular">
+                    <!-- Posterior Neck & Occipital Muscles -->
+                    <path d="M 136 46 Q 150 40 164 46 L 160 76 Q 150 72 140 76 Z" fill="url(#muscleGradBack)"/>
 
-                    <!-- Latissimus Dorsi & Trapezius Contours -->
-                    <path d="M 112 164 Q 130 186 146 194" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3" fill="none"/>
-                    <path d="M 188 164 Q 170 186 154 194" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.3" fill="none"/>
+                    <!-- Trapezius Muscle (Diamond-Shaped Upper Back) -->
+                    <path d="M 150 76 L 166 108 L 196 122 L 150 166 L 104 122 L 134 108 Z" fill="url(#muscleGradBack)"/>
+                    <path d="M 150 82 L 150 160" stroke="#ea580c" stroke-width="1.5"/>
 
-                    <!-- Gluteal Cleft & Fold -->
-                    <line x1="150" y1="242" x2="150" y2="280" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.38"/>
-                    <path d="M 122 278 Q 136 284 148 280" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.3" fill="none"/>
-                    <path d="M 178 278 Q 164 284 152 280" stroke="#38bdf8" stroke-width="1.1" stroke-opacity="0.3" fill="none"/>
+                    <!-- Infraspinatus & Posterior Deltoids -->
+                    <path d="M 98 122 C 86 128 80 144 78 158 L 90 154 C 94 142 98 130 106 124 Z" fill="url(#muscleGradBack)"/>
+                    <path d="M 202 122 C 214 128 220 144 222 158 L 210 154 C 206 142 202 130 194 124 Z" fill="url(#muscleGradBack)"/>
 
-                    <!-- Popliteal Fossa (Back of Knees) -->
-                    <path d="M 122 378 L 128 372 L 134 378 L 128 384 Z" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.35" fill="none"/>
-                    <path d="M 166 378 L 172 372 L 178 378 L 172 384 Z" stroke="#38bdf8" stroke-width="1" stroke-opacity="0.35" fill="none"/>
+                    <!-- Triceps Brachii (Posterior Arms) -->
+                    <path d="M 80 160 C 76 178 76 194 78 204 L 88 200 C 88 188 90 174 92 160 Z" fill="url(#muscleGradBack)"/>
+                    <path d="M 220 160 C 224 178 224 194 222 204 L 212 200 C 212 188 210 174 208 160 Z" fill="url(#muscleGradBack)"/>
 
-                    <!-- Achilles Tendon Cords -->
-                    <line x1="128" y1="462" x2="128" y2="502" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.45"/>
-                    <line x1="172" y1="462" x2="172" y2="502" stroke="#38bdf8" stroke-width="1.6" stroke-opacity="0.45"/>
+                    <!-- Latissimus Dorsi (Wings of the Back) -->
+                    <path d="M 112 146 C 114 174 122 198 130 220 L 148 174 Z" fill="url(#muscleGradBack)"/>
+                    <path d="M 188 146 C 186 174 178 198 170 220 L 152 174 Z" fill="url(#muscleGradBack)"/>
+
+                    <!-- Thoracolumbar Fascia (Ivory Central Aponeurosis - Image 1 Back) -->
+                    <path d="M 150 166 L 166 216 L 150 252 L 134 216 Z" fill="url(#tendonFasciaGrad)" fill-opacity="0.88"/>
+
+                    <!-- Gluteus Maximus & Medius (Strong Muscular Buttocks) -->
+                    <!-- Right Glute (Viewer Left) -->
+                    <path d="M 124 242 C 116 254 116 270 122 284 C 132 290 144 286 150 280 L 148 246 Z" fill="url(#muscleGradBack)"/>
+                    <ellipse cx="134" cy="264" rx="10" ry="14" fill="url(#muscleHighlightGrad)" fill-opacity="0.75"/>
+                    <!-- Left Glute (Viewer Right) -->
+                    <path d="M 176 242 C 184 254 184 270 178 284 C 168 290 156 286 150 280 L 152 246 Z" fill="url(#muscleGradBack)"/>
+                    <ellipse cx="166" cy="264" rx="10" ry="14" fill="url(#muscleHighlightGrad)" fill-opacity="0.75"/>
+
+                    <!-- Hamstrings (Biceps Femoris & Semitendinosus) -->
+                    <!-- Right Posterior Thigh -->
+                    <path d="M 120 286 C 116 312 116 342 122 368 L 132 366 C 132 340 132 312 134 286 Z" fill="url(#muscleGradBack)"/>
+                    <ellipse cx="126" cy="330" rx="5" ry="24" fill="url(#muscleHighlightGrad)"/>
+                    <!-- Left Posterior Thigh -->
+                    <path d="M 180 286 C 184 312 184 342 178 368 L 168 366 C 168 340 168 312 166 286 Z" fill="url(#muscleGradBack)"/>
+                    <ellipse cx="174" cy="330" rx="5" ry="24" fill="url(#muscleHighlightGrad)"/>
+
+                    <!-- Gastrocnemius (Two Prominent Calf Heads - Image 1 Back) -->
+                    <!-- Right Calf (Medial & Lateral Heads) -->
+                    <ellipse cx="122" cy="418" rx="5" ry="18" fill="url(#muscleGradBack)"/>
+                    <ellipse cx="130" cy="422" rx="4.5" ry="16" fill="url(#muscleHighlightGrad)"/>
+                    <!-- Left Calf -->
+                    <ellipse cx="178" cy="418" rx="5" ry="18" fill="url(#muscleGradBack)"/>
+                    <ellipse cx="170" cy="422" rx="4.5" ry="16" fill="url(#muscleHighlightGrad)"/>
+
+                    <!-- Calcaneal (Achilles) Tendon (Ivory Fascia into Heel) -->
+                    <line x1="128" y1="446" x2="126" y2="512" stroke="url(#tendonFasciaGrad)" stroke-width="3"/>
+                    <line x1="172" y1="446" x2="174" y2="512" stroke="url(#tendonFasciaGrad)" stroke-width="3"/>
+                  </g>
+
+                  <!-- 3. POSTERIOR SKELETAL SYSTEM (Spine, Scapulae, Posterior Pelvis) -->
+                  <g class="system-layer system-skeletal">
+                    <!-- Posterior Cranium -->
+                    <ellipse cx="150" cy="44" rx="20" ry="22" fill="url(#boneGrad)" fill-opacity="0.35" stroke="#7dd3fc" stroke-width="1"/>
+
+                    <!-- Full Vertebral Column (C1-C7, T1-T12, L1-L5, Sacrum) -->
+                    <line x1="150" y1="76" x2="150" y2="260" stroke="#38bdf8" stroke-width="4.5" stroke-dasharray="2 3"/>
+
+                    <!-- Scapulae (Shoulder Blade Bones) -->
+                    <path d="M 122 126 L 138 128 L 132 162 Z" fill="url(#boneGrad)" fill-opacity="0.6" stroke="#7dd3fc" stroke-width="1.2"/>
+                    <path d="M 178 126 L 162 128 L 168 162 Z" fill="url(#boneGrad)" fill-opacity="0.6" stroke="#7dd3fc" stroke-width="1.2"/>
+
+                    <!-- Posterior Rib Arcs -->
+                    <path d="M 150 126 Q 130 128 122 138" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 150 126 Q 170 128 178 138" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 150 140 Q 126 142 120 154" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 150 140 Q 174 142 180 154" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 150 154 Q 124 156 120 170" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+                    <path d="M 150 154 Q 176 156 180 170" stroke="#7dd3fc" stroke-width="1.2" fill="none"/>
+
+                    <!-- Posterior Pelvis & Sacrum -->
+                    <path d="M 128 244 Q 150 252 172 244 L 168 266 Q 150 274 132 266 Z" fill="url(#boneGrad)" fill-opacity="0.5" stroke="#38bdf8" stroke-width="1.4"/>
+                    <!-- Calcaneus (Heel Bones) -->
+                    <ellipse cx="126" cy="514" rx="5" ry="7" fill="#7dd3fc"/>
+                    <ellipse cx="174" cy="514" rx="5" ry="7" fill="#7dd3fc"/>
+                  </g>
+
+                  <!-- 4. POSTERIOR NERVOUS SYSTEM (Brainstem, Spinal Cord, Sciatic Nerves - Image 2) -->
+                  <g class="system-layer system-nervous">
+                    <!-- Cerebellum & Spinal Cord -->
+                    <ellipse cx="150" cy="46" rx="14" ry="10" fill="url(#nerveGrad)" fill-opacity="0.7"/>
+                    <line x1="150" y1="56" x2="150" y2="252" stroke="url(#nerveGrad)" stroke-width="3"/>
+                    <!-- Great Sciatic Nerves (Descending Posterior Thighs) -->
+                    <path d="M 148 248 L 134 274 L 128 376 L 124 476" stroke="url(#nerveGrad)" stroke-width="2.2" stroke-dasharray="3 2" fill="none"/>
+                    <path d="M 152 248 L 166 274 L 172 376 L 176 476" stroke="url(#nerveGrad)" stroke-width="2.2" stroke-dasharray="3 2" fill="none"/>
+                  </g>
+
+                  <!-- 5. POSTERIOR CARDIOVASCULAR & VISCERAL (Kidneys & Great Vessels) -->
+                  <g class="system-layer system-cardiovascular">
+                    <!-- Kidneys (Bilateral in Retroperitoneal Flank) -->
+                    <ellipse cx="134" cy="196" rx="7" ry="11" fill="#9333ea" fill-opacity="0.75" stroke="#c084fc" stroke-width="1.2"/>
+                    <ellipse cx="166" cy="196" rx="7" ry="11" fill="#9333ea" fill-opacity="0.75" stroke="#c084fc" stroke-width="1.2"/>
+                    <!-- Popliteal Vessels (Behind Knees) -->
+                    <line x1="128" y1="368" x2="128" y2="392" stroke="#ef4444" stroke-width="2"/>
+                    <line x1="172" y1="368" x2="172" y2="392" stroke="#ef4444" stroke-width="2"/>
                   </g>
 
                   <!-- ======================================================= -->
-                  <!-- EXACT ANATOMICAL ZONES (BACK VIEW)                     -->
+                  <!-- INTERACTIVE TARGET ANATOMICAL ZONES (BACK)              -->
                   <!-- ======================================================= -->
 
                   <!-- 1. Posterior Cranium / Occipital Region -->
@@ -1110,10 +1452,9 @@
                     <circle cx="150" cy="96" r="3.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 3. Spinal Column (Vertebrae chain - Cervical, Thoracic, Lumbar, Sacral) -->
+                  <!-- 3. Spinal Column (Vertebral Column) -->
                   <g class="anatomy-zone zone-spine" data-target-id="back" data-organ-name="Vertebral Column (Entire Spine)">
                     <rect x="145" y="106" width="10" height="150" rx="4" class="zone-surface organ-spine-track"/>
-                    <!-- Segmented vertebrae discs -->
                     <circle cx="150" cy="112" r="2.8" fill="#e11d48"/>
                     <circle cx="150" cy="126" r="3" fill="#e11d48"/>
                     <circle cx="150" cy="140" r="3" fill="#e11d48"/>
@@ -1139,12 +1480,9 @@
                     <circle cx="150" cy="126" r="4" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 6. Lower Back (Lumbar) & Kidneys (Bilateral Renal Lodges) -->
+                  <!-- 6. Lower Back (Lumbar) & Kidneys -->
                   <g class="anatomy-zone zone-back-lower" data-target-id="back" data-organ-name="Lower Back (Lumbar) & Renal Flank">
                     <path d="M 125 178 L 175 178 L 172 232 L 128 232 Z" class="zone-surface"/>
-                    <!-- Kidneys (Bilateral) -->
-                    <ellipse cx="134" cy="196" rx="7" ry="11" fill="#9333ea" fill-opacity="0.65"/>
-                    <ellipse cx="166" cy="196" rx="7" ry="11" fill="#9333ea" fill-opacity="0.65"/>
                     <circle cx="134" cy="196" r="3.5" class="zone-target-beacon"/>
                     <circle cx="166" cy="196" r="3.5" class="zone-target-beacon"/>
                   </g>
@@ -1196,7 +1534,7 @@
                     <circle cx="174" cy="492" r="3.5" class="zone-target-beacon"/>
                   </g>
 
-                  <!-- 14. Posterior Skin Surface (Dermatological) -->
+                  <!-- 14. Posterior Skin Surface -->
                   <g class="anatomy-zone zone-skin-back" data-target-id="skin" data-organ-name="Cutaneous Skin Surface (Back)" style="display:none;">
                     <circle cx="150" cy="275" r="5" class="zone-target-beacon"/>
                   </g>

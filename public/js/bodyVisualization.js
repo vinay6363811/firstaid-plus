@@ -210,6 +210,36 @@
     }
   ];
 
+  const SYSTEM_ASSOCIATIONS = {
+    heart: 'cardiovascular',
+    lungs: 'respiratory',
+    throat: 'respiratory',
+    head: 'nervous',
+    eyes: 'nervous',
+    jaw: 'skeletal',
+    back: 'skeletal',
+    kidneys: 'cardiovascular',
+    shoulders: 'muscular',
+    hands: 'muscular',
+    arms: 'muscular',
+    knees: 'skeletal',
+    ankles: 'skeletal',
+    feet: 'skeletal',
+    legs: 'muscular',
+    skin: 'lymphatic',
+    systemic: 'lymphatic'
+  };
+
+  const SYSTEM_NAMES = {
+    all: 'All Anatomical Layers (Complete Anatomy)',
+    cardiovascular: 'Cardiovascular System (Heart & Arterial Network)',
+    respiratory: 'Respiratory System (Airways, Lungs & Bronchi)',
+    skeletal: 'Skeletal Framework (Bones, Joints & Cranium)',
+    nervous: 'Nervous System (Brain, Spinal Cord & Peripheral Nerves)',
+    muscular: 'Muscular System (Striated Muscle Anatomy)',
+    lymphatic: 'Lymphatic & Immune Network (Lymph Nodes & Vessels)'
+  };
+
   class BodyVisualizationController {
     constructor() {
       this.container = document.getElementById('interactive-body-container');
@@ -222,6 +252,7 @@
       this.tooltip = document.getElementById('body-hover-tooltip');
 
       this.currentView = 'front'; // 'front' or 'back'
+      this.currentSystem = 'all'; // 'all', 'cardiovascular', 'respiratory', 'skeletal', 'nervous', 'muscular', 'lymphatic'
       this.isAutoRotating = true;
       this.rotationAngle = 0;
       this.dragStartX = 0;
@@ -239,6 +270,7 @@
 
     init() {
       this.bindControls();
+      this.bindSystemSelector();
       this.bindDragInteraction();
       this.bindZoneInteractions();
       this.bindSymptomInputListener();
@@ -288,6 +320,52 @@
         this.hudResetBtn.addEventListener('click', () => {
           this.resetVisualization();
         });
+      }
+    }
+
+    bindSystemSelector() {
+      if (!this.container) return;
+      const buttons = this.container.querySelectorAll('.system-tab-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const sysId = btn.getAttribute('data-system');
+          if (sysId) {
+            this.setSystem(sysId);
+          }
+        });
+      });
+    }
+
+    setSystem(systemId, updateHud = true) {
+      if (!systemId) systemId = 'all';
+      this.currentSystem = systemId;
+
+      // Update toolbar button states
+      if (this.container) {
+        const buttons = this.container.querySelectorAll('.system-tab-btn');
+        buttons.forEach(btn => {
+          const isTarget = btn.getAttribute('data-system') === systemId;
+          btn.classList.toggle('active', isTarget);
+        });
+      }
+
+      // Update active system on front & back SVGs
+      const frontSvg = document.getElementById('svg-anatomy-front');
+      const backSvg = document.getElementById('svg-anatomy-back');
+      if (frontSvg) frontSvg.setAttribute('data-active-system', systemId);
+      if (backSvg) backSvg.setAttribute('data-active-system', systemId);
+
+      // Update HUD status label if idle
+      if (updateHud && this.hudStatusLabel && this.hudOrganName) {
+        const readableName = SYSTEM_NAMES[systemId] || 'System Active';
+        if (this.activeTargets.size === 0) {
+          this.setHudStatus(
+            systemId === 'all' ? 'ALL SYSTEMS NORMAL' : `SYSTEM: ${systemId.toUpperCase()}`,
+            readableName,
+            false
+          );
+        }
       }
     }
 
@@ -541,8 +619,14 @@
         this.switchView('front');
       }
 
-      // Update HUD Labels
+      // Automatically isolate and illuminate corresponding anatomical system
       const primaryTarget = matchedTargets[0];
+      const mappedSystem = matchedTargets.reduce((sys, t) => sys || SYSTEM_ASSOCIATIONS[t.id], null);
+      if (mappedSystem) {
+        this.setSystem(mappedSystem, false);
+      }
+
+      // Update HUD Labels
       const combinedLabel = targetLabels.slice(0, 3).join(' • ');
       this.setHudStatus(`⚡ BLINKING: ${combinedLabel}`, primaryTarget.name, true);
     }
@@ -589,6 +673,7 @@
       this.clearActiveHighlights();
       this.rotationAngle = 0;
       this.switchView('front');
+      this.setSystem('all');
       this.setHudStatus('IDLE MONITORING', 'All Systems Normal', false);
       this.update3DTransform();
     }
@@ -651,4 +736,10 @@
   } else {
     window.bodyVisualization = new BodyVisualizationController();
   }
+
+  window.setAnatomicalSystem = function (sysId) {
+    if (window.bodyVisualization) {
+      window.bodyVisualization.setSystem(sysId);
+    }
+  };
 })();
