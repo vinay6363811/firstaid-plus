@@ -872,10 +872,10 @@
               console.warn('Network location unavailable, falling back to IP...', netErr);
               this.fallbackToIpPharmacies(netErr.message || 'Signal unavailable');
             },
-            { enableHighAccuracy: false, timeout: 6000, maximumAge: forceRefresh ? 0 : 60000 }
+            { enableHighAccuracy: false, timeout: 15000, maximumAge: forceRefresh ? 0 : 60000 }
           );
         },
-        { enableHighAccuracy: true, timeout: 4500, maximumAge: forceRefresh ? 0 : 300000 }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: forceRefresh ? 0 : 300000 }
       );
     }
 

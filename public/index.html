@@ -2378,6 +2378,23 @@
         </div>
       </div>
 
+      <!-- Real-Time Emergency Location Access Seeker Banner -->
+      <div id="radar-location-permission-banner" class="radar-permission-banner" style="display: none;">
+        <div class="perm-banner-left">
+          <div class="perm-pulse-icon">🛰️</div>
+          <div class="perm-banner-text">
+            <strong>SEEKING REAL-TIME LOCATION ACCESS</strong>
+            <p>Please click <strong>"Allow"</strong> when prompted by your browser to activate continuous real-time GPS tracking and locate immediate 24/7 hospitals around your exact position.</p>
+          </div>
+        </div>
+        <div class="perm-banner-actions">
+          <button id="btn-grant-location-access" class="btn-grant-gps" type="button">
+            <span>📍 Allow Live Location</span>
+          </button>
+          <button id="btn-dismiss-location-prompt" class="btn-dismiss-gps" type="button" title="Dismiss">✕</button>
+        </div>
+      </div>
+
       <!-- Smart GPS Emergency Location Radar Cockpit (Requirement 1) -->
       <div class="hospital-gps-cockpit">
         <div class="radar-scan-wrapper">
@@ -2401,6 +2418,10 @@
               <button id="btn-refresh-gps" class="btn-radar-action" type="button">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
                 <span>Refresh GPS</span>
+              </button>
+              <button id="btn-toggle-live-tracking" class="btn-radar-action" type="button" title="Continuously track real-time location via GPS">
+                <span class="live-track-dot"></span>
+                <span id="live-tracking-btn-text">Track Real-Time GPS</span>
               </button>
               <button id="btn-recenter-map" class="btn-radar-action" type="button">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>

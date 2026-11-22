@@ -55,6 +55,17 @@
       this.googleMapsFallbackBtn = document.getElementById('btn-open-google-maps-hospitals');
       this.sortSelect = document.getElementById('hospital-sort-select');
 
+      // Real-time location tracking state
+      this.watchId = null;
+      this.isLiveTracking = false;
+      this.lastTrackedLat = null;
+      this.lastTrackedLng = null;
+      this.lastFetchDistanceThreshold = 40; // Re-query hospitals if moved > 40m
+      this.liveTrackingToggleBtn = document.getElementById('btn-toggle-live-tracking');
+      this.permissionBanner = document.getElementById('radar-location-permission-banner');
+      this.grantLocationBtn = document.getElementById('btn-grant-location-access');
+      this.dismissPromptBtn = document.getElementById('btn-dismiss-location-prompt');
+
       this.init();
     }
 
@@ -64,26 +75,45 @@
       this.bindEvents();
       this.initMap();
 
-      // Listen for view activation
+      // Listen for view activation - actively seek location access
       const hospitalNavBtn = document.querySelector('[data-view="hospitals"]');
       if (hospitalNavBtn) {
         hospitalNavBtn.addEventListener('click', () => {
           setTimeout(() => {
             if (this.map) this.map.invalidateSize();
-            if (!this.userLat) {
-              this.detectUserLocation();
-            }
+            this.seekLocationAccess();
           }, 250);
         });
       }
 
       // Check URL params or initial hash
       if (window.location.hash === '#hospitals') {
-        setTimeout(() => this.detectUserLocation(), 300);
+        setTimeout(() => this.seekLocationAccess(), 300);
       }
     }
 
     bindEvents() {
+      // Toggle Real-Time GPS Tracking
+      if (this.liveTrackingToggleBtn) {
+        this.liveTrackingToggleBtn.addEventListener('click', () => {
+          this.toggleRealTimeTracking();
+        });
+      }
+
+      // Grant Location Access button in banner
+      if (this.grantLocationBtn) {
+        this.grantLocationBtn.addEventListener('click', () => {
+          this.seekLocationAccess(true);
+        });
+      }
+
+      // Dismiss Location Prompt banner
+      if (this.dismissPromptBtn) {
+        this.dismissPromptBtn.addEventListener('click', () => {
+          this.hidePermissionPromptBanner();
+        });
+      }
+
       // Refresh GPS
       if (this.refreshGpsBtn) {
         this.refreshGpsBtn.addEventListener('click', () => {
@@ -327,67 +357,226 @@
     }
 
     /**
-     * Smart Multi-Stage Cascading Geolocation Pipeline
-     * Stage 1: High Accuracy Satellite GPS (4500ms timeout)
-     * Stage 2: Fast Wi-Fi / Cellular Triangulation (enableHighAccuracy: false, 6000ms timeout)
+     * Actively seek location access from the user and start real-time tracking
+     */
+    seekLocationAccess(forcePrompt = true) {
+      this.startRealTimeTracking(forcePrompt);
+    }
+
+    /**
+     * Show permission guidance banner prompting the user to grant access
+     */
+    showPermissionPromptBanner() {
+      if (this.permissionBanner) {
+        this.permissionBanner.style.display = 'flex';
+      }
+    }
+
+    /**
+     * Hide permission guidance banner once granted or dismissed
+     */
+    hidePermissionPromptBanner() {
+      if (this.permissionBanner) {
+        this.permissionBanner.style.display = 'none';
+      }
+    }
+
+    /**
+     * Calculate Distance between two lat/lng pairs in meters (Haversine)
+     */
+    calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371000; // meters
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    /**
+     * Smart Multi-Stage Real-Time Geolocation Tracking Pipeline
+     * Uses navigator.geolocation.watchPosition for live continuous tracking with high accuracy.
+     * Generous 25s timeout so browser dialog never closes before user can click "Allow".
+     * Stage 1: High Accuracy Satellite GPS (continuous watch)
+     * Stage 2: Fast Wi-Fi / Cellular Triangulation fallback
      * Stage 3: IP Geolocation Fallback (/api/location/ip + client IP lookup)
      * Stage 4: Interactive Pinning & Dragging
      */
     detectUserLocation(forcePrompt = false) {
+      this.startRealTimeTracking(forcePrompt);
+    }
+
+    startRealTimeTracking(forcePrompt = false) {
       if (!navigator.geolocation) {
         this.setRadarStatus('GPS UNAVAILABLE ON THIS DEVICE', 'error');
         this.fallbackToIpLocation('Device does not support GPS geolocation.');
         return;
       }
 
+      // Clear any previous watcher
+      if (this.watchId) {
+        navigator.geolocation.clearWatch(this.watchId);
+        this.watchId = null;
+      }
+
+      this.isLiveTracking = true;
+      this.updateLiveTrackingButtonUI(true);
       this.setRadarStatus('LOCATING YOUR POSITION...', 'locating');
       this.setRadarScanningAnimation(true);
 
+      // Show friendly prompt if permission hasn't been granted yet
+      if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'geolocation' }).then(perm => {
+          if (perm.state === 'prompt') {
+            this.showPermissionPromptBanner();
+          } else if (perm.state === 'granted') {
+            this.hidePermissionPromptBanner();
+          }
+        }).catch(() => {});
+      }
+
       // Progressive status messages
       setTimeout(() => {
-        if (this.isLoading) this.setRadarStatus('IDENTIFYING NEAREST MEDICAL SUPPORT...', 'locating');
-      }, 1200);
+        if (this.isLoading && this.isLiveTracking) this.setRadarStatus('IDENTIFYING NEAREST MEDICAL SUPPORT...', 'locating');
+      }, 1500);
 
       setTimeout(() => {
-        if (this.isLoading) this.setRadarStatus('SCANNING YOUR SURROUNDINGS...', 'locating');
-      }, 2400);
+        if (this.isLoading && this.isLiveTracking) this.setRadarStatus('STREAMING REAL-TIME SATELLITE GPS...', 'locating');
+      }, 3000);
 
-      // Stage 1: Try High-Accuracy Satellite GPS
-      navigator.geolocation.getCurrentPosition(
+      // Start continuous high-accuracy watchPosition with generous 25s timeout
+      const highAccOptions = {
+        enableHighAccuracy: true,
+        timeout: 25000,
+        maximumAge: forcePrompt ? 0 : 5000
+      };
+
+      let initialFixReceived = false;
+
+      this.watchId = navigator.geolocation.watchPosition(
         (position) => {
-          this.handleLocationSuccess(position, 'gps');
+          initialFixReceived = true;
+          this.hidePermissionPromptBanner();
+          this.handleRealTimeLocationFix(position, 'gps_live');
         },
         (gpsError) => {
-          console.warn('GPS High-accuracy failed/timed out, attempting Wi-Fi/Network triangulation...', gpsError);
+          console.warn('Real-time GPS high accuracy error/timeout:', gpsError);
 
           // If user specifically denied permission in browser
           if (gpsError.code === gpsError.PERMISSION_DENIED) {
+            this.stopRealTimeTracking();
+            this.hidePermissionPromptBanner();
+            this.showPermissionNotice(true);
             this.fallbackToIpLocation('Location permission denied in browser.');
             return;
           }
 
-          // Stage 2: Fast Wi-Fi / Cellular Triangulation (very fast & reliable on laptops/desktops)
-          navigator.geolocation.getCurrentPosition(
-            (netPosition) => {
-              this.handleLocationSuccess(netPosition, 'network');
-            },
-            (netError) => {
-              console.warn('Network triangulation unavailable, engaging IP Geolocation fallback...', netError);
-              this.fallbackToIpLocation(netError.message || 'Signal unavailable');
-            },
-            {
-              enableHighAccuracy: false,
-              timeout: 6000,
-              maximumAge: forcePrompt ? 0 : 60000
-            }
-          );
+          // If high accuracy timed out and no fix has been received yet, try network fix
+          if (!initialFixReceived && (gpsError.code === gpsError.TIMEOUT || gpsError.code === gpsError.POSITION_UNAVAILABLE)) {
+            console.log('Attempting fast Wi-Fi / cellular triangulation...');
+            navigator.geolocation.getCurrentPosition(
+              (netPosition) => {
+                this.hidePermissionPromptBanner();
+                this.handleLocationSuccess(netPosition, 'network');
+              },
+              (netError) => {
+                console.warn('Network location fix also failed, engaging IP fallback...', netError);
+                this.fallbackToIpLocation(netError.message || 'Signal unavailable');
+              },
+              { enableHighAccuracy: false, timeout: 15000, maximumAge: forcePrompt ? 0 : 30000 }
+            );
+          }
         },
-        {
-          enableHighAccuracy: true,
-          timeout: 4500,
-          maximumAge: forcePrompt ? 0 : 30000
-        }
+        highAccOptions
       );
+    }
+
+    stopRealTimeTracking() {
+      if (this.watchId) {
+        navigator.geolocation.clearWatch(this.watchId);
+        this.watchId = null;
+      }
+      this.isLiveTracking = false;
+      this.updateLiveTrackingButtonUI(false);
+      if (this.radarAccuracyBadge && (this.locationSource === 'gps_live' || this.locationSource === 'gps')) {
+        this.radarAccuracyBadge.textContent = `📍 GPS Fixed: ±${this.gpsAccuracy} m`;
+        this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-gps';
+      }
+    }
+
+    toggleRealTimeTracking() {
+      if (this.isLiveTracking) {
+        this.stopRealTimeTracking();
+      } else {
+        this.startRealTimeTracking(true);
+      }
+    }
+
+    updateLiveTrackingButtonUI(isActive) {
+      if (!this.liveTrackingToggleBtn) return;
+      const textSpan = document.getElementById('live-tracking-btn-text');
+      if (isActive) {
+        this.liveTrackingToggleBtn.classList.add('live-tracking-active');
+        if (textSpan) textSpan.textContent = '● Tracking Live GPS';
+        this.liveTrackingToggleBtn.title = 'Live GPS tracking active. Click to pause tracking.';
+      } else {
+        this.liveTrackingToggleBtn.classList.remove('live-tracking-active');
+        if (textSpan) textSpan.textContent = 'Track Real-Time GPS';
+        this.liveTrackingToggleBtn.title = 'Click to start real-time GPS tracking.';
+      }
+    }
+
+    /**
+     * Process incoming real-time GPS coordinates stream
+     */
+    handleRealTimeLocationFix(position, source = 'gps_live') {
+      const { latitude, longitude, accuracy } = position.coords;
+      const prevLat = this.userLat;
+      const prevLng = this.userLng;
+
+      this.userLat = latitude;
+      this.userLng = longitude;
+      this.gpsAccuracy = Math.round(accuracy);
+      this.locationSource = source;
+
+      this.setRadarScanningAnimation(false);
+      this.setRadarStatus('YOUR REAL-TIME POSITION IS ACTIVE', 'success');
+
+      if (this.radarAccuracyBadge) {
+        this.radarAccuracyBadge.innerHTML = `<span class="live-dot-pulse">●</span> LIVE REAL-TIME GPS: ±${this.gpsAccuracy} m`;
+        this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-live-tracking';
+        this.radarAccuracyBadge.style.display = 'inline-block';
+      }
+
+      // Hide permission notices
+      this.hidePermissionPromptBanner();
+      const noticeBox = document.getElementById('hospital-radar-notice');
+      if (noticeBox && noticeBox.querySelector('.notice-permission-guide')) {
+        noticeBox.style.display = 'none';
+      }
+
+      // Smoothly update user marker on map
+      this.updateMapUserPosition();
+
+      // Check distance moved from previous query
+      let shouldRefreshHospitals = false;
+      if (!prevLat || !prevLng || !this.lastTrackedLat || !this.lastTrackedLng) {
+        shouldRefreshHospitals = true;
+      } else {
+        const movedMeters = this.calculateDistanceMeters(this.lastTrackedLat, this.lastTrackedLng, latitude, longitude);
+        if (movedMeters >= this.lastFetchDistanceThreshold) {
+          shouldRefreshHospitals = true;
+        }
+      }
+
+      if (shouldRefreshHospitals) {
+        this.lastTrackedLat = latitude;
+        this.lastTrackedLng = longitude;
+        this.fetchUserAddress(latitude, longitude);
+        this.fetchNearbyHospitals();
+      }
     }
 
     /**
@@ -404,12 +593,12 @@
       this.setRadarStatus('YOUR LOCATION IS IDENTIFIED', 'success');
 
       if (this.radarAccuracyBadge) {
-        if (type === 'gps' && this.gpsAccuracy <= 50) {
-          this.radarAccuracyBadge.textContent = `🟢 GPS Satellite: ±${this.gpsAccuracy} m`;
-          this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-gps';
-        } else if (type === 'gps') {
-          this.radarAccuracyBadge.textContent = `🟢 GPS Fix: ±${this.gpsAccuracy} m`;
-          this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-gps';
+        if ((type === 'gps' || type === 'gps_live') && this.gpsAccuracy <= 50) {
+          this.radarAccuracyBadge.innerHTML = `<span class="live-dot-pulse">●</span> LIVE GPS Satellite: ±${this.gpsAccuracy} m`;
+          this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-live-tracking';
+        } else if (type === 'gps' || type === 'gps_live') {
+          this.radarAccuracyBadge.innerHTML = `<span class="live-dot-pulse">●</span> LIVE GPS Fix: ±${this.gpsAccuracy} m`;
+          this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-live-tracking';
         } else {
           this.radarAccuracyBadge.textContent = `🟡 Wi-Fi / Network: ±${this.gpsAccuracy} m`;
           this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-wifi';
@@ -418,10 +607,21 @@
       }
 
       // Hide permission notice if open
+      this.hidePermissionPromptBanner();
       const noticeBox = document.getElementById('hospital-radar-notice');
       if (noticeBox && noticeBox.querySelector('.notice-permission-guide')) {
         noticeBox.style.display = 'none';
       }
+
+      // Update Map Position with draggable pin
+      this.updateMapUserPosition();
+
+      // Reverse Geocode to display real address
+      this.fetchUserAddress(latitude, longitude);
+
+      // Discover Real Hospitals
+      this.fetchNearbyHospitals();
+    }
 
       // Update Map Position with draggable pin
       this.updateMapUserPosition();
@@ -718,14 +918,18 @@
           this.setUserLocation(pt.lat, pt.lng, 'Dragged Pin');
         });
 
-        this.userMarker.bindPopup(
-          `<strong>📍 Your Position</strong><br>${this.userAddress || 'Detected Device Location'}<br><small style="color:#0284c7; font-weight:600;">👆 Drag pin or click map to adjust exact spot</small>`
-        );
+        const popupMsg = this.isLiveTracking
+          ? `<strong>📍 Live Real-Time Position</strong><br>${this.userAddress || 'Streaming GPS'}<br><small style="color:#16a34a; font-weight:700;">● Continuous Live GPS Tracking Active (±${this.gpsAccuracy || 10}m)</small>`
+          : `<strong>📍 Your Position</strong><br>${this.userAddress || 'Detected Device Location'}<br><small style="color:#0284c7; font-weight:600;">👆 Drag pin or click map to adjust exact spot</small>`;
+
+        this.userMarker.bindPopup(popupMsg);
       } else {
         this.userMarker.setLatLng(userLatLng);
-        this.userMarker.setPopupContent(
-          `<strong>📍 Your Position</strong><br>${this.userAddress || 'Detected Device Location'}<br><small style="color:#0284c7; font-weight:600;">👆 Drag pin or click map to adjust exact spot</small>`
-        );
+        const popupMsg = this.isLiveTracking
+          ? `<strong>📍 Live Real-Time Position</strong><br>${this.userAddress || 'Streaming GPS'}<br><small style="color:#16a34a; font-weight:700;">● Continuous Live GPS Tracking Active (±${this.gpsAccuracy || 10}m)</small>`
+          : `<strong>📍 Your Position</strong><br>${this.userAddress || 'Detected Device Location'}<br><small style="color:#0284c7; font-weight:600;">👆 Drag pin or click map to adjust exact spot</small>`;
+
+        this.userMarker.setPopupContent(popupMsg);
       }
 
       // Accuracy circle
@@ -746,7 +950,11 @@
       }
 
       this.updateRadiusCircle();
-      this.map.setView(userLatLng, 14);
+      if (this.isLiveTracking && this.map.getZoom() >= 13) {
+        this.map.panTo(userLatLng, { animate: true, duration: 0.6 });
+      } else {
+        this.map.setView(userLatLng, 14);
+      }
     }
 
     /**

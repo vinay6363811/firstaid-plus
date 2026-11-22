@@ -482,6 +482,18 @@ async function runTests() {
     assert(cssStyle.includes('.hospital-map-helper-tip'), 'CSS styles interactive map helper tip');
     assert(cssStyle.includes('.notice-permission-guide'), 'CSS styles location permission recovery guide');
 
+    // Real-Time Location Tracking and Permission Seeker Verification
+    assert(hospitalRadarJs.includes('seekLocationAccess'), 'hospitalRadar.js implements seekLocationAccess method');
+    assert(hospitalRadarJs.includes('startRealTimeTracking'), 'hospitalRadar.js implements startRealTimeTracking method');
+    assert(hospitalRadarJs.includes('watchPosition'), 'hospitalRadar.js implements continuous real-time watchPosition tracking');
+    assert(hospitalRadarJs.includes('toggleRealTimeTracking'), 'hospitalRadar.js implements toggleRealTimeTracking method');
+    assert(indexHtml.includes('id="btn-toggle-live-tracking"'), 'HTML contains Track Real-Time GPS button (#btn-toggle-live-tracking)');
+    assert(indexHtml.includes('id="radar-location-permission-banner"'), 'HTML contains Location Access Seeker Banner (#radar-location-permission-banner)');
+    assert(indexHtml.includes('id="btn-grant-location-access"'), 'HTML contains Grant Live Location button (#btn-grant-location-access)');
+    assert(cssStyle.includes('.radar-permission-banner'), 'CSS styles .radar-permission-banner');
+    assert(cssStyle.includes('.badge-live-tracking'), 'CSS styles .badge-live-tracking');
+    assert(cssStyle.includes('.live-tracking-active'), 'CSS styles .live-tracking-active');
+
     console.log('\n--- 13. Testing MODULE 11 — AI Medicine & Relief Recommendations + Pharmacy Finder ---');
     // A. Medicine categories
     const resMedCats = await fetch('http://127.0.0.1:3000/api/medicine/categories');
