@@ -158,10 +158,37 @@
             </button>
           </li>
           <li>
+            <button class="nav-btn voice-assistant-nav" data-view="voice-assistant" title="Module 2: Hands-Free AI Voice Emergency Assistant">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+              <span>Voice Assistant</span>
+              <span class="mic-live-pill">VOICE</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn history-nav" data-view="history" title="Module 1: Smart Symptom History & Doctor Export">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span>Symptom History</span>
+            </button>
+          </li>
+          <li>
             <button class="nav-btn emergency-radar-nav" data-view="hospitals" title="Module 10: Real-Time Nearby Hospitals & Emergency Services Radar">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path><circle cx="12" cy="10" r="3"></circle></svg>
               <span>Nearby Hospitals</span>
               <span class="radar-live-badge">RADAR</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn ambulance-nav" data-view="ambulance" title="Module 5: Emergency Ambulance Finder & 108/112 Network">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="16" height="12" rx="2"></rect><circle cx="6" cy="17" r="2"></circle><circle cx="16" cy="17" r="2"></circle><path d="M17 9h4l2 3v4h-3"></path><path d="M6 7v4M4 9h4"></path></svg>
+              <span>Ambulances</span>
+              <span class="amb-108-pill">108</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn location-sharing-nav" data-view="location-sharing" title="Module 4: Live Location Sharing & Real-Time Tracking">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+              <span>Share Location</span>
+              <span class="share-live-pill">LIVE</span>
             </button>
           </li>
           <li>
@@ -475,6 +502,28 @@
                   </div>
                 </div>
 
+                <!-- Module 3: Automatic Language Detection Status Bar -->
+                <div id="lang-detector-bar" class="lang-detector-bar">
+                  <div id="auto-lang-detected-badge" class="auto-lang-badge badge-idle">
+                    <span class="badge-icon">🌐</span>
+                    <span class="badge-text">Auto-Detecting Language...</span>
+                  </div>
+                  <div class="lang-manual-override">
+                    <label for="auto-lang-manual-select">Language:</label>
+                    <select id="auto-lang-manual-select" class="lang-select-compact">
+                      <option value="auto" selected>✨ Auto-Detect</option>
+                      <option value="en-IN">🇮🇳 English</option>
+                      <option value="kn-IN">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+                      <option value="hi-IN">🇮🇳 हिन्दी (Hindi)</option>
+                      <option value="te-IN">🇮🇳 తెలుగు (Telugu)</option>
+                      <option value="ta-IN">🇮🇳 தமிழ் (Tamil)</option>
+                      <option value="ml-IN">🇮🇳 മലയാളം (Malayalam)</option>
+                      <option value="bn-IN">🇮🇳 বাংলা (Bengali)</option>
+                      <option value="mr-IN">🇮🇳 मराठी (Marathi)</option>
+                    </select>
+                  </div>
+                </div>
+
                 <!-- Textarea Input (Requirement 1.A) -->
                 <div class="textarea-wrapper">
                   <textarea 
@@ -485,10 +534,14 @@
                   ></textarea>
                 </div>
 
-                <!-- Buttons & Actions (Requirement 1.A) -->
+                <!-- Buttons & Actions (Requirement 1.A & Module 2 Hands-free Mic) -->
                 <div class="textarea-actions">
                   <div class="char-counter" id="char-counter">0 characters</div>
                   <div class="btn-group">
+                    <button id="inline-mic-input-btn" class="btn btn-mic-speak" type="button" title="Speak symptoms hands-free with microphone">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                      <span>Speak</span>
+                    </button>
                     <button id="clear-text-btn" class="btn btn-secondary" type="button">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                       <span id="clear-btn-text">Clear</span>
@@ -3054,6 +3107,303 @@
     </div>
   </div>
 
+  <!-- =================================================================== -->
+  <!-- MODULE 1: SMART SYMPTOM HISTORY & TIMELINE DASHBOARD (FEATURE 19)   -->
+  <!-- =================================================================== -->
+  <section id="view-history" class="view-section">
+    <!-- Permanent Emergency Reminder Banner -->
+    <div class="history-emergency-banner" role="alert">
+      <div class="hosp-banner-left">
+        <span class="pulsing-siren-dot"></span>
+        <div class="hosp-banner-text">
+          <strong>📋 SMART SYMPTOM HISTORY & CLINICAL TIMELINE</strong>
+          <span>Your previous health questions and AI sessions are saved privately on this device. Export summaries for your doctor anytime.</span>
+        </div>
+      </div>
+      <div class="history-banner-actions">
+        <button id="btn-export-history-summary" class="btn-export-doctor" type="button">
+          <span>📋 Export for Doctor</span>
+        </button>
+        <button id="btn-clear-history-all" class="btn-clear-history" type="button">
+          <span>🗑️ Clear All</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- History Statistics Summary -->
+    <div class="history-summary-strip">
+      <div class="hist-stat-item">
+        <span class="stat-num" id="history-stat-total">0 Saved Sessions</span>
+        <span class="stat-desc">Private Local Log</span>
+      </div>
+      <div class="hist-stat-item">
+        <span class="stat-num stat-alert" id="history-stat-critical">0 Critical / 112</span>
+        <span class="stat-desc">High Priority Logs</span>
+      </div>
+      <div class="hist-stat-item">
+        <span class="stat-num">🔒 100% Client Private</span>
+        <span class="stat-desc">No Cloud Sharing</span>
+      </div>
+    </div>
+
+    <!-- Search & Filters Toolbar -->
+    <div class="history-search-toolbar">
+      <div class="hist-search-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="history-search-input" placeholder="Search previous symptoms, medicines, or conditions...">
+      </div>
+      <div class="history-filter-chips">
+        <button class="history-filter-chip active" data-filter="all" type="button">All Time</button>
+        <button class="history-filter-chip" data-filter="today" type="button">Today</button>
+        <button class="history-filter-chip" data-filter="week" type="button">This Week</button>
+        <button class="history-filter-chip" data-filter="month" type="button">This Month</button>
+      </div>
+    </div>
+
+    <!-- Timeline & Cards Container -->
+    <div id="history-cards-container" class="history-cards-container">
+      <!-- Rendered by symptomHistory.js -->
+    </div>
+  </section>
+
+  <!-- History Single Session Detail Modal -->
+  <div id="history-detail-modal" class="history-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
+    <div class="history-modal-box">
+      <div class="history-modal-header-bar">
+        <h2 id="history-modal-title">📄 Medical Session Details</h2>
+        <button id="btn-close-history-modal" class="btn-modal-close" type="button" aria-label="Close modal">✕</button>
+      </div>
+      <div id="history-modal-body" class="history-modal-body-content">
+        <!-- Populated by symptomHistory.openDetail() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- MODULE 2: HANDS-FREE AI VOICE EMERGENCY ASSISTANT (FEATURE 41)       -->
+  <!-- =================================================================== -->
+  <section id="view-voice-assistant" class="view-section">
+    <div class="voice-assistant-cockpit">
+      <div class="voice-assistant-header">
+        <div class="voice-title-pill">
+          <span class="pulsing-mic-dot"></span>
+          <span>HANDS-FREE EMERGENCY AI ASSISTANT</span>
+        </div>
+        <h2 id="voice-status-title" class="voice-main-status">TAP MICROPHONE TO SPEAK</h2>
+        <p id="voice-status-sub" class="voice-sub-status">Speak your medical emergency or symptoms naturally. FirstAid+ listens and responds aloud.</p>
+        <div class="voice-lang-chip-row">
+          <span id="voice-assistant-lang-badge" class="voice-lang-badge">🇮🇳 Auto-Detecting Language</span>
+        </div>
+      </div>
+
+      <!-- Giant Animated Microphone -->
+      <div class="voice-mic-stage">
+        <button id="voice-assistant-mic-btn" class="voice-mic-giant-btn state-idle" type="button" title="Tap to start/stop listening">
+          <div class="mic-ripple-ring ring-1"></div>
+          <div class="mic-ripple-ring ring-2"></div>
+          <div class="mic-icon-center">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+          </div>
+        </button>
+        <!-- Soundwave Visualizer Canvas -->
+        <canvas id="voice-wave-canvas" class="voice-wave-canvas" width="420" height="60"></canvas>
+      </div>
+
+      <!-- Live Recognized Transcript Box -->
+      <div class="voice-transcript-card">
+        <div class="transcript-header">
+          <span>🗣️ RECOGNIZED SYMPTOM INPUT:</span>
+          <button id="btn-edit-voice-transcript" class="btn-transcript-action" type="button">✏️ Edit Text</button>
+        </div>
+        <div id="voice-transcript-text" class="voice-transcript-text">Tap the microphone and describe what happened...</div>
+        <textarea id="voice-transcript-edit-input" class="voice-transcript-edit-input" style="display: none;" rows="3"></textarea>
+        
+        <div class="voice-transcript-actions">
+          <button id="btn-analyze-voice-text" class="btn btn-primary btn-analyze-voice" type="button" style="display: none;">
+            <span>🚀 Analyze Problem</span>
+          </button>
+          <button id="btn-speak-again-assistant" class="btn btn-secondary" type="button">
+            <span>🔄 Speak Again</span>
+          </button>
+          <button id="btn-stop-voice-assistant" class="btn btn-secondary btn-stop-voice" type="button" style="display: none;">
+            <span>⏹ Stop Voice</span>
+          </button>
+          <button id="btn-listen-again-assistant" class="btn btn-secondary" type="button" style="display: none;">
+            <span>🔊 Listen Again</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Guidance Result Card in Voice View -->
+      <div id="voice-assistant-results-card" class="voice-assistant-results-card" style="display: none;">
+        <!-- Dynamically populated by voiceAssistant.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================================== -->
+  <!-- MODULE 4: LIVE LOCATION SHARING & REAL-TIME TRACKING (FEATURE 3)    -->
+  <!-- =================================================================== -->
+  <section id="view-location-sharing" class="view-section">
+    <!-- Permanent Emergency Top Banner -->
+    <div class="sharing-top-banner">
+      <div class="hosp-banner-left">
+        <span class="pulsing-siren-dot"></span>
+        <div>
+          <strong>🚨 EMERGENCY LIVE LOCATION SHARING</strong>
+          <p>Broadcast your real-time coordinates to family, friends, or ambulance dispatch during emergencies.</p>
+        </div>
+      </div>
+      <div id="live-sharing-status-badge" class="live-status-pill status-standby">
+        ● STANDBY — TAP TO TRACK
+      </div>
+    </div>
+
+    <!-- Permission Guide Card if Blocked -->
+    <div id="sharing-permission-guide" class="sharing-permission-guide" style="display: none;">
+      <div class="guide-icon">🔒</div>
+      <div class="guide-body">
+        <strong>Browser Location Access Blocked</strong>
+        <p>To broadcast live location, click the site lock/settings icon in your browser URL bar, set Location to <strong>Allow</strong>, and click <strong>Enable GPS</strong> below.</p>
+        <button id="btn-enable-location-gps" class="btn btn-primary" type="button">🔄 Enable GPS Location</button>
+      </div>
+    </div>
+
+    <!-- Live Location Metrics Cockpit -->
+    <div class="sharing-metrics-cockpit">
+      <div class="sharing-metric-card">
+        <span class="metric-title">GPS Coordinates</span>
+        <span class="metric-val" id="sharing-coords-display">Seeking coordinates...</span>
+        <span class="metric-badge" id="sharing-accuracy-display">Accuracy: ±-- m</span>
+      </div>
+
+      <div class="sharing-metric-card address-card">
+        <span class="metric-title">Detected Address & Landmark</span>
+        <span class="metric-val address-val" id="sharing-address-display">Reverse geocoding position...</span>
+        <span class="metric-sub" id="sharing-timestamp-display">Last updated: Standby</span>
+      </div>
+
+      <div class="sharing-metric-card actions-card">
+        <span class="metric-title">Live Tracking Controls</span>
+        <div class="sharing-controls-row">
+          <button id="btn-start-live-sharing" class="btn-live-track-start" type="button">
+            <span>🟢 Start Live Sharing</span>
+          </button>
+          <button id="btn-stop-live-sharing" class="btn-live-track-stop" type="button" style="display: none;">
+            <span>🔴 Stop Live Sharing</span>
+          </button>
+          <button id="btn-refresh-sharing-location" class="btn btn-secondary btn-refresh-loc" type="button">
+            <span>🔄 Refresh GPS</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick 1-Click Share Toolbar -->
+    <div class="sharing-quick-bar">
+      <button id="btn-copy-location-link" class="btn-quick-share btn-copy-link" type="button">
+        <span>📋 Copy Location Link</span>
+      </button>
+      <button id="btn-share-whatsapp-location" class="btn-quick-share btn-whatsapp" type="button">
+        <span>💬 Share on WhatsApp</span>
+      </button>
+      <button id="btn-share-sms-location" class="btn-quick-share btn-sms" type="button">
+        <span>📱 Send SMS Alert</span>
+      </button>
+      <button id="btn-share-native-location" class="btn-quick-share btn-native-share" type="button">
+        <span>📤 Share Via Device</span>
+      </button>
+    </div>
+
+    <!-- Main Layout: Interactive Map + Emergency Contacts -->
+    <div class="sharing-main-layout">
+      <div class="sharing-map-col">
+        <div class="sharing-map-wrap">
+          <div id="sharing-interactive-map" class="sharing-map-canvas"></div>
+        </div>
+      </div>
+
+      <div class="sharing-contacts-col">
+        <div class="contacts-card">
+          <div class="contacts-card-header">
+            <h3>🚨 Emergency Contacts</h3>
+            <button id="btn-add-emergency-contact" class="btn-add-contact" type="button">+ Add Contact</button>
+          </div>
+          <p class="contacts-sub">Tap WhatsApp or SMS next to any contact to instantly send your live coordinates.</p>
+          <div id="sharing-contacts-list" class="sharing-contacts-list">
+            <!-- Rendered by locationSharing.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================================== -->
+  <!-- MODULE 5: AMBULANCE FINDER & EMERGENCY TRANSPORT FLEET (FEATURE 6)   -->
+  <!-- =================================================================== -->
+  <section id="view-ambulance" class="view-section">
+    <!-- Permanent 112/108 India Alert Banner -->
+    <div class="ambulance-emergency-banner" role="alert">
+      <div class="amb-banner-left">
+        <span class="pulsing-siren-dot"></span>
+        <div class="amb-banner-text">
+          <strong>🚨 ACUTE EMERGENCY? DIAL 108 OR 112 DIRECTLY</strong>
+          <span>108 is India's free 24/7 Government Emergency Ambulance. 112 is the National Emergency Response Support System.</span>
+        </div>
+      </div>
+      <div class="amb-banner-actions">
+        <a href="tel:108" class="btn-amb-call-primary">
+          <span>🚑 CALL 108</span>
+        </a>
+        <a href="tel:112" class="btn-amb-call-primary red-pill">
+          <span>🚨 CALL 112</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Ambulance Discovery Header & Search -->
+    <div class="ambulance-cockpit">
+      <div class="amb-cockpit-top">
+        <div class="amb-header-title">
+          <h2>🚑 Emergency Ambulance & Transport Fleet</h2>
+          <span id="ambulance-total-count" class="amb-count-badge">Scanning nearby ambulances...</span>
+        </div>
+        <button id="btn-refresh-ambulances" class="btn-radar-action" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+          <span>Refresh Fleet Radar</span>
+        </button>
+      </div>
+
+      <!-- Manual Location Search Fallback -->
+      <div class="ambulance-manual-search-bar">
+        <input type="text" id="ambulance-manual-search-input" placeholder="Search another area, hospital, city, or PIN code for ambulances...">
+        <button id="btn-ambulance-manual-search" class="btn-search-submit" type="button">Search Area</button>
+      </div>
+    </div>
+
+    <!-- Fastest Response Fleet Highlight Card -->
+    <div id="ambulance-nearest-summary" class="ambulance-nearest-card" style="display: none;">
+      <!-- Rendered by ambulanceFinder.js -->
+    </div>
+
+    <!-- Split Layout: Leaflet Map + Ambulance Fleet Cards List -->
+    <div class="ambulance-main-layout">
+      <!-- Left Map -->
+      <div class="ambulance-map-col">
+        <div class="ambulance-map-wrap">
+          <div id="ambulance-interactive-map" class="ambulance-map-canvas"></div>
+        </div>
+      </div>
+
+      <!-- Right Cards List -->
+      <div class="ambulance-cards-col">
+        <div id="ambulance-cards-list" class="ambulance-cards-list">
+          <!-- Rendered by ambulanceFinder.js -->
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Application Scripts -->
   <script src="js/splashIntro.js"></script>
   <script src="js/speechEngine.js"></script>
@@ -3065,6 +3415,11 @@
   <script src="js/assistant.js"></script>
   <script src="js/hospitalRadar.js"></script>
   <script src="js/medicineRelief.js"></script>
+  <script src="js/symptomHistory.js"></script>
+  <script src="js/languageDetector.js"></script>
+  <script src="js/voiceAssistant.js"></script>
+  <script src="js/locationSharing.js"></script>
+  <script src="js/ambulanceFinder.js"></script>
   <script src="js/analyzer.js"></script>
   <script src="js/app.js"></script>
 

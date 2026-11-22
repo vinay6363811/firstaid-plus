@@ -477,6 +477,27 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // =========================================================================
+  // MODULE 5: AMBULANCE FINDER & EMERGENCY TRANSPORT FLEET
+  // =========================================================================
+  if (pathname === '/api/ambulances/nearby' && method === 'GET') {
+    try {
+      const lat = reqUrl.searchParams.get('lat');
+      const lng = reqUrl.searchParams.get('lng');
+      const radius = reqUrl.searchParams.get('radius') || 15000;
+
+      if (!lat || !lng) {
+        return sendJson(res, 400, { error: 'Latitude and Longitude are required to find nearby ambulances.' });
+      }
+
+      const ambulanceData = await hospitalService.searchNearbyAmbulances(lat, lng, radius);
+      return sendJson(res, 200, ambulanceData);
+    } catch (err) {
+      console.error('Error finding ambulances:', err);
+      return sendJson(res, 500, { error: err.message });
+    }
+  }
+
   // Serve static files
   serveStaticFile(req, res, pathname);
 });

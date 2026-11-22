@@ -104,6 +104,16 @@ class SmartAnalyzerController {
       this.analyzeTextBtn.addEventListener("click", () => this.analyzeTextProblem());
     }
 
+    // Inline Microphone Button for Hands-free Voice Input (Module 2)
+    const inlineMicBtn = document.getElementById("inline-mic-input-btn");
+    if (inlineMicBtn) {
+      inlineMicBtn.addEventListener("click", () => {
+        if (window.voiceAssistant && typeof window.voiceAssistant.startInlineVoiceInput === 'function') {
+          window.voiceAssistant.startInlineVoiceInput();
+        }
+      });
+    }
+
     // Example Prompt Chips
     this.exampleChips.forEach(chip => {
       chip.addEventListener("click", () => {
@@ -825,6 +835,12 @@ class SmartAnalyzerController {
     if (window.bodyVisualization && typeof window.bodyVisualization.scanAndHighlightSymptoms === 'function') {
       const symptomQuery = (result.possibleEmergency || result.title || '') + ' ' + (result.whatHappened || '');
       window.bodyVisualization.scanAndHighlightSymptoms(symptomQuery);
+    }
+
+    // Save session to Smart Symptom History (Module 1)
+    if (window.symptomHistory && typeof window.symptomHistory.saveSession === 'function') {
+      const promptText = (this.problemTextarea ? this.problemTextarea.value : '') || (this.previewContextInput ? this.previewContextInput.value : '');
+      window.symptomHistory.saveSession(result, promptText, isPhoto ? 'photo' : 'text_analyzer');
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
