@@ -300,6 +300,32 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // IP Geolocation: Approximate location based on client/ISP network IP
+  if (pathname === '/api/location/ip' && method === 'GET') {
+    try {
+      const forwarded = req.headers['x-forwarded-for'];
+      const clientIp = (forwarded ? forwarded.split(',')[0].trim() : '') ||
+                       req.headers['x-real-ip'] ||
+                       req.socket.remoteAddress || '';
+      const ipResult = await hospitalService.getIpLocation(clientIp);
+      return sendJson(res, 200, ipResult);
+    } catch (err) {
+      console.error('Error resolving IP location:', err);
+      return sendJson(res, 200, {
+        success: true,
+        lat: 12.9716,
+        lng: 77.5946,
+        city: 'Bengaluru',
+        region: 'Karnataka',
+        country: 'India',
+        postal: '560001',
+        formattedAddress: 'Bengaluru, Karnataka, India',
+        isDefault: true,
+        source: 'default_fallback'
+      });
+    }
+  }
+
   // Reverse Geocode: lat, lng -> Human-readable Area, Street, City, PIN
   if (pathname === '/api/hospitals/reverse-geocode' && method === 'GET') {
     try {

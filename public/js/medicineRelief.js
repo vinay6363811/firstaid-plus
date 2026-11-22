@@ -750,6 +750,9 @@
           <!-- Split View: Leaflet Map + Pharmacy Cards -->
           <div class="pharmacy-split-view">
             <div class="pharmacy-map-container">
+              <div class="hospital-map-helper-tip">
+                💡 <strong>Exact Location:</strong> Click anywhere on the map or drag the blue pin to search pharmacies near that spot.
+              </div>
               <div id="pharmacy-interactive-map" class="pharmacy-map-canvas"></div>
             </div>
 
@@ -840,22 +843,84 @@
 
     async detectUserLocationAndFindPharmacies(forceRefresh = false) {
       if (!navigator.geolocation) {
-        this.fetchPharmacies(12.9716, 77.5946, 'Bengaluru Center (Default)');
+        this.fallbackToIpPharmacies('Geolocation not supported on device.');
         return;
       }
 
+      // Stage 1: High-Accuracy GPS (4500ms timeout)
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           this.userLat = pos.coords.latitude;
           this.userLng = pos.coords.longitude;
           this.fetchPharmacies(this.userLat, this.userLng);
         },
-        (err) => {
-          console.warn('Geolocation denied or unavailable, using fallback:', err);
-          this.fetchPharmacies(12.9716, 77.5946, 'Bengaluru Center (Fallback)');
+        (gpsErr) => {
+          console.warn('Pharmacy GPS high accuracy failed, attempting network triangulation...', gpsErr);
+          if (gpsErr.code === gpsErr.PERMISSION_DENIED) {
+            this.fallbackToIpPharmacies('Location permission denied.');
+            return;
+          }
+
+          // Stage 2: Fast Wi-Fi / Network Triangulation (enableHighAccuracy: false)
+          navigator.geolocation.getCurrentPosition(
+            (netPos) => {
+              this.userLat = netPos.coords.latitude;
+              this.userLng = netPos.coords.longitude;
+              this.fetchPharmacies(this.userLat, this.userLng);
+            },
+            (netErr) => {
+              console.warn('Network location unavailable, falling back to IP...', netErr);
+              this.fallbackToIpPharmacies(netErr.message || 'Signal unavailable');
+            },
+            { enableHighAccuracy: false, timeout: 6000, maximumAge: forceRefresh ? 0 : 60000 }
+          );
         },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: forceRefresh ? 0 : 300000 }
+        { enableHighAccuracy: true, timeout: 4500, maximumAge: forceRefresh ? 0 : 300000 }
       );
+    }
+
+    async fallbackToIpPharmacies(reason = '') {
+      let lat = 12.9716;
+      let lng = 77.5946;
+      let addr = 'Bengaluru Center (Fallback)';
+
+      try {
+        const res = await fetch('/api/location/ip');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.lat && data.lng && !data.isDefault) {
+            lat = data.lat;
+            lng = data.lng;
+            addr = data.formattedAddress;
+          }
+        }
+      } catch (e) {}
+
+      if (lat === 12.9716) {
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.latitude && data.longitude) {
+              lat = parseFloat(data.latitude);
+              lng = parseFloat(data.longitude);
+              addr = `${data.city || ''}, ${data.region || ''}, ${data.country_name || 'India'}`.replace(/^, /, '');
+            }
+          }
+        } catch (e) {}
+      }
+
+      this.fetchPharmacies(lat, lng, addr);
+    }
+
+    setPharmacyUserLocation(lat, lng) {
+      const validLat = parseFloat(lat);
+      const validLng = parseFloat(lng);
+      if (isNaN(validLat) || isNaN(validLng)) return;
+
+      this.userLat = validLat;
+      this.userLng = validLng;
+      this.fetchPharmacies(validLat, validLng, 'Exact Location Pinned on Map');
     }
 
     searchPharmaciesByInput() {
@@ -1003,6 +1068,11 @@
         });
 
         tileLayer.addTo(this.pharmacyMap);
+
+        // Click on map to place exact pin
+        this.pharmacyMap.on('click', (e) => {
+          this.setPharmacyUserLocation(e.latlng.lat, e.latlng.lng);
+        });
       }
 
       this.pharmacyMap.invalidateSize();
@@ -1021,7 +1091,7 @@
         this.userMarker = null;
       }
 
-      // Add User Location Pin
+      // Add User Location Pin (Draggable)
       if (this.userLat && this.userLng) {
         const userIcon = L.divIcon({
           className: 'user-gps-marker',
@@ -1030,9 +1100,18 @@
           iconAnchor: [16, 16]
         });
 
-        this.userMarker = L.marker([this.userLat, this.userLng], { icon: userIcon })
+        this.userMarker = L.marker([this.userLat, this.userLng], { 
+          icon: userIcon,
+          draggable: true,
+          autoPan: true
+        })
           .addTo(this.pharmacyMap)
-          .bindPopup('<strong>📍 Your Location</strong>');
+          .bindPopup('<strong>📍 Your Location</strong><br><small style="color:#0284c7; font-weight:600;">👆 Drag pin or click map to set exact spot</small>');
+
+        this.userMarker.on('dragend', (e) => {
+          const pt = e.target.getLatLng();
+          this.setPharmacyUserLocation(pt.lat, pt.lng);
+        });
       }
 
       // Add Pharmacy Pins

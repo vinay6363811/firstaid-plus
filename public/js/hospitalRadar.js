@@ -98,6 +98,14 @@
         });
       }
 
+      // Pin on Map button
+      const pinMapBtn = document.getElementById('btn-pin-on-map');
+      if (pinMapBtn) {
+        pinMapBtn.addEventListener('click', () => {
+          this.enablePinPlacementMode();
+        });
+      }
+
       // Manual Location Search
       if (this.manualSearchBtn && this.manualSearchInput) {
         const doManualSearch = () => {
@@ -228,9 +236,11 @@
           if (this.map) this.map.invalidateSize();
         }, 150);
 
-        // Listen for map clicks
-        this.map.on('click', () => {
-          // Deselect hospital route on neutral map click if needed
+        // Listen for map clicks: allows users to click anywhere to set their exact location
+        this.map.on('click', (e) => {
+          const mapCanvas = document.getElementById('hospital-interactive-map');
+          if (mapCanvas) mapCanvas.classList.remove('pin-placement-active');
+          this.setUserLocation(e.latlng.lat, e.latlng.lng, 'Manual Pin');
         });
       } catch (err) {
         console.error('Error initializing map:', err);
@@ -252,25 +262,88 @@
     }
 
     /**
-     * Smart GPS Emergency Location Detection
+     * Enable interactive Pin Placement mode on Map (crosshair cursor & prompt)
+     */
+    enablePinPlacementMode() {
+      if (!this.map) return;
+      const mapCanvas = document.getElementById('hospital-interactive-map');
+      if (mapCanvas) {
+        mapCanvas.classList.add('pin-placement-active');
+      }
+      this.setRadarStatus('TAP ANYWHERE ON MAP TO PIN YOUR EXACT LOCATION', 'locating');
+      const hint = document.getElementById('map-click-hint');
+      if (hint) {
+        hint.innerHTML = '🎯 <strong>Pin Mode Active:</strong> Tap anywhere on the map now to place your exact pin.';
+        hint.classList.add('hint-pulse');
+      }
+    }
+
+    /**
+     * Set User Location interactively (from map click, pin drag, or manual search)
+     * Re-centers the radar, updates coordinates, reverse-geocodes street, and queries facilities.
+     */
+    setUserLocation(lat, lng, sourceLabel = 'Manual Pin') {
+      const validLat = parseFloat(lat);
+      const validLng = parseFloat(lng);
+      if (isNaN(validLat) || isNaN(validLng)) return;
+
+      this.userLat = validLat;
+      this.userLng = validLng;
+      this.gpsAccuracy = null;
+      this.locationSource = 'pinned';
+
+      if (this.accuracyCircle && this.map) {
+        this.map.removeLayer(this.accuracyCircle);
+        this.accuracyCircle = null;
+      }
+
+      this.setRadarScanningAnimation(false);
+      this.setRadarStatus('EXACT LOCATION SET ON MAP', 'success');
+
+      if (this.radarAccuracyBadge) {
+        this.radarAccuracyBadge.textContent = '📍 Exact Location Pinned';
+        this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-pinned';
+        this.radarAccuracyBadge.style.display = 'inline-block';
+      }
+
+      const hint = document.getElementById('map-click-hint');
+      if (hint) {
+        hint.innerHTML = '📍 <strong>Exact Location Pinned!</strong> Drag the blue pin or click another spot anytime to change.';
+        hint.classList.remove('hint-pulse');
+      }
+
+      // Update Map pin and radar circle
+      this.updateMapUserPosition();
+
+      if (this.userMarker) {
+        this.userMarker.bindPopup(`<strong>📍 Exact Location Set by You</strong><br><small style="color:#0284c7;">Scanning nearest hospitals from this exact spot...</small>`).openPopup();
+      }
+
+      // Reverse geocode new coordinates for street/area display
+      this.fetchUserAddress(validLat, validLng);
+
+      // Re-fetch nearby medical facilities from this exact point
+      this.fetchNearbyHospitals();
+    }
+
+    /**
+     * Smart Multi-Stage Cascading Geolocation Pipeline
+     * Stage 1: High Accuracy Satellite GPS (4500ms timeout)
+     * Stage 2: Fast Wi-Fi / Cellular Triangulation (enableHighAccuracy: false, 6000ms timeout)
+     * Stage 3: IP Geolocation Fallback (/api/location/ip + client IP lookup)
+     * Stage 4: Interactive Pinning & Dragging
      */
     detectUserLocation(forcePrompt = false) {
       if (!navigator.geolocation) {
         this.setRadarStatus('GPS UNAVAILABLE ON THIS DEVICE', 'error');
-        this.showManualSearchNotice('Your device does not support GPS geolocation. Please enter your location manually.');
+        this.fallbackToIpLocation('Device does not support GPS geolocation.');
         return;
       }
 
       this.setRadarStatus('LOCATING YOUR POSITION...', 'locating');
       this.setRadarScanningAnimation(true);
 
-      const options = {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: forcePrompt ? 0 : 30000
-      };
-
-      // Step animation sequence
+      // Progressive status messages
       setTimeout(() => {
         if (this.isLoading) this.setRadarStatus('IDENTIFYING NEAREST MEDICAL SUPPORT...', 'locating');
       }, 1200);
@@ -279,58 +352,177 @@
         if (this.isLoading) this.setRadarStatus('SCANNING YOUR SURROUNDINGS...', 'locating');
       }, 2400);
 
+      // Stage 1: Try High-Accuracy Satellite GPS
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude, longitude, accuracy } = position.coords;
-          this.userLat = latitude;
-          this.userLng = longitude;
-          this.gpsAccuracy = Math.round(accuracy);
-
-          this.setRadarStatus('YOUR LOCATION IS IDENTIFIED', 'success');
-          this.setRadarScanningAnimation(false);
-
-          if (this.radarAccuracyBadge) {
-            this.radarAccuracyBadge.textContent = `GPS Accuracy: ±${this.gpsAccuracy} m`;
-            this.radarAccuracyBadge.style.display = 'inline-block';
-          }
-
-          // Update Map Position
-          this.updateMapUserPosition();
-
-          // Reverse Geocode to display real address
-          this.fetchUserAddress(latitude, longitude);
-
-          // Discover Real Hospitals
-          this.fetchNearbyHospitals();
+          this.handleLocationSuccess(position, 'gps');
         },
-        (error) => {
-          this.setRadarScanningAnimation(false);
-          let errorMsg = 'Unable to detect your current location.';
-          if (error.code === error.PERMISSION_DENIED) {
-            errorMsg = 'Location permission was denied. Please allow GPS access or enter your location manually.';
-          } else if (error.code === error.TIMEOUT) {
-            errorMsg = 'GPS location request timed out. Please tap Refresh GPS or search your area manually.';
-          } else if (error.code === error.POSITION_UNAVAILABLE) {
-            errorMsg = 'GPS signal is currently unavailable. Please enter your area or PIN code.';
+        (gpsError) => {
+          console.warn('GPS High-accuracy failed/timed out, attempting Wi-Fi/Network triangulation...', gpsError);
+
+          // If user specifically denied permission in browser
+          if (gpsError.code === gpsError.PERMISSION_DENIED) {
+            this.fallbackToIpLocation('Location permission denied in browser.');
+            return;
           }
 
-          this.setRadarStatus(errorMsg, 'error');
-          this.showManualSearchNotice(errorMsg);
-
-          // Use fallback default (Bangalore center) for immediate demo if no coordinates yet
-          if (!this.userLat) {
-            this.userLat = 12.9716;
-            this.userLng = 77.5946;
-            this.userAddress = 'Bengaluru City Center (Default Demo Location)';
-            if (this.radarAddressText) {
-              this.radarAddressText.textContent = this.userAddress;
+          // Stage 2: Fast Wi-Fi / Cellular Triangulation (very fast & reliable on laptops/desktops)
+          navigator.geolocation.getCurrentPosition(
+            (netPosition) => {
+              this.handleLocationSuccess(netPosition, 'network');
+            },
+            (netError) => {
+              console.warn('Network triangulation unavailable, engaging IP Geolocation fallback...', netError);
+              this.fallbackToIpLocation(netError.message || 'Signal unavailable');
+            },
+            {
+              enableHighAccuracy: false,
+              timeout: 6000,
+              maximumAge: forcePrompt ? 0 : 60000
             }
-            this.updateMapUserPosition();
-            this.fetchNearbyHospitals();
-          }
+          );
         },
-        options
+        {
+          enableHighAccuracy: true,
+          timeout: 4500,
+          maximumAge: forcePrompt ? 0 : 30000
+        }
       );
+    }
+
+    /**
+     * Handle Successful Browser Geolocation Fix (GPS or Wi-Fi Network)
+     */
+    handleLocationSuccess(position, type) {
+      const { latitude, longitude, accuracy } = position.coords;
+      this.userLat = latitude;
+      this.userLng = longitude;
+      this.gpsAccuracy = Math.round(accuracy);
+      this.locationSource = type;
+
+      this.setRadarScanningAnimation(false);
+      this.setRadarStatus('YOUR LOCATION IS IDENTIFIED', 'success');
+
+      if (this.radarAccuracyBadge) {
+        if (type === 'gps' && this.gpsAccuracy <= 50) {
+          this.radarAccuracyBadge.textContent = `🟢 GPS Satellite: ±${this.gpsAccuracy} m`;
+          this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-gps';
+        } else if (type === 'gps') {
+          this.radarAccuracyBadge.textContent = `🟢 GPS Fix: ±${this.gpsAccuracy} m`;
+          this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-gps';
+        } else {
+          this.radarAccuracyBadge.textContent = `🟡 Wi-Fi / Network: ±${this.gpsAccuracy} m`;
+          this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-wifi';
+        }
+        this.radarAccuracyBadge.style.display = 'inline-block';
+      }
+
+      // Hide permission notice if open
+      const noticeBox = document.getElementById('hospital-radar-notice');
+      if (noticeBox && noticeBox.querySelector('.notice-permission-guide')) {
+        noticeBox.style.display = 'none';
+      }
+
+      // Update Map Position with draggable pin
+      this.updateMapUserPosition();
+
+      // Reverse Geocode to display real address
+      this.fetchUserAddress(latitude, longitude);
+
+      // Discover Real Hospitals
+      this.fetchNearbyHospitals();
+    }
+
+    /**
+     * Fallback to IP-Based Geolocation when GPS & Wi-Fi are blocked or unavailable
+     */
+    async fallbackToIpLocation(reason = '') {
+      this.setRadarStatus('LOCATING VIA NETWORK IP...', 'locating');
+
+      let resolved = false;
+
+      // 1. Try FirstAid+ Backend IP Geolocation API
+      try {
+        const res = await fetch('/api/location/ip');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.lat && data.lng && !data.isDefault) {
+            this.userLat = data.lat;
+            this.userLng = data.lng;
+            this.userAddress = data.formattedAddress;
+            resolved = true;
+          }
+        }
+      } catch (e) {}
+
+      // 2. Client-side direct IP lookup if backend returned default
+      if (!resolved) {
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.latitude && data.longitude) {
+              this.userLat = parseFloat(data.latitude);
+              this.userLng = parseFloat(data.longitude);
+              this.userAddress = `${data.city || ''}, ${data.region || ''}, ${data.country_name || 'India'}`.replace(/^, /, '');
+              resolved = true;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // 3. Fallback to default if offline
+      if (!this.userLat || !this.userLng) {
+        this.userLat = 12.9716;
+        this.userLng = 77.5946;
+        this.userAddress = 'Bengaluru City Center (Demo Location)';
+      }
+
+      this.setRadarScanningAnimation(false);
+      this.gpsAccuracy = null;
+      this.locationSource = resolved ? 'ip' : 'demo';
+
+      if (this.radarAddressText) {
+        this.radarAddressText.textContent = this.userAddress;
+      }
+      if (this.radarAccuracyBadge) {
+        this.radarAccuracyBadge.textContent = resolved ? '🟠 Estimated Area (Network IP)' : '📍 Demo Center (Tap map to change)';
+        this.radarAccuracyBadge.className = 'radar-accuracy-badge badge-approximate';
+        this.radarAccuracyBadge.style.display = 'inline-block';
+      }
+
+      this.setRadarStatus('APPROXIMATE AREA IDENTIFIED — TAP MAP FOR EXACT SPOT', 'warning');
+      this.showPermissionNotice(true);
+
+      this.updateMapUserPosition();
+      this.fetchNearbyHospitals();
+    }
+
+    /**
+     * Show Permission Guidance Banner
+     */
+    showPermissionNotice(isDenied = false) {
+      const noticeBox = document.getElementById('hospital-radar-notice');
+      if (!noticeBox) return;
+
+      noticeBox.innerHTML = `
+        <div class="radar-notice-content notice-permission-guide">
+          <div class="perm-guide-left">
+            <span class="perm-guide-icon">📍</span>
+            <div>
+              <strong>${isDenied ? 'Browser Location Permission Blocked or Unavailable' : 'Exact Location Guidance'}</strong>
+              <p>${isDenied 
+                ? 'To detect GPS automatically: click the lock icon in your browser URL bar and set Location to "Allow", or <strong>tap anywhere on the map below</strong> to set your exact spot.' 
+                : 'Not at the detected spot? <strong>Click anywhere on the map or drag the blue pin</strong> directly onto your building or street.'}</p>
+            </div>
+          </div>
+          <div class="perm-guide-actions">
+            <button type="button" class="btn-perm-pin" onclick="window.hospitalRadar.enablePinPlacementMode()">📍 Tap Map to Pin</button>
+            <button type="button" class="btn-perm-retry" onclick="window.hospitalRadar.detectUserLocation(true)">🔄 Retry GPS</button>
+          </div>
+        </div>
+      `;
+      noticeBox.style.display = 'block';
     }
 
     /**
@@ -507,11 +699,33 @@
       });
 
       if (!this.userMarker) {
-        this.userMarker = L.marker(userLatLng, { icon: userRadarIcon, zIndexOffset: 1000 }).addTo(this.map);
-        this.userMarker.bindPopup('<strong>📍 Your Current GPS Location</strong><br>' + (this.userAddress || 'Detected Device Position'));
+        this.userMarker = L.marker(userLatLng, { 
+          icon: userRadarIcon, 
+          zIndexOffset: 1000,
+          draggable: true,
+          autoPan: true
+        }).addTo(this.map);
+
+        this.userMarker.on('dragstart', () => {
+          if (this.accuracyCircle) {
+            this.map.removeLayer(this.accuracyCircle);
+            this.accuracyCircle = null;
+          }
+        });
+
+        this.userMarker.on('dragend', (e) => {
+          const pt = e.target.getLatLng();
+          this.setUserLocation(pt.lat, pt.lng, 'Dragged Pin');
+        });
+
+        this.userMarker.bindPopup(
+          `<strong>📍 Your Position</strong><br>${this.userAddress || 'Detected Device Location'}<br><small style="color:#0284c7; font-weight:600;">👆 Drag pin or click map to adjust exact spot</small>`
+        );
       } else {
         this.userMarker.setLatLng(userLatLng);
-        this.userMarker.setPopupContent('<strong>📍 Your Current GPS Location</strong><br>' + (this.userAddress || 'Detected Device Position'));
+        this.userMarker.setPopupContent(
+          `<strong>📍 Your Position</strong><br>${this.userAddress || 'Detected Device Location'}<br><small style="color:#0284c7; font-weight:600;">👆 Drag pin or click map to adjust exact spot</small>`
+        );
       }
 
       // Accuracy circle

@@ -449,6 +449,13 @@ async function runTests() {
     const cssStyle = fs.readFileSync(path.join(__dirname, 'public', 'css', 'style.css'), 'utf-8');
     const hospitalRadarJs = fs.readFileSync(path.join(__dirname, 'public', 'js', 'hospitalRadar.js'), 'utf-8');
     
+    // G.1. IP Geolocation API Endpoint Check
+    const resIpGeo = await fetch('http://127.0.0.1:3000/api/location/ip');
+    assert(resIpGeo.status === 200, 'GET /api/location/ip returns HTTP 200');
+    const ipGeoData = await resIpGeo.json();
+    assert(ipGeoData.success === true && !isNaN(ipGeoData.lat) && !isNaN(ipGeoData.lng), 'IP Geolocation API returns valid coordinates');
+    assert(ipGeoData.city && ipGeoData.country, 'IP Geolocation returns city and country metadata');
+
     assert(indexHtml.includes('leaflet.css') && indexHtml.includes('leaflet.js'), 'HTML imports local Leaflet CSS and JS');
     assert(indexHtml.includes('data-view="hospitals"'), 'HTML contains Nearby Hospitals navigation button');
     assert(indexHtml.includes('id="view-hospitals"'), 'HTML contains Module 10 View Section (#view-hospitals)');
@@ -456,9 +463,14 @@ async function runTests() {
     assert(indexHtml.includes('id="hospital-interactive-map"'), 'HTML contains Leaflet interactive map container');
     assert(indexHtml.includes('id="hospitals-cards-list"'), 'HTML contains ranked hospital cards container');
     assert(indexHtml.includes('id="hospital-radar-scanner"'), 'HTML contains radar pulse cockpit');
+    assert(indexHtml.includes('id="btn-pin-on-map"'), 'HTML includes Pin On Map button for interactive manual pinning');
+    assert(indexHtml.includes('id="map-click-hint"'), 'HTML includes exact location helper tip above map');
     assert(indexHtml.includes('js/hospitalRadar.js'), 'HTML includes hospitalRadar.js script tag');
     assert(hospitalRadarJs.includes('class HospitalRadarController'), 'hospitalRadar.js defines HospitalRadarController class');
     assert(hospitalRadarJs.includes('window.openHospitalRadar'), 'hospitalRadar.js exports global window.openHospitalRadar helper');
+    assert(hospitalRadarJs.includes('setUserLocation'), 'hospitalRadar.js defines setUserLocation method for interactive pinning');
+    assert(hospitalRadarJs.includes('fallbackToIpLocation'), 'hospitalRadar.js defines fallbackToIpLocation method for resilient IP geolocation');
+    assert(hospitalRadarJs.includes('draggable: true'), 'hospitalRadar.js makes user location pin draggable for pinpoint precision');
     assert(!hospitalRadarJs.includes('basemaps.cartocdn.com'), 'hospitalRadar.js has completely removed the broken CartoDB tile layer causing "API KEY REQUIRED" watermark');
     assert(hospitalRadarJs.includes('tile.openstreetmap.org'), 'hospitalRadar.js uses free, verified standard OpenStreetMap tile layer');
     assert(hospitalRadarJs.includes('OpenStreetMap') && hospitalRadarJs.includes('contributors'), 'hospitalRadar.js includes proper OpenStreetMap attribution');
@@ -467,6 +479,8 @@ async function runTests() {
     assert(cssStyle.includes('#view-hospitals.emergency-mode-active'), 'CSS styles Smart Emergency Mode high-contrast cockpit');
     assert(cssStyle.includes('.user-gps-radar-pin'), 'CSS styles pulsing GPS radar pin');
     assert(cssStyle.includes('.hospital-map-pin.nearest'), 'CSS styles #01 Nearest hospital map pin');
+    assert(cssStyle.includes('.hospital-map-helper-tip'), 'CSS styles interactive map helper tip');
+    assert(cssStyle.includes('.notice-permission-guide'), 'CSS styles location permission recovery guide');
 
     console.log('\n--- 13. Testing MODULE 11 — AI Medicine & Relief Recommendations + Pharmacy Finder ---');
     // A. Medicine categories
@@ -551,6 +565,8 @@ async function runTests() {
     assert(indexHtmlMod11.includes('js/medicineRelief.js'), 'HTML includes medicineRelief.js script tag');
     assert(medReliefJs.includes('class MedicineReliefController'), 'medicineRelief.js defines MedicineReliefController class');
     assert(medReliefJs.includes('window.openMedicineRelief'), 'medicineRelief.js exports global window.openMedicineRelief helper');
+    assert(medReliefJs.includes('setPharmacyUserLocation'), 'medicineRelief.js supports interactive map click-to-pin');
+    assert(medReliefJs.includes('fallbackToIpPharmacies'), 'medicineRelief.js includes IP geolocation fallback');
     assert(cssStyleMod11.includes('.medicine-item-card'), 'CSS styles medicine item cards');
     assert(cssStyleMod11.includes('.med-brand-pill'), 'CSS styles Indian brand pills');
     assert(cssStyleMod11.includes('.pharmacy-item-card'), 'CSS styles pharmacy item cards');
