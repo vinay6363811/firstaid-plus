@@ -8,6 +8,29 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
+// Load environment variables from .env if present
+try {
+  const envPath = path.join(__dirname, '.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split(/\r?\n/).forEach(line => {
+      const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+      if (match) {
+        const key = match[1];
+        let value = match[2] || '';
+        if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+          value = value.slice(1, -1);
+        }
+        if (!process.env[key]) {
+          process.env[key] = value.trim();
+        }
+      }
+    });
+  }
+} catch (e) {
+  console.warn('Could not load .env file:', e.message);
+}
+
 const { EMERGENCY_GUIDES, DEFAULT_GUIDE, analyzeTextSymptoms } = require('./knowledgeBase');
 const { analyzePhotoLocal } = require('./visualAnalyzer');
 const { translateResult } = require('./multilingualService');
@@ -253,6 +276,24 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/hospitals/config' && method === 'GET') {
     return sendJson(res, 200, {
       hasGoogleMapsApiKey: hospitalService.hasGoogleMapsApiKey(),
+      apiKey: hospitalService.getGoogleMapsApiKey() || '',
+      requiredGoogleApis: [
+        {
+          name: "Maps JavaScript API",
+          description: "Renders the interactive Google Map, zoom/drag controls, and custom colored pins",
+          status: "Required"
+        },
+        {
+          name: "Places API (New)",
+          description: "Searches real nearby hospitals, clinics, medical centers, pharmacies and medical stores",
+          status: "Required"
+        },
+        {
+          name: "Geocoding API",
+          description: "Converts GPS coordinates into street addresses and geocodes manual area searches",
+          status: "Recommended"
+        }
+      ],
       provider: hospitalService.hasGoogleMapsApiKey() 
         ? 'Google Maps Platform Places API (New)' 
         : 'OpenStreetMap Live Medical Network + Verified Emergency Registry',
@@ -266,13 +307,32 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/hospitals/config-key' && method === 'POST') {
     try {
       const { apiKey } = await readJsonBody(req);
-      hospitalService.setGoogleMapsApiKey(apiKey || '');
+      const cleanKey = (apiKey || '').trim();
+      hospitalService.setGoogleMapsApiKey(cleanKey);
+
+      // Persist to .env file so it stays saved across server restarts
+      try {
+        const envPath = path.join(__dirname, '.env');
+        let existingEnv = '';
+        if (fs.existsSync(envPath)) {
+          existingEnv = fs.readFileSync(envPath, 'utf8');
+        }
+        if (/^GOOGLE_MAPS_API_KEY=/m.test(existingEnv)) {
+          existingEnv = existingEnv.replace(/^GOOGLE_MAPS_API_KEY=.*$/m, `GOOGLE_MAPS_API_KEY=${cleanKey}`);
+        } else {
+          existingEnv = (existingEnv ? existingEnv.trim() + '\n' : '') + `GOOGLE_MAPS_API_KEY=${cleanKey}\n`;
+        }
+        fs.writeFileSync(envPath, existingEnv, 'utf8');
+      } catch (writeErr) {
+        console.warn('Could not write to .env:', writeErr.message);
+      }
+
       return sendJson(res, 200, {
         success: true,
         hasGoogleMapsApiKey: hospitalService.hasGoogleMapsApiKey(),
         message: hospitalService.hasGoogleMapsApiKey()
-          ? 'Google Maps API key configured successfully on backend.'
-          : 'Google Maps API key cleared. Operating in OpenStreetMap Live Radar mode.'
+          ? 'Google Maps API key configured and persisted successfully.'
+          : 'Google Maps API key cleared. Operating in high-precision fallback mode.'
       });
     } catch (err) {
       return sendJson(res, 500, { error: err.message });

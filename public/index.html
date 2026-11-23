@@ -2331,6 +2331,28 @@
     <!-- MODULE 10: NEARBY HOSPITALS & EMERGENCY SERVICES RADAR              -->
     <!-- =================================================================== -->
     <section id="view-hospitals" class="view-section">
+      <!-- Healthcare Header Row (Requirement 6) -->
+      <div class="healthcare-header-row">
+        <div class="healthcare-header-left">
+          <h1 class="healthcare-main-heading">Nearby Healthcare Facilities</h1>
+          <p class="healthcare-subheading">Live GPS Radar • Google Maps Integration • Verified Hospitals & Pharmacies</p>
+        </div>
+        <div class="healthcare-header-actions">
+          <button id="btn-share-live-location" class="btn-share-live-loc" type="button" title="Share your exact live coordinates and Google Maps link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+            <span>Share My Live Location</span>
+          </button>
+          <button id="btn-refresh-location-top" class="btn-refresh-loc-top" type="button" title="Refresh your GPS location">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            <span>Refresh Location</span>
+          </button>
+          <button id="btn-google-api-setup" class="btn-api-config-pill" type="button" title="Configure or verify Google Maps API key">
+            <span id="google-api-status-dot" class="api-status-dot"></span>
+            <span id="google-api-status-text">Google Maps API</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Permanent Emergency Alert Banner (Requirement 10) -->
       <div class="hospital-emergency-banner" role="alert">
         <div class="hosp-banner-left">
@@ -2515,10 +2537,10 @@
             <div id="hospital-interactive-map" class="hospital-map-canvas"></div>
           </div>
           <div class="hospital-map-legend">
-            <div class="legend-item"><span class="legend-pin-sample user-pin"></span> Your Location</div>
-            <div class="legend-item"><span class="legend-pin-sample nearest-pin">#01</span> Nearest Hospital</div>
-            <div class="legend-item"><span class="legend-pin-sample standard-pin">#02</span> Other Facilities</div>
-            <div class="legend-item"><span class="legend-pin-sample er-pin">ER</span> 24/7 Emergency</div>
+            <div class="legend-item"><span class="legend-pin-sample user-pin blue-marker-pin"></span> 🔵 Your Live Location (Blue)</div>
+            <div class="legend-item"><span class="legend-pin-sample hospital-pin red-marker-pin"></span> 🔴 Hospitals & Emergency (Red)</div>
+            <div class="legend-item"><span class="legend-pin-sample pharmacy-pin green-marker-pin"></span> 🟢 Pharmacies & Medical (Green)</div>
+            <div class="legend-item"><span class="legend-pin-sample nearest-pin">#01</span> Nearest Facility</div>
           </div>
         </div>
 
@@ -3071,6 +3093,56 @@
       <div class="tablet-modal-footer">
         <span class="modal-footer-disclaimer">⚕️ Clinical reference grounded in CDSCO, WHO Essential Medicines, and NPPA benchmarks. Always consult a certified physician for prescription medicines.</span>
         <button id="btn-close-tablet-guide-footer" class="btn btn-secondary" type="button">Close Guide</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Maps API Setup Modal (Requirement 7) -->
+  <div id="google-maps-setup-modal" class="google-maps-modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="google-modal-title">
+    <div class="google-maps-modal-card">
+      <div class="google-modal-header">
+        <div class="google-modal-title-wrap">
+          <span class="google-modal-logo">🗺️</span>
+          <div>
+            <h3 id="google-modal-title">Google Maps Platform Configuration</h3>
+            <p>Connect Google Cloud Console APIs for Live Google Maps & Places</p>
+          </div>
+        </div>
+        <button id="btn-close-google-modal" class="google-modal-close-btn" type="button" aria-label="Close">✕</button>
+      </div>
+
+      <div class="google-modal-body">
+        <div class="google-api-instructions-box">
+          <h4>Required Google Cloud Console APIs:</h4>
+          <p>To enable live Google Maps with real hospital & pharmacy search, create an API key in <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a> and enable these 3 APIs:</p>
+          <ul class="google-apis-checklist">
+            <li>
+              <strong>1. Maps JavaScript API</strong>
+              <span>Renders the interactive Google Map, zoom/drag controls, and custom blue, red, and green markers.</span>
+            </li>
+            <li>
+              <strong>2. Places API (New)</strong>
+              <span>Finds real hospitals, trauma centers, clinics, pharmacies, and medical stores within 5 km to 50 km.</span>
+            </li>
+            <li>
+              <strong>3. Geocoding API</strong>
+              <span>Converts GPS coordinates into exact street addresses and enables manual address/PIN code searches.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="google-key-input-group">
+          <label for="google-maps-key-input">Enter your Google Maps API Key:</label>
+          <input type="text" id="google-maps-key-input" placeholder="AIzaSy..." autocomplete="off" spellcheck="false">
+          <small class="key-hint">Keys are securely stored in your local <code>.env</code> file and used for Google Maps JS and Places API calls.</small>
+        </div>
+
+        <div id="google-key-status-msg" class="google-key-status-msg" style="display: none;"></div>
+      </div>
+
+      <div class="google-modal-footer">
+        <button id="btn-clear-google-key" class="btn btn-outline" type="button">Use Fallback Radar</button>
+        <button id="btn-save-google-key" class="btn btn-primary" type="button">Save & Activate Google Maps</button>
       </div>
     </div>
   </div>

@@ -1660,13 +1660,24 @@ out center 40;`;
 /**
  * Fetch real hospitals from Google Places API (New) when API key is provided
  */
-async function fetchGooglePlacesHospitals(lat, lng, radiusMeters) {
+async function fetchGooglePlacesHospitals(lat, lng, radiusMeters, categoryFilter = 'all') {
   const apiKey = getGoogleMapsApiKey();
   if (!apiKey) return [];
 
   const url = 'https://places.googleapis.com/v1/places:searchNearby';
+  
+  let includedTypes = ['hospital', 'doctor', 'medical_clinic', 'pharmacy', 'drugstore'];
+  const cat = (categoryFilter || 'all').toLowerCase();
+  if (cat === 'pharmacy') {
+    includedTypes = ['pharmacy', 'drugstore'];
+  } else if (cat === 'hospital' || cat === 'emergency' || cat === 'government' || cat === 'private') {
+    includedTypes = ['hospital', 'medical_clinic', 'doctor'];
+  } else if (cat === 'clinic') {
+    includedTypes = ['medical_clinic', 'doctor'];
+  }
+
   const payload = {
-    includedTypes: ['hospital', 'doctor', 'pharmacy'],
+    includedTypes,
     maxResultCount: 20,
     locationRestriction: {
       circle: {
@@ -1694,9 +1705,11 @@ async function fetchGooglePlacesHospitals(lat, lng, radiusMeters) {
     return data.places.map(p => {
       const name = p.displayName ? p.displayName.text : 'Medical Facility';
       const types = p.types || [];
+      const isPharmacy = types.includes('pharmacy') || types.includes('drugstore') || /pharmacy|chemist|medical store|drugstore|druggist/i.test(name);
+      
       let category = 'Hospital';
-      if (types.includes('pharmacy')) category = 'Pharmacy';
-      else if (types.includes('doctor')) category = 'Clinic';
+      if (isPharmacy) category = 'Pharmacy';
+      else if (types.includes('doctor') || types.includes('medical_clinic')) category = 'Clinic';
       else if (/emergency|trauma/i.test(name)) category = 'Emergency / Trauma Center';
       else if (/government|govt|general hospital/i.test(name)) category = 'Government Hospital';
       else category = 'Multispecialty Hospital';
@@ -1708,6 +1721,7 @@ async function fetchGooglePlacesHospitals(lat, lng, radiusMeters) {
         googlePlaceId: p.id,
         name: name,
         category,
+        isPharmacy,
         address: p.formattedAddress || 'Address on file with Google Maps',
         area: '',
         city: '',
@@ -1721,9 +1735,11 @@ async function fetchGooglePlacesHospitals(lat, lng, radiusMeters) {
         userRatingsTotal: p.userRatingCount || null,
         isOpen: isOpenNow,
         openNowText: isOpenNow === true ? 'Open Now' : (isOpenNow === false ? 'Closed' : 'Hours unavailable'),
-        emergency: types.includes('hospital') || /emergency/i.test(name),
-        emergencyDepartment: /emergency/i.test(name) ? 'Verified Emergency Facility' : 'Medical Department',
+        emergency: !isPharmacy && (types.includes('hospital') || /emergency/i.test(name)),
+        emergencyDepartment: isPharmacy ? null : (/emergency/i.test(name) ? 'Verified Emergency Facility' : 'Medical Department'),
         googleMapsUri: p.googleMapsUri || null,
+        googleMapsNavigationUrl: `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${p.location.latitude},${p.location.longitude}&travelmode=driving`,
+        directionsUrl: `https://www.google.com/maps/dir/?api=1&origin=${lat},${lng}&destination=${p.location.latitude},${p.location.longitude}&travelmode=driving`,
         source: 'Google Places API (New)'
       };
     });
@@ -1813,7 +1829,7 @@ async function searchNearbyHospitals(lat, lng, radiusMeters = 5000, categoryFilt
     // 1. Google Places (if key configured)
     let googleResults = [];
     if (hasGoogleMapsApiKey()) {
-      googleResults = await fetchGooglePlacesHospitals(validLat, validLng, currentRadius);
+      googleResults = await fetchGooglePlacesHospitals(validLat, validLng, currentRadius, categoryFilter);
     }
 
     // 2. OpenStreetMap Live Overpass Radar & Nominatim in parallel
@@ -1841,7 +1857,9 @@ async function searchNearbyHospitals(lat, lng, radiusMeters = 5000, categoryFilt
   aggregated.forEach(hosp => {
     hosp.distanceMeters = calculateHaversineDistance(validLat, validLng, hosp.lat, hosp.lng);
     hosp.distanceFormatted = formatDistance(hosp.distanceMeters);
-    hosp.googleMapsNavigationUrl = `https://www.google.com/maps/dir/?api=1&destination=${hosp.lat},${hosp.lng}&destination_place_id=${hosp.googlePlaceId || ''}`;
+    hosp.isPharmacy = Boolean(hosp.isPharmacy || hosp.category === 'Pharmacy' || /pharmacy|chemist|medical store|drugstore/i.test(hosp.name));
+    hosp.googleMapsNavigationUrl = `https://www.google.com/maps/dir/?api=1&origin=${validLat},${validLng}&destination=${hosp.lat},${hosp.lng}&travelmode=driving`;
+    hosp.directionsUrl = hosp.googleMapsNavigationUrl;
     hosp.googleMapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hosp.name)}&query_place_id=${hosp.googlePlaceId || ''}`;
   });
 

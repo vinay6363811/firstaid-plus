@@ -7756,3 +7756,407 @@ body {
   0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.3); }
   50% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15); }
 }
+
+/* ==========================================================================
+   HEALTHCARE FACILITIES & GOOGLE MAPS INTEGRATION STYLES
+   ========================================================================== */
+
+.healthcare-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 18px 24px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.healthcare-main-heading {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+  margin: 0 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.healthcare-subheading {
+  font-size: 0.88rem;
+  color: var(--text-muted, #64748b);
+  margin: 0;
+}
+
+.healthcare-header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-share-live-loc {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-share-live-loc:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+}
+
+.btn-refresh-loc-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-refresh-loc-top:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-api-config-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-api-config-pill:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.api-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.api-status-dot.dot-active {
+  background: #16a34a;
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.6);
+}
+
+.api-status-dot.dot-inactive {
+  background: #94a3b8;
+}
+
+/* Map Legend Marker Pins */
+.legend-pin-sample.blue-marker-pin {
+  background: #2563eb;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.6);
+}
+
+.legend-pin-sample.red-marker-pin {
+  background: #dc2626;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(220, 38, 38, 0.6);
+}
+
+.legend-pin-sample.green-marker-pin {
+  background: #16a34a;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(22, 163, 74, 0.6);
+}
+
+/* Leaflet Pin Styles for Pharmacy & Hospital */
+.hospital-map-pin.pharmacy-pin .pin-badge {
+  background: #16a34a !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(22, 163, 74, 0.45) !important;
+}
+
+.hospital-map-pin.pharmacy-pin .pin-arrow {
+  border-top-color: #16a34a !important;
+}
+
+.hospital-map-pin.hospital-pin .pin-badge {
+  background: #dc2626 !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(220, 38, 38, 0.45) !important;
+}
+
+.hospital-map-pin.hospital-pin .pin-arrow {
+  border-top-color: #dc2626 !important;
+}
+
+/* Card Pharmacy Variant */
+.hospital-card.pharmacy-card {
+  border-left: 4px solid #16a34a !important;
+}
+
+.hosp-rank-badge.badge-pharmacy {
+  background: #dcfce7 !important;
+  color: #15803d !important;
+  border: 1px solid #86efac !important;
+}
+
+.hosp-category-pill.pharmacy-pill {
+  background: #f0fdf4 !important;
+  color: #166534 !important;
+  border: 1px solid #bbf7d0 !important;
+}
+
+/* Google Maps Setup Modal */
+.google-maps-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.google-maps-modal-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg, 16px);
+  max-width: 620px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.google-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.google-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.google-modal-logo {
+  font-size: 1.8rem;
+}
+
+.google-modal-header h3 {
+  margin: 0 0 2px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.google-modal-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.google-modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.google-modal-close-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.google-modal-body {
+  padding: 24px;
+}
+
+.google-api-instructions-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md, 8px);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.google-api-instructions-box h4 {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.google-api-instructions-box p {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.google-apis-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.google-apis-checklist li {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+.google-apis-checklist li strong {
+  display: block;
+  color: #2563eb;
+  margin-bottom: 2px;
+}
+
+.google-apis-checklist li span {
+  color: #64748b;
+}
+
+.google-key-input-group label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.google-key-input-group input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  font-family: monospace;
+  border: 1.5px solid #cbd5e1;
+  border-radius: var(--radius-md, 8px);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.google-key-input-group input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.key-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+.google-key-status-msg {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.google-key-status-msg.status-loading {
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.google-key-status-msg.status-success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.google-key-status-msg.status-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.google-key-status-msg.status-info {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.google-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 18px 24px;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-bottom-left-radius: var(--radius-lg, 16px);
+  border-bottom-right-radius: var(--radius-lg, 16px);
+}
+
+/* FirstAid+ Live Location Toast */
+.firstaid-toast-notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100000;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 14px 20px;
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.firstaid-toast-notification.toast-show {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -494,6 +494,41 @@ async function runTests() {
     assert(cssStyle.includes('.badge-live-tracking'), 'CSS styles .badge-live-tracking');
     assert(cssStyle.includes('.live-tracking-active'), 'CSS styles .live-tracking-active');
 
+    // Google Maps & Nearby Healthcare Facilities Verification
+    assert(indexHtml.includes('Nearby Healthcare Facilities'), 'HTML contains "Nearby Healthcare Facilities" heading');
+    assert(indexHtml.includes('id="btn-share-live-location"'), 'HTML contains "Share My Live Location" button (#btn-share-live-location)');
+    assert(indexHtml.includes('id="btn-refresh-location-top"'), 'HTML contains "Refresh Location" button (#btn-refresh-location-top)');
+    assert(indexHtml.includes('id="google-maps-setup-modal"'), 'HTML contains Google Maps setup modal dialog (#google-maps-setup-modal)');
+    assert(indexHtml.includes('id="google-maps-key-input"'), 'HTML contains Google Maps key input field (#google-maps-key-input)');
+    assert(indexHtml.includes('Maps JavaScript API') && indexHtml.includes('Places API (New)') && indexHtml.includes('Geocoding API'), 'HTML details the 3 required Google Cloud Console APIs');
+    assert(indexHtml.includes('🔵 Your Live Location (Blue)'), 'HTML map legend includes Blue Marker for User');
+    assert(indexHtml.includes('🔴 Hospitals & Emergency (Red)'), 'HTML map legend includes Red Marker for Hospitals');
+    assert(indexHtml.includes('🟢 Pharmacies & Medical (Green)'), 'HTML map legend includes Green Marker for Pharmacies');
+
+    assert(hospitalRadarJs.includes('initGoogleMap'), 'hospitalRadar.js implements initGoogleMap method');
+    assert(hospitalRadarJs.includes('updateGoogleMapUserPosition'), 'hospitalRadar.js implements updateGoogleMapUserPosition method');
+    assert(hospitalRadarJs.includes('updateGoogleMapHospitalMarkers'), 'hospitalRadar.js implements updateGoogleMapHospitalMarkers method');
+    assert(hospitalRadarJs.includes('shareLiveLocation'), 'hospitalRadar.js implements shareLiveLocation method');
+    assert(hospitalRadarJs.includes('openGoogleSetupModal'), 'hospitalRadar.js implements openGoogleSetupModal method');
+    assert(hospitalRadarJs.includes('saveGoogleMapsKey'), 'hospitalRadar.js implements saveGoogleMapsKey method');
+    assert(hospitalRadarJs.includes('GET DIRECTIONS'), 'hospitalRadar.js renders "GET DIRECTIONS" button on cards');
+
+    // Directions URL verification
+    assert(nearbyData.hospitals[0].googleMapsNavigationUrl.includes('origin=12.9716,77.5946'), 'googleMapsNavigationUrl includes user origin lat/lng');
+    assert(nearbyData.hospitals[0].googleMapsNavigationUrl.includes('&destination='), 'googleMapsNavigationUrl includes destination coordinates');
+    assert(nearbyData.hospitals[0].googleMapsNavigationUrl.includes('travelmode=driving'), 'googleMapsNavigationUrl specifies travelmode=driving');
+
+    // Hospital config APIs test
+    assert(Array.isArray(hospConfigData.requiredGoogleApis) && hospConfigData.requiredGoogleApis.length === 3, '/api/hospitals/config returns list of 3 required Google Cloud APIs');
+    assert(hospConfigData.requiredGoogleApis.some(a => a.name === 'Maps JavaScript API'), 'Includes Maps JavaScript API in required APIs');
+    assert(hospConfigData.requiredGoogleApis.some(a => a.name === 'Places API (New)'), 'Includes Places API (New) in required APIs');
+    assert(hospConfigData.requiredGoogleApis.some(a => a.name === 'Geocoding API'), 'Includes Geocoding API in required APIs');
+
+    assert(cssStyle.includes('.healthcare-header-row'), 'CSS styles .healthcare-header-row');
+    assert(cssStyle.includes('.btn-share-live-loc'), 'CSS styles .btn-share-live-loc');
+    assert(cssStyle.includes('.google-maps-modal-card'), 'CSS styles .google-maps-modal-card');
+    assert(cssStyle.includes('.pharmacy-card'), 'CSS styles .pharmacy-card');
+
     console.log('\n--- 13. Testing MODULE 11 — AI Medicine & Relief Recommendations + Pharmacy Finder ---');
     // A. Medicine categories
     const resMedCats = await fetch('http://127.0.0.1:3000/api/medicine/categories');

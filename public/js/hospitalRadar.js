@@ -55,6 +55,26 @@
       this.googleMapsFallbackBtn = document.getElementById('btn-open-google-maps-hospitals');
       this.sortSelect = document.getElementById('hospital-sort-select');
 
+      // Google Maps Platform & Live Location UI Elements
+      this.shareLiveLocBtn = document.getElementById('btn-share-live-location');
+      this.refreshLocTopBtn = document.getElementById('btn-refresh-location-top');
+      this.googleApiSetupBtn = document.getElementById('btn-google-api-setup');
+      this.googleModal = document.getElementById('google-maps-setup-modal');
+      this.googleKeyInput = document.getElementById('google-maps-key-input');
+      this.saveGoogleKeyBtn = document.getElementById('btn-save-google-key');
+      this.clearGoogleKeyBtn = document.getElementById('btn-clear-google-key');
+      this.closeGoogleModalBtn = document.getElementById('btn-close-google-modal');
+      this.googleStatusMsg = document.getElementById('google-key-status-msg');
+
+      // Google Maps JS State
+      this.isGoogleMapsActive = false;
+      this.googleMap = null;
+      this.googleUserMarker = null;
+      this.googleHospitalMarkers = [];
+      this.googleRadiusCircle = null;
+      this.googleMapsConfig = null;
+      this.googleInfoWindow = null;
+
       // Real-time location tracking state
       this.watchId = null;
       this.isLiveTracking = false;
@@ -73,6 +93,7 @@
       if (!this.container) return;
 
       this.bindEvents();
+      this.checkGoogleMapsConfig();
       this.initMap();
 
       // Listen for view activation - actively seek location access
@@ -81,6 +102,9 @@
         hospitalNavBtn.addEventListener('click', () => {
           setTimeout(() => {
             if (this.map) this.map.invalidateSize();
+            if (this.googleMap && window.google) {
+              google.maps.event.trigger(this.googleMap, 'resize');
+            }
             this.seekLocationAccess();
           }, 250);
         });
@@ -93,6 +117,48 @@
     }
 
     bindEvents() {
+      // Share My Live Location
+      if (this.shareLiveLocBtn) {
+        this.shareLiveLocBtn.addEventListener('click', () => {
+          this.shareLiveLocation();
+        });
+      }
+
+      // Refresh Location (Top header button)
+      if (this.refreshLocTopBtn) {
+        this.refreshLocTopBtn.addEventListener('click', () => {
+          this.detectUserLocation(true);
+        });
+      }
+
+      // Google Maps API Setup Modal Trigger
+      if (this.googleApiSetupBtn) {
+        this.googleApiSetupBtn.addEventListener('click', () => {
+          this.openGoogleSetupModal();
+        });
+      }
+
+      // Close Google Setup Modal
+      if (this.closeGoogleModalBtn) {
+        this.closeGoogleModalBtn.addEventListener('click', () => {
+          this.closeGoogleSetupModal();
+        });
+      }
+
+      // Save Google Maps Key
+      if (this.saveGoogleKeyBtn) {
+        this.saveGoogleKeyBtn.addEventListener('click', () => {
+          this.saveGoogleMapsKey();
+        });
+      }
+
+      // Clear Google Maps Key
+      if (this.clearGoogleKeyBtn) {
+        this.clearGoogleKeyBtn.addEventListener('click', () => {
+          this.clearGoogleMapsKey();
+        });
+      }
+
       // Toggle Real-Time GPS Tracking
       if (this.liveTrackingToggleBtn) {
         this.liveTrackingToggleBtn.addEventListener('click', () => {
@@ -289,6 +355,442 @@
       } else {
         this.initMap();
       }
+    }
+
+    /**
+     * Google Maps Platform Initialization
+     */
+    initGoogleMap() {
+      if (!window.google || !window.google.maps) return;
+      const mapEl = document.getElementById('hospital-interactive-map');
+      if (!mapEl) return;
+
+      // Cleanly teardown Leaflet map if attached
+      if (this.map) {
+        try {
+          this.map.remove();
+          this.map = null;
+          this.userMarker = null;
+          this.accuracyCircle = null;
+          this.radiusCircle = null;
+          this.hospitalMarkers.clear();
+        } catch (e) {
+          console.warn('Error clearing Leaflet:', e);
+        }
+      }
+
+      this.isGoogleMapsActive = true;
+      const centerLat = this.userLat || 12.9716;
+      const centerLng = this.userLng || 77.5946;
+
+      this.googleMap = new google.maps.Map(mapEl, {
+        center: { lat: centerLat, lng: centerLng },
+        zoom: 14,
+        zoomControl: true,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true,
+        styles: [
+          {
+            featureType: "poi.medical",
+            elementType: "labels",
+            stylers: [{ visibility: "on" }]
+          }
+        ]
+      });
+
+      this.googleInfoWindow = new google.maps.InfoWindow();
+
+      // Click to pin on Google Maps
+      this.googleMap.addListener('click', (e) => {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        this.setUserLocation(lat, lng, 'Manual Pin');
+      });
+
+      this.updateGoogleMapUserPosition();
+      this.updateGoogleMapHospitalMarkers();
+    }
+
+    /**
+     * Update User Marker on Google Maps (Blue Marker)
+     */
+    updateGoogleMapUserPosition() {
+      if (!this.googleMap || !this.userLat || !this.userLng || !window.google) return;
+
+      const userPos = { lat: this.userLat, lng: this.userLng };
+
+      // Blue SVG Pin for User Location
+      const bluePinSvg = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+        <svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 0C7.6 0 0 7.6 0 17C0 29.8 17 42 17 42C17 42 34 29.8 34 17C34 7.6 26.4 0 17 0Z" fill="#2563EB"/>
+          <circle cx="17" cy="17" r="8" fill="#FFFFFF"/>
+          <circle cx="17" cy="17" r="5" fill="#3B82F6"/>
+        </svg>
+      `);
+
+      if (!this.googleUserMarker) {
+        this.googleUserMarker = new google.maps.Marker({
+          position: userPos,
+          map: this.googleMap,
+          title: "Your Location",
+          draggable: true,
+          icon: {
+            url: bluePinSvg,
+            scaledSize: new google.maps.Size(34, 42),
+            anchor: new google.maps.Point(17, 42)
+          },
+          zIndex: 1000
+        });
+
+        this.googleUserMarker.addListener('dragend', (e) => {
+          this.setUserLocation(e.latLng.lat(), e.latLng.lng(), 'Dragged Pin');
+        });
+
+        this.googleUserMarker.addListener('click', () => {
+          if (this.googleInfoWindow) {
+            this.googleInfoWindow.setContent(`
+              <div style="font-family: inherit; padding: 6px;">
+                <strong style="color: #2563eb;">📍 Your Live Location</strong>
+                <p style="margin: 4px 0 0; font-size: 0.85rem; color: #475569;">${this.userAddress || 'GPS Coordinates'}</p>
+                <small style="color: #16a34a; font-weight: 700;">● High-Accuracy GPS Active</small>
+              </div>
+            `);
+            this.googleInfoWindow.open(this.googleMap, this.googleUserMarker);
+          }
+        });
+      } else {
+        this.googleUserMarker.setPosition(userPos);
+      }
+
+      // Search Radius Circle on Google Maps
+      if (!this.googleRadiusCircle) {
+        this.googleRadiusCircle = new google.maps.Circle({
+          strokeColor: "#0284c7",
+          strokeOpacity: 0.6,
+          strokeWeight: 2,
+          fillColor: "#38bdf8",
+          fillOpacity: 0.08,
+          map: this.googleMap,
+          center: userPos,
+          radius: this.searchRadius
+        });
+      } else {
+        this.googleRadiusCircle.setCenter(userPos);
+        this.googleRadiusCircle.setRadius(this.searchRadius);
+      }
+
+      this.googleMap.panTo(userPos);
+    }
+
+    /**
+     * Update Healthcare Markers on Google Maps (Red for Hospitals, Green for Pharmacies)
+     */
+    updateGoogleMapHospitalMarkers() {
+      if (!this.googleMap || !window.google) return;
+
+      // Clear existing markers
+      if (this.googleHospitalMarkers && this.googleHospitalMarkers.length > 0) {
+        this.googleHospitalMarkers.forEach(m => m.setMap(null));
+        this.googleHospitalMarkers = [];
+      }
+
+      const bounds = new google.maps.LatLngBounds();
+      if (this.userLat && this.userLng) {
+        bounds.extend({ lat: this.userLat, lng: this.userLng });
+      }
+
+      // Red SVG Pin for Hospitals & Emergency Centers
+      const redPinSvg = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+        <svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 0C7.2 0 0 7.2 0 16C0 28 16 40 16 40C16 40 32 28 32 16C32 7.2 24.8 0 16 0Z" fill="#DC2626"/>
+          <circle cx="16" cy="16" r="8" fill="#FFFFFF"/>
+          <path d="M14 10H18V14H22V18H18V22H14V18H10V14H14V10Z" fill="#DC2626"/>
+        </svg>
+      `);
+
+      // Green SVG Pin for Pharmacies & Medical Stores
+      const greenPinSvg = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+        <svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 0C7.2 0 0 7.2 0 16C0 28 16 40 16 40C16 40 32 28 32 16C32 7.2 24.8 0 16 0Z" fill="#16A34A"/>
+          <circle cx="16" cy="16" r="8" fill="#FFFFFF"/>
+          <path d="M14 10H18V14H22V18H18V22H14V18H10V14H14V10Z" fill="#16A34A"/>
+        </svg>
+      `);
+
+      this.hospitals.forEach(hosp => {
+        const isPharmacy = Boolean(hosp.isPharmacy || hosp.category === 'Pharmacy' || /pharmacy|chemist|medical store/i.test(hosp.name));
+        const pos = { lat: hosp.lat, lng: hosp.lng };
+
+        const marker = new google.maps.Marker({
+          position: pos,
+          map: this.googleMap,
+          title: hosp.name,
+          icon: {
+            url: isPharmacy ? greenPinSvg : redPinSvg,
+            scaledSize: new google.maps.Size(32, 40),
+            anchor: new google.maps.Point(16, 40)
+          }
+        });
+
+        marker.addListener('click', () => {
+          this.highlightHospitalCard(hosp.id);
+          if (this.googleInfoWindow) {
+            const directionsUrl = hosp.googleMapsNavigationUrl || `https://www.google.com/maps/dir/?api=1&origin=${this.userLat},${this.userLng}&destination=${hosp.lat},${hosp.lng}&travelmode=driving`;
+            const infoHtml = `
+              <div style="font-family: inherit; max-width: 280px; padding: 4px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                  <span style="font-size: 0.72rem; font-weight: 700; background: ${isPharmacy ? '#dcfce7' : '#fee2e2'}; color: ${isPharmacy ? '#166534' : '#991b1b'}; padding: 2px 8px; border-radius: 999px;">
+                    ${isPharmacy ? '💊 Pharmacy' : '🏥 Hospital'}
+                  </span>
+                  <span style="font-size: 0.8rem; font-weight: 700; color: #2563eb;">${hosp.rankBadge}</span>
+                </div>
+                <h4 style="margin: 0 0 4px; font-size: 0.95rem; color: #0f172a; font-weight: 700;">${hosp.name}</h4>
+                <p style="margin: 0 0 6px; font-size: 0.8rem; color: #64748b;">${hosp.address}</p>
+                <div style="display: flex; gap: 8px; font-size: 0.8rem; margin-bottom: 8px; color: #334155;">
+                  <span>📍 <strong>${hosp.distanceFormatted}</strong></span>
+                  ${hosp.rating ? `<span>⭐ <strong>${hosp.rating.toFixed(1)}</strong></span>` : ''}
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  ${hosp.phone ? `<a href="tel:${hosp.phone}" style="flex:1; text-align:center; padding: 6px; font-size: 0.75rem; font-weight:700; color:#fff; background:#2563eb; border-radius:6px; text-decoration:none;">📞 Call</a>` : ''}
+                  <a href="${directionsUrl}" target="_blank" rel="noopener noreferrer" style="flex:1; text-align:center; padding: 6px; font-size: 0.75rem; font-weight:700; color:#fff; background:#16a34a; border-radius:6px; text-decoration:none;">🗺️ Get Directions</a>
+                </div>
+              </div>
+            `;
+            this.googleInfoWindow.setContent(infoHtml);
+            this.googleInfoWindow.open(this.googleMap, marker);
+          }
+        });
+
+        this.googleHospitalMarkers.push(marker);
+        bounds.extend(pos);
+      });
+
+      if (this.hospitals.length > 0) {
+        this.googleMap.fitBounds(bounds);
+      }
+    }
+
+    /**
+     * Share My Live Location (Requirement 1)
+     * Retrieves actual GPS coordinates via navigator.geolocation.getCurrentPosition()
+     * with high accuracy GPS, shows position on map, and shares/copies Google Maps link.
+     */
+    shareLiveLocation() {
+      if (!navigator.geolocation) {
+        alert('GPS Geolocation is not supported on this browser or device.');
+        return;
+      }
+
+      this.setRadarStatus('ACQUIRING HIGH-ACCURACY GPS FIX TO SHARE...', 'locating');
+      this.setRadarScanningAnimation(true);
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          this.handleRealTimeLocationFix(pos, 'gps_live');
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const acc = Math.round(pos.coords.accuracy || 10);
+          const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+          const shareText = `Emergency Live Location from FirstAid+:\n${this.userAddress || 'GPS Coordinates'}\nAccuracy: ±${acc}m\nMap: ${mapsUrl}`;
+
+          if (navigator.share) {
+            navigator.share({
+              title: 'My Live Emergency Location - FirstAid+',
+              text: shareText,
+              url: mapsUrl
+            }).catch(err => {
+              if (err.name !== 'AbortError') {
+                this.copyShareUrlToClipboard(mapsUrl, lat, lng, acc);
+              }
+            });
+          } else {
+            this.copyShareUrlToClipboard(mapsUrl, lat, lng, acc);
+          }
+        },
+        (err) => {
+          this.setRadarScanningAnimation(false);
+          this.setRadarStatus('COULD NOT ACQUIRE HIGH-ACCURACY GPS', 'error');
+          if (err.code === err.PERMISSION_DENIED) {
+            alert('Location permission was denied. Please allow location access in your browser settings to share your live GPS location.');
+          } else {
+            alert('Unable to acquire GPS signal. Please ensure location services are enabled on your device.');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      );
+    }
+
+    copyShareUrlToClipboard(url, lat, lng, acc) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          this.showToastNotification(`📍 Live location copied to clipboard!\nLat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)} (±${acc}m)\n${url}`);
+        }).catch(() => {
+          prompt('Copy your live Google Maps location link:', url);
+        });
+      } else {
+        prompt('Copy your live Google Maps location link:', url);
+      }
+    }
+
+    showToastNotification(msg) {
+      const existing = document.getElementById('firstaid-live-loc-toast');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'firstaid-live-loc-toast';
+      toast.className = 'firstaid-toast-notification';
+      toast.innerHTML = `
+        <div class="toast-content">
+          <span>${msg.replace(/\n/g, '<br>')}</span>
+        </div>
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('toast-show');
+      }, 50);
+      setTimeout(() => {
+        toast.classList.remove('toast-show');
+        setTimeout(() => toast.remove(), 400);
+      }, 4500);
+    }
+
+    openGoogleSetupModal() {
+      if (this.googleModal) {
+        this.googleModal.style.display = 'flex';
+        if (this.googleKeyInput && this.googleMapsConfig && this.googleMapsConfig.apiKey) {
+          this.googleKeyInput.value = this.googleMapsConfig.apiKey;
+        }
+      }
+    }
+
+    closeGoogleSetupModal() {
+      if (this.googleModal) {
+        this.googleModal.style.display = 'none';
+      }
+    }
+
+    async saveGoogleMapsKey() {
+      if (!this.googleKeyInput) return;
+      const key = this.googleKeyInput.value.trim();
+      if (!key) {
+        alert('Please enter a valid Google Maps API Key or click "Use Fallback Radar".');
+        return;
+      }
+
+      if (this.googleStatusMsg) {
+        this.googleStatusMsg.style.display = 'block';
+        this.googleStatusMsg.textContent = 'Saving and activating key...';
+        this.googleStatusMsg.className = 'google-key-status-msg status-loading';
+      }
+
+      try {
+        const res = await fetch('/api/hospitals/config-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: key })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          if (this.googleStatusMsg) {
+            this.googleStatusMsg.textContent = '✅ Google Maps API key saved! Initializing live map...';
+            this.googleStatusMsg.className = 'google-key-status-msg status-success';
+          }
+          this.updateGoogleApiStatusPill(true);
+          this.loadGoogleMapsJsApi(key);
+          setTimeout(() => {
+            this.closeGoogleSetupModal();
+            this.fetchNearbyHospitals();
+          }, 1200);
+        } else {
+          if (this.googleStatusMsg) {
+            this.googleStatusMsg.textContent = 'Error: ' + (data.error || 'Failed to save key.');
+            this.googleStatusMsg.className = 'google-key-status-msg status-error';
+          }
+        }
+      } catch (err) {
+        if (this.googleStatusMsg) {
+          this.googleStatusMsg.textContent = 'Network error saving key.';
+          this.googleStatusMsg.className = 'google-key-status-msg status-error';
+        }
+      }
+    }
+
+    async clearGoogleMapsKey() {
+      try {
+        await fetch('/api/hospitals/config-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: '' })
+        });
+        this.updateGoogleApiStatusPill(false);
+        this.isGoogleMapsActive = false;
+        if (this.googleStatusMsg) {
+          this.googleStatusMsg.textContent = 'Operating in OpenStreetMap Live Radar mode.';
+          this.googleStatusMsg.className = 'google-key-status-msg status-info';
+        }
+        setTimeout(() => {
+          this.closeGoogleSetupModal();
+          this.initMap();
+          this.fetchNearbyHospitals();
+        }, 800);
+      } catch (e) {
+        this.closeGoogleSetupModal();
+      }
+    }
+
+    updateGoogleApiStatusPill(isActive, customLabel) {
+      const dot = document.getElementById('google-api-status-dot');
+      const text = document.getElementById('google-api-status-text');
+      if (dot && text) {
+        if (isActive) {
+          dot.className = 'api-status-dot dot-active';
+          text.textContent = customLabel || 'Google Maps Active';
+        } else {
+          dot.className = 'api-status-dot dot-inactive';
+          text.textContent = customLabel || 'Google Maps Setup';
+        }
+      }
+    }
+
+    async checkGoogleMapsConfig() {
+      try {
+        const res = await fetch('/api/hospitals/config');
+        if (res.ok) {
+          const config = await res.json();
+          this.googleMapsConfig = config;
+          this.updateGoogleApiStatusPill(config.hasGoogleMapsApiKey);
+          if (config.hasGoogleMapsApiKey && config.apiKey) {
+            this.loadGoogleMapsJsApi(config.apiKey);
+          }
+        }
+      } catch (e) {
+        console.warn('Could not load Google Maps configuration:', e);
+      }
+    }
+
+    loadGoogleMapsJsApi(apiKey) {
+      if (window.google && window.google.maps) {
+        this.initGoogleMap();
+        return;
+      }
+      const existing = document.getElementById('google-maps-js-sdk');
+      if (existing) existing.remove();
+
+      const script = document.createElement('script');
+      script.id = 'google-maps-js-sdk';
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places,geometry`;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        console.log('✅ Google Maps JavaScript API loaded successfully');
+        this.initGoogleMap();
+      };
+      script.onerror = () => {
+        console.warn('Google Maps JS API failed to load (check key/network). Falling back to OpenStreetMap radar.');
+        this.updateGoogleApiStatusPill(false, 'API Load Error');
+      };
+      document.head.appendChild(script);
     }
 
     /**
@@ -914,6 +1416,9 @@
      * Update Leaflet Map with User GPS Position & Radar Circle
      */
     updateMapUserPosition() {
+      if (this.isGoogleMapsActive && this.googleMap) {
+        this.updateGoogleMapUserPosition();
+      }
       if (!this.map || !this.userLat || !this.userLng) return;
 
       const userLatLng = [this.userLat, this.userLng];
@@ -1020,6 +1525,9 @@
      * Update Leaflet Map with Numbered Hospital Markers
      */
     updateMapHospitalMarkers() {
+      if (this.isGoogleMapsActive && this.googleMap) {
+        this.updateGoogleMapHospitalMarkers();
+      }
       if (!this.map) return;
 
       // Clear existing hospital markers
@@ -1031,15 +1539,24 @@
       this.hospitals.forEach(hosp => {
         const isNearest = hosp.isNearest;
         const rankText = String(hosp.rank).padStart(2, '0');
+        const isPharmacy = Boolean(hosp.isPharmacy || hosp.category === 'Pharmacy' || /pharmacy|chemist|medical store/i.test(hosp.name));
 
-        // Create numbered custom pin
-        const pinClass = isNearest ? 'hospital-map-pin nearest-pin' : 'hospital-map-pin standard-pin';
+        // Create numbered custom pin (Red for Hospital, Green for Pharmacy)
+        let pinClass = 'hospital-map-pin hospital-pin';
+        if (isPharmacy) {
+          pinClass = 'hospital-map-pin pharmacy-pin';
+        } else if (isNearest) {
+          pinClass = 'hospital-map-pin nearest-pin';
+        } else if (hosp.emergency) {
+          pinClass = 'hospital-map-pin hospital-pin emergency-pin';
+        }
+
         const customPinIcon = L.divIcon({
           className: pinClass,
           html: `
             <div class="pin-badge">
               <span class="pin-rank">#${rankText}</span>
-              <span class="pin-icon">${hosp.category.includes('Pharmacy') ? '💊' : (hosp.category.includes('Clinic') ? '🩺' : '🏥')}</span>
+              <span class="pin-icon">${isPharmacy ? '💊' : (hosp.category.includes('Clinic') ? '🩺' : '🏥')}</span>
             </div>
             <div class="pin-arrow"></div>
           `,
@@ -1064,7 +1581,7 @@
             <div class="popup-actions">
               ${hosp.phone ? `<a href="tel:${hosp.phone}" class="popup-btn btn-call">📞 Call</a>` : ''}
               <button type="button" class="popup-btn btn-route" onclick="window.hospitalRadar.selectHospitalAndRoute('${hosp.id}')">🧭 Route</button>
-              <a href="${hosp.googleMapsNavigationUrl}" target="_blank" class="popup-btn btn-nav">🗺️ Navigate</a>
+              <a href="${hosp.googleMapsNavigationUrl}" target="_blank" rel="noopener noreferrer" class="popup-btn btn-nav">🗺️ Get Directions</a>
             </div>
           </div>
         `;
@@ -1116,25 +1633,26 @@
       const cardsHtml = displayed.map(h => {
         const isSelected = this.selectedHospital && this.selectedHospital.id === h.id;
         const isNearest = h.isNearest;
+        const isPharmacy = Boolean(h.isPharmacy || h.category === 'Pharmacy' || /pharmacy|chemist|medical store/i.test(h.name));
 
         return `
-          <article class="hospital-card ${isNearest ? 'nearest-hospital-card' : ''} ${isSelected ? 'selected-hospital-card' : ''}" 
+          <article class="hospital-card ${isPharmacy ? 'pharmacy-card' : ''} ${isNearest ? 'nearest-hospital-card' : ''} ${isSelected ? 'selected-hospital-card' : ''}" 
                    id="card-hosp-${h.id}" 
                    data-hosp-id="${h.id}">
             
             <!-- Card Header: Rank, Badges, Category -->
             <div class="hosp-card-header">
               <div class="hosp-rank-col">
-                <span class="hosp-rank-badge ${isNearest ? 'badge-nearest' : ''}">${h.rankBadge}</span>
-                ${isNearest ? '<span class="nearest-pulse-tag">NEAREST HOSPITAL</span>' : ''}
+                <span class="hosp-rank-badge ${isNearest ? 'badge-nearest' : ''} ${isPharmacy ? 'badge-pharmacy' : ''}">${h.rankBadge}</span>
+                ${isNearest ? '<span class="nearest-pulse-tag">NEAREST FACILITY</span>' : ''}
               </div>
               <div class="hosp-cat-col">
-                <span class="hosp-category-pill">${h.category}</span>
+                <span class="hosp-category-pill ${isPharmacy ? 'pharmacy-pill' : ''}">${isPharmacy ? '💊 Pharmacy' : h.category}</span>
                 ${h.emergency ? '<span class="emergency-24h-tag">24/7 EMERGENCY</span>' : ''}
               </div>
             </div>
 
-            <!-- Hospital Name -->
+            <!-- Hospital / Pharmacy Name -->
             <h3 class="hosp-card-name">${h.name}</h3>
 
             <!-- Address -->
@@ -1184,9 +1702,9 @@
             <!-- Action Buttons Grid -->
             <div class="hosp-card-actions">
               ${h.phone ? `
-                <a href="tel:${h.phone}" class="hosp-btn btn-call-hospital" title="Call hospital telephone">
+                <a href="tel:${h.phone}" class="hosp-btn btn-call-hospital" title="Call facility phone">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                  <span>CALL HOSPITAL</span>
+                  <span>CALL</span>
                 </a>
               ` : `
                 <span class="hosp-btn btn-call-hospital disabled-btn" title="Phone number unlisted">
@@ -1196,17 +1714,17 @@
 
               <button type="button" class="hosp-btn btn-view-route" onclick="window.hospitalRadar.selectHospitalAndRoute('${h.id}')" title="Calculate road route on map">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-                <span>CALCULATE ROUTE</span>
+                <span>ROUTE</span>
               </button>
 
               <button type="button" class="hosp-btn btn-view-map" onclick="window.hospitalRadar.centerOnHospital('${h.id}')" title="Center on map">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
-                <span>VIEW ON MAP</span>
+                <span>MAP</span>
               </button>
 
               <a href="${h.googleMapsNavigationUrl}" target="_blank" rel="noopener noreferrer" class="hosp-btn btn-navigate-hospital" title="Open Google Maps Turn-by-Turn GPS Navigation">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
-                <span>NAVIGATE</span>
+                <span>GET DIRECTIONS</span>
               </a>
             </div>
 
