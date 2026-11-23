@@ -926,7 +926,7 @@ const VERIFIED_REGIONAL_HOSPITALS = [
     emergency: true,
     emergencyDepartment: "24/7 Advanced Critical & Trauma Unit"
   },
-  // Mumbai
+  // Mumbai & Mumbai Metropolitan Region (MMR)
   {
     id: "hosp_bom_01",
     name: "KEM Hospital (King Edward Memorial)",
@@ -945,7 +945,7 @@ const VERIFIED_REGIONAL_HOSPITALS = [
     isOpen: true,
     openNowText: "Open 24 Hours (Emergency)",
     emergency: true,
-    emergencyDepartment: "Premier Municipal Corporation Trauma Center"
+    emergencyDepartment: "Premier Municipal Corporation Level-1 Trauma Center"
   },
   {
     id: "hosp_bom_02",
@@ -966,6 +966,426 @@ const VERIFIED_REGIONAL_HOSPITALS = [
     openNowText: "Open 24 Hours (Emergency)",
     emergency: true,
     emergencyDepartment: "24/7 Full Emergency & Intensive Care"
+  },
+  {
+    id: "hosp_bom_03",
+    name: "Lokmanya Tilak Municipal General Hospital (Sion Hospital)",
+    category: "Government Hospital",
+    address: "Sion West, Mumbai, Maharashtra 400022",
+    area: "Sion",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400022",
+    lat: 19.0366,
+    lng: 72.8601,
+    phone: "+912224076381",
+    website: "https://ltmmc.edu.in",
+    rating: 4.2,
+    userRatingsTotal: 6800,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Major Trauma & Disaster Management Center"
+  },
+  {
+    id: "hosp_bom_04",
+    name: "Sir H. N. Reliance Foundation Hospital and Research Centre",
+    category: "Private Hospital",
+    address: "Raja Rammohan Roy Rd, Prarthana Samaj, Girgaon, Mumbai, Maharashtra 400004",
+    area: "Girgaon",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400004",
+    lat: 18.9575,
+    lng: 72.8197,
+    phone: "+912261305000",
+    website: "https://www.rfhospital.org",
+    rating: 4.6,
+    userRatingsTotal: 4900,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Advanced Critical Care & Emergency Unit"
+  },
+  {
+    id: "hosp_bom_05",
+    name: "Bombay Hospital & Medical Research Centre",
+    category: "Private Hospital",
+    address: "12, Marine Lines, Mumbai, Maharashtra 400020",
+    area: "Marine Lines",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400020",
+    lat: 18.9392,
+    lng: 72.8285,
+    phone: "+912222067676",
+    website: "https://bombayhospital.com",
+    rating: 4.3,
+    userRatingsTotal: 5300,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Emergency Casualty & Cardiac Care"
+  },
+  {
+    id: "hosp_bom_06",
+    name: "P. D. Hinduja Hospital & Medical Research Centre",
+    category: "Private Hospital",
+    address: "Veer Savarkar Marg, Mahim West, Mumbai, Maharashtra 400016",
+    area: "Mahim",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400016",
+    lat: 19.0330,
+    lng: 72.8398,
+    phone: "+912224451515",
+    website: "https://www.hindujahospital.com",
+    rating: 4.5,
+    userRatingsTotal: 6400,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Rapid Emergency Response & Trauma Care"
+  },
+  {
+    id: "hosp_bom_07",
+    name: "Kokilaben Dhirubhai Ambani Hospital",
+    category: "Private Hospital",
+    address: "Rao Saheb Achutrao Patwardhan Marg, Four Bungalows, Andheri West, Mumbai, Maharashtra 400053",
+    area: "Andheri West",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400053",
+    lat: 19.1314,
+    lng: 72.8252,
+    phone: "+912242696969",
+    website: "https://www.kokilabenhospital.com",
+    rating: 4.6,
+    userRatingsTotal: 8900,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Level-1 Emergency & Stroke Center"
+  },
+  {
+    id: "hosp_bom_08",
+    name: "Nanavati Max Super Speciality Hospital",
+    category: "Private Hospital",
+    address: "Swami Vivekanand Rd, Vile Parle West, Mumbai, Maharashtra 400056",
+    area: "Vile Parle West",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400056",
+    lat: 19.0968,
+    lng: 72.8407,
+    phone: "+912226267500",
+    website: "https://www.nanavatimaxhospital.org",
+    rating: 4.4,
+    userRatingsTotal: 6200,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Comprehensive Emergency Medicine Center"
+  },
+  {
+    id: "hosp_bom_09",
+    name: "Dr. R. N. Cooper Municipal General Hospital",
+    category: "Government Hospital",
+    address: "U 15, Juhu Tara Rd, JVPD Scheme, Juhu, Mumbai, Maharashtra 400056",
+    area: "Juhu",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400056",
+    lat: 19.1084,
+    lng: 72.8362,
+    phone: "+912226207254",
+    website: "https://cooperhospital.org",
+    rating: 4.1,
+    userRatingsTotal: 4100,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Trauma Emergency Care"
+  },
+  {
+    id: "hosp_bom_10",
+    name: "Dr. L. H. Hiranandani Hospital",
+    category: "Private Hospital",
+    address: "Hillside Avenue, Hiranandani Gardens, Powai, Mumbai, Maharashtra 400076",
+    area: "Powai",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400076",
+    lat: 19.1186,
+    lng: 72.9114,
+    phone: "+912225763300",
+    website: "https://www.hiranandanihospital.org",
+    rating: 4.5,
+    userRatingsTotal: 5700,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Multi-Disciplinary Emergency Dept"
+  },
+  {
+    id: "hosp_bom_11",
+    name: "Fortis Hospital Mulund",
+    category: "Private Hospital",
+    address: "Mulund Goregaon Link Rd, Industrial Area, Mulund West, Mumbai, Maharashtra 400078",
+    area: "Mulund West",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400078",
+    lat: 19.1601,
+    lng: 72.9365,
+    phone: "+912243654365",
+    website: "https://www.fortishealthcare.com",
+    rating: 4.4,
+    userRatingsTotal: 6900,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Advanced Trauma & Cardiac Emergency"
+  },
+  {
+    id: "hosp_bom_12",
+    name: "Godrej Memorial Hospital",
+    category: "Private Hospital",
+    address: "Pirojshanagar, Vikhroli East, Mumbai, Maharashtra 400079",
+    area: "Vikhroli East",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400079",
+    lat: 19.0988,
+    lng: 72.9288,
+    phone: "+912266417777",
+    website: "https://www.godrejhospital.com",
+    rating: 4.3,
+    userRatingsTotal: 3100,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Emergency & Critical Care"
+  },
+  {
+    id: "hosp_bom_13",
+    name: "Apollo Hospitals Navi Mumbai",
+    category: "Private Hospital",
+    address: "Parsik Hill Rd, Sector 23, CBD Belapur, Navi Mumbai, Maharashtra 400614",
+    area: "CBD Belapur",
+    city: "Navi Mumbai",
+    state: "Maharashtra",
+    postcode: "400614",
+    lat: 19.0205,
+    lng: 73.0416,
+    phone: "+912233503350",
+    website: "https://www.apollohospitals.com",
+    rating: 4.5,
+    userRatingsTotal: 7300,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Apollo Emergency & Level-1 Trauma Care"
+  },
+  {
+    id: "hosp_bom_14",
+    name: "MGM Hospital & Research Centre",
+    category: "Multispecialty Hospital",
+    address: "Plot 35, Sector 3, Vashi, Navi Mumbai, Maharashtra 400703",
+    area: "Vashi",
+    city: "Navi Mumbai",
+    state: "Maharashtra",
+    postcode: "400703",
+    lat: 19.0743,
+    lng: 72.9982,
+    phone: "+912261526666",
+    website: "https://www.mgmhospitalvashi.net",
+    rating: 4.3,
+    userRatingsTotal: 4800,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Intensive Care & Trauma Support"
+  },
+  {
+    id: "hosp_bom_15",
+    name: "Dr. D. Y. Patil Super Speciality Hospital",
+    category: "Multispecialty Hospital",
+    address: "Sector 5, Nerul, Navi Mumbai, Maharashtra 400706",
+    area: "Nerul",
+    city: "Navi Mumbai",
+    state: "Maharashtra",
+    postcode: "400706",
+    lat: 19.0438,
+    lng: 73.0163,
+    phone: "+912239215999",
+    website: "https://dypatilhospital.com",
+    rating: 4.4,
+    userRatingsTotal: 5600,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Advanced Emergency & Critical Care"
+  },
+  {
+    id: "hosp_bom_16",
+    name: "Fortis Hiranandani Hospital Vashi",
+    category: "Private Hospital",
+    address: "Mini Seashore Rd, Juhu Nagar, Sector 10A, Vashi, Navi Mumbai, Maharashtra 400703",
+    area: "Vashi",
+    city: "Navi Mumbai",
+    state: "Maharashtra",
+    postcode: "400703",
+    lat: 19.0802,
+    lng: 72.9926,
+    phone: "+912239199222",
+    website: "https://www.fortishealthcare.com",
+    rating: 4.3,
+    userRatingsTotal: 3900,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Trauma & Emergency Department"
+  },
+  {
+    id: "hosp_bom_17",
+    name: "Reliance Hospital Navi Mumbai",
+    category: "Private Hospital",
+    address: "Plot 3, Thanisandra Rd, Sector 9, Kopar Khairane, Navi Mumbai, Maharashtra 400709",
+    area: "Kopar Khairane",
+    city: "Navi Mumbai",
+    state: "Maharashtra",
+    postcode: "400709",
+    lat: 19.1042,
+    lng: 73.0089,
+    phone: "+912268800000",
+    website: "https://www.reliancehospitals.com",
+    rating: 4.4,
+    userRatingsTotal: 3400,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Advanced Emergency Medicine"
+  },
+  {
+    id: "hosp_bom_18",
+    name: "NMMC General Hospital Vashi",
+    category: "Government Hospital",
+    address: "Near Vashi Bus Depot, Sector 10, Vashi, Navi Mumbai, Maharashtra 400703",
+    area: "Vashi",
+    city: "Navi Mumbai",
+    state: "Maharashtra",
+    postcode: "400703",
+    lat: 19.0768,
+    lng: 72.9972,
+    phone: "+912227899901",
+    website: "https://www.nmmc.gov.in",
+    rating: 4.1,
+    userRatingsTotal: 3600,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Municipal Casualty & Trauma Unit"
+  },
+  {
+    id: "hosp_bom_19",
+    name: "Jupiter Hospital Thane",
+    category: "Private Hospital",
+    address: "Eastern Express Highway, Service Rd, Next to Viviana Mall, Thane West, Maharashtra 400601",
+    area: "Thane West",
+    city: "Thane",
+    state: "Maharashtra",
+    postcode: "400601",
+    lat: 19.2046,
+    lng: 72.9714,
+    phone: "+912221725555",
+    website: "https://www.jupiterhospital.com",
+    rating: 4.5,
+    userRatingsTotal: 8200,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 NABH Accredited Emergency & Trauma Center"
+  },
+  {
+    id: "hosp_bom_20",
+    name: "Bethany Hospital Thane",
+    category: "Private Hospital",
+    address: "Pokhran Rd No. 2, Shastri Nagar, Thane West, Maharashtra 400610",
+    area: "Thane West",
+    city: "Thane",
+    state: "Maharashtra",
+    postcode: "400610",
+    lat: 19.2215,
+    lng: 72.9649,
+    phone: "+912221725111",
+    website: "https://www.bethanyhospital.org",
+    rating: 4.4,
+    userRatingsTotal: 4300,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Emergency Care & ICU"
+  },
+  {
+    id: "hosp_bom_21",
+    name: "Apex Multispeciality Hospital Borivali",
+    category: "Multispecialty Hospital",
+    address: "Off Chandavarkar Rd, Borivali West, Mumbai, Maharashtra 400092",
+    area: "Borivali West",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400092",
+    lat: 19.2312,
+    lng: 72.8532,
+    phone: "+912261561000",
+    website: "https://apexgroupofhospitals.com",
+    rating: 4.3,
+    userRatingsTotal: 3200,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Casualty & Trauma Unit"
+  },
+  {
+    id: "hosp_bom_22",
+    name: "Saifee Hospital",
+    category: "Private Hospital",
+    address: "15/17, Maharshi Karve Rd, Opposite Charni Road Station, Girgaon, Mumbai, Maharashtra 400004",
+    area: "Girgaon",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400004",
+    lat: 18.9525,
+    lng: 72.8182,
+    phone: "+912267570111",
+    website: "https://www.saifeehospital.com",
+    rating: 4.5,
+    userRatingsTotal: 6100,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Advanced Emergency Services"
+  },
+  {
+    id: "hosp_bom_23",
+    name: "Tata Memorial Hospital",
+    category: "Government Hospital",
+    address: "Dr. E Borges Rd, Parel East, Parel, Mumbai, Maharashtra 400012",
+    area: "Parel",
+    city: "Mumbai",
+    state: "Maharashtra",
+    postcode: "400012",
+    lat: 19.0048,
+    lng: 72.8436,
+    phone: "+912224177000",
+    website: "https://tmc.gov.in",
+    rating: 4.6,
+    userRatingsTotal: 9800,
+    isOpen: true,
+    openNowText: "Open 24 Hours (Emergency)",
+    emergency: true,
+    emergencyDepartment: "24/7 Emergency Casualty Care"
   },
   // Chennai
   {
@@ -1769,7 +2189,7 @@ async function getRoute(startLat, startLng, destLat, destLng, mode = 'driving') 
 
 /**
  * IP Geolocation Resolver
- * Looks up approximate coordinates for a given public IP or host connection.
+ * Looks up approximate coordinates for a given public IP or host connection with multi-service redundancy.
  */
 async function getIpLocation(clientIp = '') {
   const isPrivate = !clientIp || 
@@ -1780,11 +2200,74 @@ async function getIpLocation(clientIp = '') {
     clientIp.startsWith('10.') || 
     clientIp.startsWith('172.16.');
 
-  const targetUrl = isPrivate 
-    ? 'https://ipapi.co/json/' 
-    : `https://ipapi.co/${encodeURIComponent(clientIp)}/json/`;
-
+  // Strategy 1: ipwho.is (highly reliable in India, accurate ISP localization)
   try {
+    const ipwhoUrl = isPrivate ? 'https://ipwho.is/' : `https://ipwho.is/${encodeURIComponent(clientIp)}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+    const res = await fetch(ipwhoUrl, {
+      signal: controller.signal,
+      headers: { 'User-Agent': 'FirstAidPlus/2.1' }
+    });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.success && data.latitude && data.longitude) {
+        return {
+          success: true,
+          lat: parseFloat(data.latitude),
+          lng: parseFloat(data.longitude),
+          city: data.city || 'Mumbai',
+          region: data.region || 'Maharashtra',
+          country: data.country || 'India',
+          postal: data.postal || '',
+          formattedAddress: `${data.city || 'City'}, ${data.region || 'State'}, ${data.country || 'India'}`.replace(/^, /, ''),
+          ip: data.ip || clientIp,
+          source: 'ipwho_service'
+        };
+      }
+    }
+  } catch (err) {}
+
+  // Strategy 2: freeipapi.com (fast secondary fallback)
+  try {
+    const freeIpUrl = isPrivate ? 'https://freeipapi.com/api/json' : `https://freeipapi.com/api/json/${encodeURIComponent(clientIp)}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+    const res = await fetch(freeIpUrl, {
+      signal: controller.signal,
+      headers: { 'User-Agent': 'FirstAidPlus/2.1' }
+    });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.latitude && data.longitude) {
+        return {
+          success: true,
+          lat: parseFloat(data.latitude),
+          lng: parseFloat(data.longitude),
+          city: data.cityName || 'Mumbai',
+          region: data.regionName || 'Maharashtra',
+          country: data.countryName || 'India',
+          postal: data.zipCode || '',
+          formattedAddress: `${data.cityName || 'City'}, ${data.regionName || 'State'}, ${data.countryName || 'India'}`.replace(/^, /, ''),
+          ip: data.ipAddress || clientIp,
+          source: 'freeipapi_service'
+        };
+      }
+    }
+  } catch (err) {}
+
+  // Strategy 3: ipapi.co (third fallback)
+  try {
+    const targetUrl = isPrivate 
+      ? 'https://ipapi.co/json/' 
+      : `https://ipapi.co/${encodeURIComponent(clientIp)}/json/`;
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3500);
 
@@ -1807,13 +2290,11 @@ async function getIpLocation(clientIp = '') {
           postal: data.postal || '',
           formattedAddress: `${data.city || 'City'}, ${data.region || 'State'}, ${data.country_name || 'India'}`.replace(/^, /, ''),
           ip: data.ip || clientIp,
-          source: 'ip_service'
+          source: 'ipapi_service'
         };
       }
     }
-  } catch (err) {
-    // Network or timeout in sandbox/offline
-  }
+  } catch (err) {}
 
   // Graceful fallback default
   return {

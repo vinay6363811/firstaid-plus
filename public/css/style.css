@@ -4699,35 +4699,61 @@ body {
 /* 7. Custom Leaflet Markers */
 .user-gps-radar-pin {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1500 !important;
+  cursor: grab;
 }
 
-.user-gps-radar-pin .pulse-ring {
+.user-gps-radar-pin .pulse-ring,
+.user-gps-radar-pin .user-radar-pulse {
   position: absolute;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: rgba(37, 99, 235, 0.35);
+  background: rgba(14, 165, 233, 0.4);
+  border: 1.5px solid rgba(2, 132, 199, 0.75);
   animation: gpsPulseRing 1.8s infinite;
+  pointer-events: none;
 }
 
 @keyframes gpsPulseRing {
-  0% { transform: scale(0.6); opacity: 0.9; }
-  100% { transform: scale(2.2); opacity: 0; }
+  0% { transform: scale(0.6); opacity: 0.95; }
+  100% { transform: scale(2.4); opacity: 0; }
 }
 
-.user-gps-radar-pin .center-dot {
+.user-gps-radar-pin .center-dot,
+.user-gps-radar-pin .user-radar-dot {
   position: relative;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: #2563eb;
-  border: 2.5px solid #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  background: #0284c7;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.95), 0 3px 8px rgba(0, 0, 0, 0.45);
+  z-index: 2;
+}
+
+.user-gps-radar-pin .user-radar-tag {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #0284c7;
+  padding: 2px 7px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  z-index: 3;
 }
 
 .hospital-map-pin {

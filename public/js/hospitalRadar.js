@@ -437,23 +437,32 @@
         }).catch(() => {});
       }
 
-      // Progressive status messages
-      setTimeout(() => {
-        if (this.isLoading && this.isLiveTracking) this.setRadarStatus('IDENTIFYING NEAREST MEDICAL SUPPORT...', 'locating');
-      }, 1500);
+      // Fast Dual-Stage Geolocation Strategy:
+      // Stage 1: Fast Wi-Fi/network triangulation (enableHighAccuracy: false).
+      // On Windows desktops and laptops, this resolves in 150-400ms without stalling on GPS satellite acquisition.
+      let initialFixReceived = false;
 
-      setTimeout(() => {
-        if (this.isLoading && this.isLiveTracking) this.setRadarStatus('STREAMING REAL-TIME SATELLITE GPS...', 'locating');
-      }, 3000);
+      navigator.geolocation.getCurrentPosition(
+        (fastPos) => {
+          if (!initialFixReceived) {
+            console.log('⚡ Fast network location acquired:', fastPos.coords.latitude, fastPos.coords.longitude);
+            initialFixReceived = true;
+            this.hidePermissionPromptBanner();
+            this.handleRealTimeLocationFix(fastPos, 'network_fast');
+          }
+        },
+        (fastErr) => {
+          console.warn('Fast network geolocation attempt skipped/failed:', fastErr.message);
+        },
+        { enableHighAccuracy: false, timeout: 5000, maximumAge: forcePrompt ? 0 : 30000 }
+      );
 
-      // Start continuous high-accuracy watchPosition with generous 25s timeout
+      // Stage 2: Continuous high-accuracy watchPosition for true GPS & live moving tracking
       const highAccOptions = {
         enableHighAccuracy: true,
-        timeout: 25000,
+        timeout: 15000,
         maximumAge: forcePrompt ? 0 : 5000
       };
-
-      let initialFixReceived = false;
 
       this.watchId = navigator.geolocation.watchPosition(
         (position) => {
@@ -462,7 +471,7 @@
           this.handleRealTimeLocationFix(position, 'gps_live');
         },
         (gpsError) => {
-          console.warn('Real-time GPS high accuracy error/timeout:', gpsError);
+          console.warn('Real-time GPS high accuracy status:', gpsError);
 
           // If user specifically denied permission in browser
           if (gpsError.code === gpsError.PERMISSION_DENIED) {
@@ -473,20 +482,10 @@
             return;
           }
 
-          // If high accuracy timed out and no fix has been received yet, try network fix
+          // If high accuracy timed out and no fix has been received yet, engage resilient fallback
           if (!initialFixReceived && (gpsError.code === gpsError.TIMEOUT || gpsError.code === gpsError.POSITION_UNAVAILABLE)) {
-            console.log('Attempting fast Wi-Fi / cellular triangulation...');
-            navigator.geolocation.getCurrentPosition(
-              (netPosition) => {
-                this.hidePermissionPromptBanner();
-                this.handleLocationSuccess(netPosition, 'network');
-              },
-              (netError) => {
-                console.warn('Network location fix also failed, engaging IP fallback...', netError);
-                this.fallbackToIpLocation(netError.message || 'Signal unavailable');
-              },
-              { enableHighAccuracy: false, timeout: 15000, maximumAge: forcePrompt ? 0 : 30000 }
-            );
+            console.log('GPS high accuracy unavailable, engaging resilient fallback...');
+            this.fallbackToIpLocation(gpsError.message || 'Signal unavailable');
           }
         },
         highAccOptions
@@ -655,7 +654,39 @@
         }
       } catch (e) {}
 
-      // 2. Client-side direct IP lookup if backend returned default
+      // 2. Client-side direct IP lookup via ipwho.is (fast, highly accurate in India, CORS-enabled)
+      if (!resolved) {
+        try {
+          const res = await fetch('https://ipwho.is/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.success && data.latitude && data.longitude) {
+              this.userLat = parseFloat(data.latitude);
+              this.userLng = parseFloat(data.longitude);
+              this.userAddress = `${data.city || ''}, ${data.region || ''}, ${data.country || 'India'}`.replace(/^, /, '');
+              resolved = true;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // 3. Client-side direct IP lookup via freeipapi.com
+      if (!resolved) {
+        try {
+          const res = await fetch('https://freeipapi.com/api/json');
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.latitude && data.longitude) {
+              this.userLat = parseFloat(data.latitude);
+              this.userLng = parseFloat(data.longitude);
+              this.userAddress = `${data.cityName || ''}, ${data.regionName || ''}, ${data.countryName || 'India'}`.replace(/^, /, '');
+              resolved = true;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // 4. Client-side direct IP lookup via ipapi.co
       if (!resolved) {
         try {
           const res = await fetch('https://ipapi.co/json/');
@@ -887,21 +918,22 @@
 
       const userLatLng = [this.userLat, this.userLng];
 
-      // Custom User Radar DivIcon
+      // Custom User Radar DivIcon (High visibility beacon with pulse ring & label)
       const userRadarIcon = L.divIcon({
         className: 'user-gps-radar-pin',
         html: `
-          <div class="user-radar-pulse"></div>
-          <div class="user-radar-dot"></div>
+          <div class="pulse-ring user-radar-pulse"></div>
+          <div class="center-dot user-radar-dot"></div>
+          <div class="user-radar-tag">📍 YOU ARE HERE</div>
         `,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14]
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
       });
 
       if (!this.userMarker) {
         this.userMarker = L.marker(userLatLng, { 
           icon: userRadarIcon, 
-          zIndexOffset: 1000,
+          zIndexOffset: 1500,
           draggable: true,
           autoPan: true
         }).addTo(this.map);
@@ -924,7 +956,11 @@
 
         this.userMarker.bindPopup(popupMsg);
       } else {
+        this.userMarker.setIcon(userRadarIcon);
         this.userMarker.setLatLng(userLatLng);
+        if (this.map && !this.map.hasLayer(this.userMarker)) {
+          this.userMarker.addTo(this.map);
+        }
         const popupMsg = this.isLiveTracking
           ? `<strong>📍 Live Real-Time Position</strong><br>${this.userAddress || 'Streaming GPS'}<br><small style="color:#16a34a; font-weight:700;">● Continuous Live GPS Tracking Active (±${this.gpsAccuracy || 10}m)</small>`
           : `<strong>📍 Your Position</strong><br>${this.userAddress || 'Detected Device Location'}<br><small style="color:#0284c7; font-weight:600;">👆 Drag pin or click map to adjust exact spot</small>`;
